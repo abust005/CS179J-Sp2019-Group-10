@@ -79,11 +79,11 @@ int TickFct_movement(int movement_state)
 			Set_A2D_Pin(0x01); // Sets analog signal to the left/right axis of the right joystick
 			convert();
 			joystick2 = ADC; // Read ADC value into joystick2 variable
-			if(joystick2 > 600) // Joystick is being tilted up
+			if(joystick2 > 700) // Joystick is being tilted up
 			{
 				droneSignal = (droneSignal & 0xEF); // F/R set to 0 for forward
 			}
-			else if(joystick2 < 500) // Joystick is being tilted down
+			else if(joystick2 < 350) // Joystick is being tilted down
 			{
 				droneSignal = (droneSignal | 0x10); // F/R set to 1 for reverse
 			}
@@ -116,7 +116,7 @@ int TickFct_altitude(int altitude_state)
 			{
 				droneSignal = ((droneSignal & 0xF3) | 0x04); // Up/Down set to 01 for down
 			}
-			movement_state = forward_reverse;
+			movement_state = up_down;
 			break;
 		default:
 			movement_state = up_down;
