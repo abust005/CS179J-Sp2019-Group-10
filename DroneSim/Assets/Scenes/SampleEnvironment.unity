@@ -894,7 +894,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6a1bc6a23153de44ada8cdecb199d5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  behindPosition: {x: 0, y: 50, z: -30}
+  behindPosition: {x: 0, y: 10, z: -30}
   cameraAngleX: 20
 --- !u!1 &539128910
 GameObject:
@@ -1595,19 +1595,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 392d5570d33411747a4797a7b75fdd30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lift: 0
-  maxLift: 300
-  minLift: 60
-  forceAdjustmentA: 135
-  forceAdjustmentB: 120
-  forceAdjustmentC: 150
-  forceAdjustmentD: 110
-  forceAdjustmentE: 140
-  forceAdjustmentF: 105
-  movementAmount: 200
-  tiltAmountForward: 20
-  tiltAmountSideways: 20
   currentYRotation: 0
+  lift: 0
+  liftMax: 150
+  liftMin: 50
+  tiltAngleForward: 20
+  tiltAngleRight: 20
 --- !u!54 &1139266547
 Rigidbody:
   m_ObjectHideFlags: 0
