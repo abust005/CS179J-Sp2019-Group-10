@@ -14,6 +14,7 @@ public class DroneMovementScript : MonoBehaviour
 {
     // Private
 	private float desiredYRotation;
+	private float liftVelocity;
 	private float rotationAmount = 2.5f;
 	private float rotationYVelocity;
 	private float tiltForward = 0;
@@ -22,10 +23,14 @@ public class DroneMovementScript : MonoBehaviour
 	private float tiltSidewaysVelocity;
 	private Vector3 velocitySmoothDamp; // This is for speed clamping.
 	// Public
+	public float airDensity = 1.225f; // Air density in kg/m^3
 	[HideInInspector] public float currentYRotation; // This is for drone rotation.
 	public float lift; // This is the net force from all propellers.
-	public float liftMax = 150;
-	public float liftMin = 50;
+	public float liftCoefficient = 0.2f; // This is a constant that is normally determined experimentally.
+	public float propellerArea = 0.03f; // This is the area of the propeller wing in square meters.
+	public float propellerDiameter = 10; // This is the propeller diameter (tip-to-tip) in inches.
+	public float RPMMax = 7170; // This is 80% of the maximum RPM.
+	public float RPMMin = 5610; // This is the slowest RPM allowed for the propellers.
 	public float tiltAngleForward = 20; // This is the forward/backward angle tilt of the propeller in degrees.
 	public float tiltAngleRight = 20; // This is the sideways angle tilt of the propeller in degrees.
 	Rigidbody drone;
@@ -54,11 +59,13 @@ public class DroneMovementScript : MonoBehaviour
 	{		
 		if ( Input.GetKey( KeyCode.I ) && !Input.GetKey( KeyCode.K ) )
 		{
-			lift = liftMax;
+			liftVelocity = SetLiftVelocity(RPMMax);
+			lift = 4 * SetLift(liftVelocity);
 		}
 		else if ( Input.GetKey( KeyCode.K ) && !Input.GetKey( KeyCode.I ) )
 		{
-			lift = liftMin;
+			liftVelocity = SetLiftVelocity(RPMMin);
+			lift = 4 * SetLift(liftVelocity);
 		}
 		else 
 		{
@@ -128,4 +135,18 @@ public class DroneMovementScript : MonoBehaviour
 		return lift * Mathf.Sin( ( 90 - tiltAmountDirection ) * Mathf.PI / 180 );
 	}
 	
+	float SetLift(float velocity)
+	{
+		return liftCoefficient * ( airDensity * Mathf.Pow(velocity, 2) / 2 ) * propellerArea;
+	}	
+
+	float SetLiftVelocity(float RPM)
+	{
+		return RPM * ConvertUnitsDiameter() * Mathf.PI / 60; // (Revolution/min * 2pi[radians]/revolution * 1min/60sec * diameter[meters]/2) === (meter/second)
+	}
+
+	float ConvertUnitsDiameter()
+	{
+		return propellerDiameter * 0.0254f; // Conversion from inch to meters
+	}
 }
