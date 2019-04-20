@@ -12,7 +12,7 @@ using UnityEngine;
 
 public class DroneMovementScript : MonoBehaviour
 {
-    // Private
+	// Private
 	private float desiredYRotation;
 	private float liftVelocity;
 	private float rotationAmount = 2.5f;
@@ -25,6 +25,7 @@ public class DroneMovementScript : MonoBehaviour
 	// Public
 	public float airDensity = 1.225f; // Air density in kg/m^3
 	[HideInInspector] public float currentYRotation; // This is for drone rotation.
+	public bool isRotatable = false; // This controls whether the drone can rotate.
 	public float lift; // This is the net force from all propellers.
 	public float liftCoefficient = 0.2f; // This is a constant that is normally determined experimentally.
 	public float propellerArea = 0.03f; // This is the area of the propeller wing in square meters.
@@ -48,7 +49,7 @@ public class DroneMovementScript : MonoBehaviour
 		MovementUpDown();
 		MovementLeftRight();
 		MovementForwardBackward();
-		//Rotation();
+		Rotate();
 		ClampingSpeedValues();
 		drone.AddRelativeForce( Vector3.up * lift );
 		drone.rotation = Quaternion.Euler( new Vector3( tiltForward, currentYRotation, tiltSideways ) );
@@ -59,13 +60,13 @@ public class DroneMovementScript : MonoBehaviour
 	{		
 		if ( Input.GetKey( KeyCode.I ) && !Input.GetKey( KeyCode.K ) )
 		{
-			liftVelocity = SetLiftVelocity(RPMMax);
-			lift = 4 * SetLift(liftVelocity);
+			liftVelocity = SetLiftVelocity( RPMMax );
+			lift = 4 * SetLift( liftVelocity );
 		}
 		else if ( Input.GetKey( KeyCode.K ) && !Input.GetKey( KeyCode.I ) )
 		{
-			liftVelocity = SetLiftVelocity(RPMMin);
-			lift = 4 * SetLift(liftVelocity);
+			liftVelocity = SetLiftVelocity( RPMMin );
+			lift = 4 * SetLift( liftVelocity );
 		}
 		else 
 		{
@@ -104,8 +105,12 @@ public class DroneMovementScript : MonoBehaviour
 	}
 	
 	// Simulates left and right rotational movement
-	void Rotation()
+	void Rotate()
 	{
+		if ( !isRotatable )
+		{
+			return;
+		}
 		if ( Input.GetKey( KeyCode.J ) ) 
 		{
 			desiredYRotation -= rotationAmount;
