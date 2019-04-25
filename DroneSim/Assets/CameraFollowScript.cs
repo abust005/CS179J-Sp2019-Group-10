@@ -6,8 +6,8 @@ public class CameraFollowScript : MonoBehaviour
 {
     private Transform drone;
 	private Vector3 velocityCameraFollow;
-	public Vector3 behindPosition = new Vector3(0, 50, -30);
-	public float cameraAngleX = 20;
+	public Vector3 behindPosition = new Vector3(0, 20, -30);
+	public float cameraAngleX = 10;
 	
 	void Awake(){
 		drone = GameObject.FindGameObjectWithTag("Player").transform;
