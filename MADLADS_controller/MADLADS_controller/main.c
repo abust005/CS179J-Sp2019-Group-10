@@ -13,18 +13,13 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include "scheduler.h"
-#include "usart_ATmega1284.h" // Remove once SPI compatible 
 #include "spi.h"
 
 unsigned char temp, counter = 0x00; // SPI variables 
 
-unsigned char droneXYAxis = 0; // 000 - standby
-unsigned char droneZAxis = 0; // 00 - standby
-unsigned char claw = 0; // 0 - open, 1 - shut-them
-unsigned char b2 = 0; // button usage still undecided 
 unsigned char droneSignal = 0x00; // bits 0-1 are up/down, 2-4 are left/right/forward/reverse, 5 is claw, 6 is button2, 7 is parity bit
 
-unsigned short joystick, joystick2, joystick3; // Variables to store ADC values of joysticks
+unsigned short joystick, joystick2, joystick3 = 0x0000; // Variables to store ADC values of joysticks
 
 // Code provided by UCR for ADC
 
@@ -183,7 +178,7 @@ int spi_master(int state)
 			state = send;
 			break;
 		case send:
-			SPI_MasterTransmit(droneSignal);
+			SPI_MasterTransmit(droneSignal); // Transmit droneSignal over RF using SPI protocol
 			state = wait;
 			break;
 		default:
@@ -196,9 +191,11 @@ int spi_master(int state)
 
 int main(void)
 {
-	DDRA = 0x00; PORTA = 0xFF; // Input
-	DDRB = 0xFF; PORTB = 0x00; // Output to column sel
-	// Output from RF transmitter will be sent from TX1 DO NOT INITIALIZE DDRD / PORTD as it will not send
+	DDRA = 0x00; PORTA = 0xFF; // Input from ADC
+	DDRD = 0xFF; PORTD = 0x00; // Output for testing
+	//DDRC = 0x00; PORTC = 0xFF; // Input from button 2
+	//DDRD = 0x00; PORTD = 0xFF; // Input from button 1 (claw)
+	// Output from RF transmitter will be sent from MOSI do not initialize DDRB 
 
 	TimerSet(timerPeriod);
 	TimerOn();
@@ -228,6 +225,7 @@ int main(void)
 
 	while (1)
 	{
+		PORTD = droneSignal; // Test that we are generating the correct signal DELETE ONCE DONE
 	}
 }
 
