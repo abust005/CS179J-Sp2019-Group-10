@@ -8,7 +8,7 @@
  */ 
 
 #define timerPeriod 1
-#define tasksNum 3
+#define tasksNum 4
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
@@ -16,12 +16,12 @@
 #include "usart_ATmega1284.h" // Remove once SPI compatible 
 #include "spi.h"
 
-unsigned char temp, s_data, counter = 0x00; // SPI variables 
+unsigned char temp, counter = 0x00; // SPI variables 
 
-unsigned char droneXYAxis = 0; // 00 - stopped, 01 - creep, 10 - medium, 11 - fast
-unsigned char droneZAxis = 0; // 10 - left, 00 - straight, 01 - right
+unsigned char droneXYAxis = 0; // 000 - standby
+unsigned char droneZAxis = 0; // 00 - standby
 unsigned char claw = 0; // 0 - open, 1 - shut-them
-unsigned char b2 = 0; // button usage still undecided
+unsigned char b2 = 0; // button usage still undecided 
 unsigned char droneSignal = 0x00; // bits 0-1 are up/down, 2-4 are left/right/forward/reverse, 5 is claw, 6 is button2, 7 is parity bit
 
 unsigned short joystick, joystick2, joystick3; // Variables to store ADC values of joysticks
@@ -53,37 +53,17 @@ void convert(){
 
 // End of code provided by UCR for ADC
 
-// Master code
-void SPI_MasterInit(void) {
-	// Set DDRB to have MOSI, SCK, and SS as output and MISO as input
-	// Set SPCR register to enable SPI, enable master, and use SCK frequency
-	//   of fosc/16  (pg. 168)
-	// Make sure global interrupts are enabled on SREG register (pg. 9)
-}
-
-void SPI_MasterTransmit(unsigned char cData) {
-	// data in SPDR will be transmitted, e.g. SPDR = cData;
-	// set SS low
-	while(!(SPSR & (1<<SPIF))) { // wait for transmission to complete
-		;
-	}
-	// set SS high
-}
-
-// Servant code
-void SPI_ServantInit(void) {
-	// set DDRB to have MISO line as output and MOSI, SCK, and SS as input
-	// set SPCR register to enable SPI and enable SPI interrupt (pg. 168)
-	// make sure global interrupts are enabled on SREG register (pg. 9)
-}
-
-ISR(SPI_STC_vect) { // this is enabled in with the SPCR register’s “SPI
-	// Interrupt Enable”
-	// SPDR contains the received data, e.g. unsigned char receivedData =
-	// SPDR;
-}
-
 // Joysticks are actually wired sideways so left/right and forward/reverse are switched but the states are labeled correctly for their observed actions
+/*
+000 - standby
+001 - right
+010 - forward
+011 - forward/right
+100 - left
+101 - reverse
+110 - forward/left
+111 - N/A
+*/
 enum movement_states {left_right, forward_reverse} movement_state;
 
 int TickFct_movement(int movement_state)
@@ -91,31 +71,31 @@ int TickFct_movement(int movement_state)
 	switch(movement_state)
 	{
 		case left_right: // Right joystick controls left and right movements
-			Set_A2D_Pin(0x00); // Sets analog signal to the left/right axis of the right joystick
+			Set_A2D_Pin(0x02); // Sets analog signal to the left/right axis of the right joystick
 			convert();
 			joystick = ADC; // Read ADC value into joystick variable
 			droneSignal = (droneSignal & 0xE3); // L/R/F/R set to 000 for hover
 			if(joystick > 700) // Joystick is being tilted left
 			{
-				droneSignal = ((droneSignal & 0xE7) | 0x08); // L/R set to 10 for left NEEDS UPDATING
+				droneSignal = ((droneSignal & 0xE3) | 0x10); // L/R set to 100 for left 
 			}
 			else if(joystick < 350) // Joystick is being tilted right
 			{
-				droneSignal = ((droneSignal & 0xF3) | 0x04); // L/R set to 01 for right NEEDS UPDATING
+				droneSignal = ((droneSignal & 0xE3) | 0x04); // L/R set to 001 for right
 			}
 			movement_state = forward_reverse;
 			break;
 		case forward_reverse: // Left joystick controls forward and reverse movements
-			Set_A2D_Pin(0x01); // Sets analog signal to the left/right axis of the right joystick
+			Set_A2D_Pin(0x03); // Sets analog signal to the left/right axis of the right joystick
 			convert();
 			joystick2 = ADC; // Read ADC value into joystick2 variable
 			if(joystick2 > 700) // Joystick is being tilted up
 			{
-				droneSignal = (droneSignal & 0xEF); // F/R set to 0 for forward
+				droneSignal = (droneSignal | 0x08); // F/R set to 1 for forward
 			}
 			else if(joystick2 < 350) // Joystick is being tilted down
 			{
-				droneSignal = (droneSignal | 0x10); // F/R set to 1 for reverse
+				droneSignal = (droneSignal & 0xF7) | 0x14; // F/R set to 101 for reverse
 			}
 			movement_state = left_right; // Return to left right state
 			break;
@@ -127,6 +107,12 @@ int TickFct_movement(int movement_state)
 }
 
 // Joysticks are actually wired sideways so left/right and up/down are switched but the states are labeled correctly for their observed actions
+/*
+00 - standby
+01 - down
+10 - up
+11 - N/A
+*/
 enum altitude_states {up_down} altitude_state;
 
 int TickFct_altitude(int altitude_state)
@@ -134,17 +120,17 @@ int TickFct_altitude(int altitude_state)
 	switch(altitude_state)
 	{
 		case up_down: // Right joystick controls up and down movements
-			Set_A2D_Pin(0x03); // Sets analog signal to the left/right axis of the right joystick
+			Set_A2D_Pin(0x00); // Sets analog signal to the left/right axis of the right joystick
 			convert();
 			joystick3 = ADC; // Read ADC value into joystick variable
 			droneSignal = (droneSignal & 0xFC); // Up/Down set to 00 for maintain altitude
 			if(joystick > 700) // Joystick is being tilted up
 			{
-				droneSignal = ((droneSignal & 0xE7) | 0x02); // Up/Down set to 10 for up
+				droneSignal = ((droneSignal & 0xFC) | 0x02); // Up/Down set to 10 for up
 			}
 			else if(joystick < 350) // Joystick is being tilted left
 			{
-				droneSignal = ((droneSignal & 0xF3) | 0x04); // Up/Down set to 01 for down
+				droneSignal = ((droneSignal & 0xFC) | 0x01); // Up/Down set to 01 for down
 			}
 			movement_state = up_down;
 			break;
@@ -154,35 +140,55 @@ int TickFct_altitude(int altitude_state)
 	}
 	return altitude_state;
 }
-//Will be replaced with SPI
-enum uart_state{uart_start, send};
-int uart_tick(int state)
+
+enum button_states {buttons} button_state;
+
+int TickFct_button(int button_state)
+{
+	switch(button_state)
+	{
+		case buttons: // Right joystick controls up and down movements
+			droneSignal = (droneSignal & 0x9F); // buttons set to 00 for unused
+			movement_state = buttons;
+			break;
+		default:
+			movement_state = buttons;
+			break;
+	}
+	return button_state;
+}
+
+// SPI
+enum uart_state{wait, send};
+	
+int spi_master(int state)
 {
 	switch(state)
 	{
-		case uart_start:
-		counter = 0; // Reset counter to 0 after all three signals have been sent
-		if(USART_HasTransmitted(1))
-		{
-			temp = droneSignal; // Updates s_data if previous value has been transmitted
-		}
-		state = send;
-		break;
-		case send:
-		state = uart_start;
-		if(USART_IsSendReady(1) && counter < 3)  // Send three copies of the same signal for redundancy
-		{
-			if(counter == 0) {s_data = (temp | 0x80);} // Marker denoting first duplicate signal
-			if(counter == 1) {s_data = (temp | 0x40);} // Marker denoting second duplicate signal
-			if(counter == 2) {s_data = (temp | 0x20);} // Marker denoting third duplicate signal
-			USART_Send(s_data, 1); // Send s_data
-			counter++; // Updates counter
+		case wait:
+			counter = 0; // Counts the number of bits set to 1
+			for(int i = 0; i < 7; i++)
+			{
+				temp = (droneSignal >> i) &  0x01; // Right shift by i and clear unwanted bits
+				if(temp == 0x01){ counter++;} // If the bit we are checking is set to 1, update the counter
+			}
+			if((counter % 2) == 0) // Checks whether or not we have an even number of bits
+			{
+				droneSignal = droneSignal & 0x7F; // Set parity bit to 0 for even number of 1s
+			}
+			else
+			{
+				droneSignal = droneSignal | 0x80; // Set parity bit to 1 for odd number of 1s
+			}
 			state = send;
-		}
-		break;
+			break;
+		case send:
+			SPI_MasterTransmit(droneSignal);
+			state = wait;
+			break;
 		default:
-		state = uart_start;
-		break;
+			state = wait;
+			break;
 	}
 	return state;
 }
@@ -197,7 +203,7 @@ int main(void)
 	TimerSet(timerPeriod);
 	TimerOn();
 	A2D_init();
-	initUSART(1);
+	SPI_MasterInit();
 
 	unsigned char i = 0;
 	tasks[i].state = -1;
@@ -210,10 +216,15 @@ int main(void)
 	tasks[i].elapsedTime = 0;
 	tasks[i].TickFct = &TickFct_altitude;
 	i++;
-	tasks[i].state = uart_start;
+	tasks[i].state = -1;
+	tasks[i].period = 50;
+	tasks[i].elapsedTime = 0;
+	tasks[i].TickFct = &TickFct_button;
+	i++;
+	tasks[i].state = -1;
 	tasks[i].period = 25;
 	tasks[i].elapsedTime = 0;
-	tasks[i].TickFct = &uart_tick;
+	tasks[i].TickFct = &spi_master;
 
 	while (1)
 	{
