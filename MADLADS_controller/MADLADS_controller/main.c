@@ -19,7 +19,10 @@ unsigned char temp, counter = 0x00; // SPI variables
 
 unsigned char droneSignal = 0x00; // bits 0-1 are up/down, 2-4 are left/right/forward/reverse, 5 is claw, 6 is button2, 7 is parity bit
 
-unsigned short joystick, joystick2, joystick3 = 0x0000; // Variables to store ADC values of joysticks
+//unsigned short joystick, joystick2, joystick3 = 0x0000; // Variables to store ADC values of joysticks
+unsigned short joystick = 0;
+unsigned short joystick2 = 0;
+unsigned short joystick3 = 0;
 
 // Code provided by UCR for ADC
 
@@ -63,32 +66,33 @@ enum movement_states {left_right, forward_reverse} movement_state;
 
 int TickFct_movement(int movement_state)
 {
+	return movement_state; // FIXME: For debugging purposes
 	switch(movement_state)
 	{
 		case left_right: // Right joystick controls left and right movements
 			Set_A2D_Pin(0x02); // Sets analog signal to the left/right axis of the right joystick
 			convert();
-			joystick = ADC; // Read ADC value into joystick variable
+			joystick = (unsigned short)ADC; // Read ADC value into joystick variable
 			droneSignal = (droneSignal & 0xE3); // L/R/F/R set to 000 for hover
-			if(joystick > 700) // Joystick is being tilted left
+			if(joystick > 373) // Joystick is being tilted left
 			{
-				droneSignal = ((droneSignal & 0xE3) | 0x10); // L/R set to 100 for left 
+				droneSignal |= 0x10; // L/R set to 100 for left 
 			}
-			else if(joystick < 350) // Joystick is being tilted right
+			else if(joystick < 127) // Joystick is being tilted right
 			{
-				droneSignal = ((droneSignal & 0xE3) | 0x04); // L/R set to 001 for right
+				droneSignal |= 0x04; // L/R set to 001 for right
 			}
 			movement_state = forward_reverse;
 			break;
 		case forward_reverse: // Left joystick controls forward and reverse movements
 			Set_A2D_Pin(0x03); // Sets analog signal to the left/right axis of the right joystick
 			convert();
-			joystick2 = ADC; // Read ADC value into joystick2 variable
-			if(joystick2 > 700) // Joystick is being tilted up
+			joystick2 = (unsigned short)ADC; // Read ADC value into joystick2 variable
+			if(joystick2 > 496) // Joystick is being tilted up
 			{
-				droneSignal = (droneSignal | 0x08); // F/R set to 1 for forward
+				droneSignal |= 0x08; // F/R set to 1 for forward
 			}
-			else if(joystick2 < 350) // Joystick is being tilted down
+			else if(joystick2 < 169) // Joystick is being tilted down
 			{
 				droneSignal = (droneSignal & 0xF7) | 0x14; // F/R set to 101 for reverse
 			}
@@ -117,20 +121,19 @@ int TickFct_altitude(int altitude_state)
 		case up_down: // Right joystick controls up and down movements
 			Set_A2D_Pin(0x00); // Sets analog signal to the left/right axis of the right joystick
 			convert();
-			joystick3 = ADC; // Read ADC value into joystick variable
+			joystick3 = (unsigned short)ADC; // Read ADC value into joystick variable
 			droneSignal = (droneSignal & 0xFC); // Up/Down set to 00 for maintain altitude
-			if(joystick > 700) // Joystick is being tilted up
+			if(joystick3 > 495) // Joystick is being tilted up
 			{
-				droneSignal = ((droneSignal & 0xFC) | 0x02); // Up/Down set to 10 for up
+				droneSignal |= 0x02; // Up/Down set to 10 for up
 			}
-			else if(joystick < 350) // Joystick is being tilted left
+			else if(joystick3 < 167 && temp != 0) // Joystick is being tilted left
 			{
-				droneSignal = ((droneSignal & 0xFC) | 0x01); // Up/Down set to 01 for down
+				droneSignal |= 0x01; // Up/Down set to 01 for down
 			}
-			movement_state = up_down;
 			break;
 		default:
-			movement_state = up_down;
+			altitude_state = up_down;
 			break;
 	}
 	return altitude_state;
@@ -140,25 +143,43 @@ enum button_states {buttons} button_state;
 
 int TickFct_button(int button_state)
 {
+	// ----------vvvvvvvvvvvvvvv-----------------
+	// FIXME: For Debugging to make sure of no infinite loop; remove section when done
+	switch (button_state)
+	{
+		case buttons: // Toggles light off [PD6]
+			droneSignal &= 0xBF; 
+			button_state = -1;
+			break;
+		default: // Toggles light on [PD6]
+			droneSignal |= 0x40; 
+			button_state = buttons;
+			break;
+	}
+	return button_state;
+	// FIXME: End of debugging section
+	// ----------^^^^^^^^^^^^^^^-----------------
+	
 	switch(button_state)
 	{
 		case buttons: // Right joystick controls up and down movements
 			droneSignal = (droneSignal & 0x9F); // buttons set to 00 for unused
-			movement_state = buttons;
+			button_state = buttons;
 			break;
 		default:
-			movement_state = buttons;
+			button_state = buttons;
 			break;
 	}
 	return button_state;
 }
 
 // SPI
-enum uart_state{wait, send};
+enum uart_states {wait, send} uart_state;
 	
-int spi_master(int state)
+int spi_master(int uart_state)
 {
-	switch(state)
+	return uart_state; // FIXME: For debugging purposes
+	switch(uart_state)
 	{
 		case wait:
 			counter = 0; // Counts the number of bits set to 1
@@ -175,17 +196,17 @@ int spi_master(int state)
 			{
 				droneSignal = droneSignal | 0x80; // Set parity bit to 1 for odd number of 1s
 			}
-			state = send;
+			uart_state = send;
 			break;
 		case send:
 			SPI_MasterTransmit(droneSignal); // Transmit droneSignal over RF using SPI protocol
-			state = wait;
+			uart_state = wait;
 			break;
 		default:
-			state = wait;
+			uart_state = wait;
 			break;
 	}
-	return state;
+	return uart_state;
 }
 
 
@@ -197,10 +218,10 @@ int main(void)
 	//DDRD = 0x00; PORTD = 0xFF; // Input from button 1 (claw)
 	// Output from RF transmitter will be sent from MOSI do not initialize DDRB 
 
+	A2D_init();
+	//SPI_MasterInit();
 	TimerSet(timerPeriod);
 	TimerOn();
-	A2D_init();
-	SPI_MasterInit();
 
 	unsigned char i = 0;
 	tasks[i].state = -1;
@@ -214,7 +235,8 @@ int main(void)
 	tasks[i].TickFct = &TickFct_altitude;
 	i++;
 	tasks[i].state = -1;
-	tasks[i].period = 50;
+	//tasks[i].period = 50;
+	tasks[i].period = 500; // FIXME: For Debugging purposes only
 	tasks[i].elapsedTime = 0;
 	tasks[i].TickFct = &TickFct_button;
 	i++;
