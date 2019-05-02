@@ -4,11 +4,14 @@
  * WILL NOT CURRENTLY COMPILE AS IT IS BEING ADJUSTED TO MEET CURRENT NEEDS
  *
  * Created: 4/16/2019 7:30:36 PM
- * Author : Jonathan "Cuomo" Woolf
+ * Authors : Jonathan "Cuomo" Woolf
+ *			 Joshua Riley
+ *			 Colton Vosburg
+ *			 Adriel Bustamante 
  */ 
 
 #define timerPeriod 1
-#define tasksNum 2 // SET TO 3 WHEN DONE DEBUGGING
+#define tasksNum 3 // Number of tasks
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
@@ -20,6 +23,8 @@ unsigned char temp, counter = 0x00; // SPI variables
 unsigned char droneSignal = 0x00; // bits 0-1 are up/down, 2-4 are left/right/forward/reverse, 5 is claw, 6 is button2, 7 is parity bit
 
 unsigned short joystick, joystick2, joystick3 = 0x0000; // Variables to store ADC values of joysticks
+
+unsigned char upFlag, downFlag = 0x00;
 
 // Code provided by UCR for ADC
 
@@ -72,32 +77,71 @@ int TickFct_movement(int movement_state)
 {
 	switch(movement_state)
 	{
-		case left_right: // Right joystick controls left and right movements
-			Set_A2D_Pin(0x02); // Sets analog signal to the left/right axis of the right joystick
+		case left_right: // Left joystick controls left and right movements
+			Set_A2D_Pin(0x02); // Sets analog signal to the left/right axis of the left joystick
 			convert();
 			joystick = ADC; // Read ADC value into joystick variable
-			droneSignal = (droneSignal & 0xE3); // L/R/F/R set to 000 for hover
-			if(joystick > 373) // Joystick is being tilted left
+			//droneSignal = (droneSignal & 0xE3); // L/R/F/R set to 000 for hover
+			if(joystick > 700 && downFlag == 0) // Joystick is being tilted left
 			{
-				droneSignal = ((droneSignal & 0xE3) | 0x10); // L/R set to 100 for lef 
+				if(upFlag == 1)
+				{
+					droneSignal = (droneSignal & 0xFB) | 0x10;
+				}
+				else
+				{
+					droneSignal = ((droneSignal & 0xE3) | 0x10); // L/R set to 100 for left 
+				} 
 			}
-			else if(joystick < 127) // Joystick is being tilted right
+			else if(joystick < 350 && downFlag == 0) // Joystick is being tilted right
 			{
-				droneSignal = ((droneSignal & 0xE3) | 0x04); // L/R set to 001 for right
+				if(upFlag == 1)
+				{
+					droneSignal = (droneSignal & 0xEF) | 0x04;
+				}
+				else
+				{
+					droneSignal = ((droneSignal & 0xE3) | 0x04); // L/R set to 001 for right
+				}
 			}
+			else
+			{
+				if (downFlag == 0)
+				{
+					droneSignal = (droneSignal & 0xEB);
+				}
+			}
+// 			else if((droneSignal &  0x1c) == 0x04)
+// 			{
+// 				droneSignal = droneSignal & 0xEB;
+// 			}
+// 			else if((droneSignal &  0x1c) == 0x10)
+// 			{
+// 				droneSignal = droneSignal & 0xEB;
+// 			}
 			movement_state = forward_reverse; // Return to the forward reverse state
 			break;
 		case forward_reverse: // Left joystick controls forward and reverse movements
 			Set_A2D_Pin(0x03); // Sets analog signal to the left/right axis of the right joystick
 			convert();
 			joystick2 = ADC; // Read ADC value into joystick2 variable
-			if(joystick2 > 496) // Joystick is being tilted up
+			if(joystick2 > 700) // Joystick is being tilted up
 			{
 				droneSignal = (droneSignal | 0x08); // F/R set to 1 for forward
+				upFlag = 1;
+				downFlag = 0;
 			}
-			else if(joystick2 < 169) // Joystick is being tilted down
+			else if(joystick2 < 350) // Joystick is being tilted down
 			{
 				droneSignal = (droneSignal & 0xF7) | 0x14; // F/R set to 101 for reverse
+				upFlag = 0;
+				downFlag = 1;
+			}
+			else 
+			{
+				droneSignal = droneSignal & 0xF7;
+				upFlag = 0;
+				downFlag = 0;
 			}
 			movement_state = up_down; // Return to up down state
 			break;
@@ -106,13 +150,13 @@ int TickFct_movement(int movement_state)
 			convert();
 			joystick3 = ADC; // Read ADC value into joystick variable
 			droneSignal = (droneSignal & 0xFC); // Up/Down set to 00 for maintain altitude
-			if(joystick3 > 495) // Joystick is being tilted up
+			if(joystick3 > 700) // Joystick is being tilted up
 			{
-				droneSignal |= 0x02; // Up/Down set to 10 for up
+				droneSignal |= 0x01; // Up/Down set to 10 for down
 			}
-			else if(joystick3 < 167 && temp != 0) // Joystick is being tilted left
+			else if(joystick3 < 350) // Joystick is being tilted left
 			{
-				droneSignal |= 0x01; // Up/Down set to 01 for down
+				droneSignal |= 0x02; // Up/Down set to 01 for up
 			}
 			movement_state = left_right; // Return to left right state
 			break;
@@ -126,24 +170,8 @@ int TickFct_movement(int movement_state)
 enum button_states {buttons} button_state;
 
 int TickFct_button(int button_state)
-{
-	// ----------vvvvvvvvvvvvvvv-----------------
-	// FIXME: For Debugging to make sure of no infinite loop; remove section when done
-	switch (button_state)
-	{
-		case buttons: // Toggles light off [PD6]
-			droneSignal &= 0xBF; 
-			button_state = -1;
-			break;
-		default: // Toggles light on [PD6]
-			droneSignal |= 0x40; 
-			button_state = buttons;
-			break;
-	}
-	return button_state;
-	// FIXME: End of debugging section
-	// ----------^^^^^^^^^^^^^^^-----------------
-	
+{	
+	return -1;
 	switch(button_state)
 	{
 		case buttons: // Right joystick controls up and down movements
@@ -162,7 +190,6 @@ enum uart_states {wait, send} uart_state;
 	
 int spi_master(int uart_state)
 {
-	return uart_state; // FIXME: For debugging purposes
 	switch(uart_state)
 	{
 		case wait:
@@ -203,7 +230,7 @@ int main(void)
 	// Output from RF transmitter will be sent from MOSI do not initialize DDRB 
 
 	A2D_init();
-	//SPI_MasterInit();
+	SPI_MasterInit();
 	TimerSet(timerPeriod);
 	TimerOn();
 
@@ -213,12 +240,11 @@ int main(void)
 	tasks[i].elapsedTime = 0;
 	tasks[i].TickFct = &TickFct_movement;
 	i++;
-// 	tasks[i].state = -1;
-// 	//tasks[i].period = 50;
-// 	tasks[i].period = 1000; // FIXME: For Debugging purposes only
-// 	tasks[i].elapsedTime = 0;
-// 	tasks[i].TickFct = &TickFct_button;
-//	i++;
+ 	tasks[i].state = -1;
+ 	tasks[i].period = 50;
+ 	tasks[i].elapsedTime = 0;
+ 	tasks[i].TickFct = &TickFct_button;
+	i++;
 	tasks[i].state = -1;
 	tasks[i].period = 25;
 	tasks[i].elapsedTime = 0;
