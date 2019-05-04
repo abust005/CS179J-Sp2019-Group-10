@@ -10,13 +10,14 @@ c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/..
 Allocating common symbols
 Common symbol       size              file
 
-tasks               0x2c              main.o
+tasks               0x21              main.o
 temp                0x1               main.o
+upFlag              0x1               main.o
 movement_state      0x1               main.o
 joystick            0x2               main.o
-altitude_state      0x1               main.o
 button_state        0x1               main.o
 joystick2           0x2               main.o
+uart_state          0x1               main.o
 
 Discarded input sections
 
@@ -200,7 +201,7 @@ END GROUP
 .rela.plt
  *(.rela.plt)
 
-.text           0x00000000      0xabe
+.text           0x00000000      0xa64
  *(.vectors)
  .vectors       0x00000000       0x8c C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega1284/avr51/crtatmega1284.o
                 0x00000000                __vector_default
@@ -325,24 +326,21 @@ END GROUP
  .text.convert  0x000005b0       0x38 main.o
                 0x000005b0                convert
  .text.TickFct_movement
-                0x000005e8       0xe4 main.o
+                0x000005e8      0x1bc main.o
                 0x000005e8                TickFct_movement
- .text.TickFct_altitude
-                0x000006cc       0x88 main.o
-                0x000006cc                TickFct_altitude
  .text.TickFct_button
-                0x00000754       0x3a main.o
-                0x00000754                TickFct_button
+                0x000007a4       0x1c main.o
+                0x000007a4                TickFct_button
  .text.spi_master
-                0x0000078e       0xb4 main.o
-                0x0000078e                spi_master
- .text.main     0x00000842      0x278 main.o
-                0x00000842                main
-                0x00000aba                . = ALIGN (0x2)
+                0x000007c0       0xb4 main.o
+                0x000007c0                spi_master
+ .text.main     0x00000874      0x1ec main.o
+                0x00000874                main
+                0x00000a60                . = ALIGN (0x2)
  *(.fini9)
- .fini9         0x00000aba        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_exit.o)
-                0x00000aba                _exit
-                0x00000aba                exit
+ .fini9         0x00000a60        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_exit.o)
+                0x00000a60                _exit
+                0x00000a60                exit
  *(.fini9)
  *(.fini8)
  *(.fini8)
@@ -361,11 +359,11 @@ END GROUP
  *(.fini1)
  *(.fini1)
  *(.fini0)
- .fini0         0x00000aba        0x4 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_exit.o)
+ .fini0         0x00000a60        0x4 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_exit.o)
  *(.fini0)
-                0x00000abe                _etext = .
+                0x00000a64                _etext = .
 
-.data           0x00800100        0x4 load address 0x00000abe
+.data           0x00800100        0x4 load address 0x00000a64
                 0x00800100                PROVIDE (__data_start, .)
  *(.data)
  *(.data*)
@@ -380,7 +378,7 @@ END GROUP
                 0x00800104                _edata = .
                 0x00800104                PROVIDE (__data_end, .)
 
-.bss            0x00800104       0x42
+.bss            0x00800104       0x39
                 0x00800104                PROVIDE (__bss_start, .)
  *(.bss)
  *(.bss*)
@@ -403,26 +401,29 @@ END GROUP
  .bss.joystick3
                 0x0080010e        0x2 main.o
                 0x0080010e                joystick3
- .bss.i.1615    0x00800110        0x1 main.o
- .bss.i.1664    0x00800111        0x1 main.o
+ .bss.downFlag  0x00800110        0x1 main.o
+                0x00800110                downFlag
+ .bss.i.1615    0x00800111        0x1 main.o
+ .bss.i.1666    0x00800112        0x1 main.o
  *(COMMON)
- COMMON         0x00800112       0x34 main.o
-                0x00800112                tasks
-                0x0080013e                temp
-                0x0080013f                movement_state
-                0x00800140                joystick
-                0x00800142                altitude_state
-                0x00800143                button_state
-                0x00800144                joystick2
-                0x00800146                PROVIDE (__bss_end, .)
-                0x00000abe                __data_load_start = LOADADDR (.data)
-                0x00000ac2                __data_load_end = (__data_load_start + SIZEOF (.data))
+ COMMON         0x00800113       0x2a main.o
+                0x00800113                tasks
+                0x00800134                temp
+                0x00800135                upFlag
+                0x00800136                movement_state
+                0x00800137                joystick
+                0x00800139                button_state
+                0x0080013a                joystick2
+                0x0080013c                uart_state
+                0x0080013d                PROVIDE (__bss_end, .)
+                0x00000a64                __data_load_start = LOADADDR (.data)
+                0x00000a68                __data_load_end = (__data_load_start + SIZEOF (.data))
 
-.noinit         0x00800146        0x0
+.noinit         0x0080013d        0x0
                 [!provide]                PROVIDE (__noinit_start, .)
  *(.noinit*)
                 [!provide]                PROVIDE (__noinit_end, .)
-                0x00800146                _end = .
+                0x0080013d                _end = .
                 [!provide]                PROVIDE (__heap_start, .)
 
 .eeprom         0x00810000        0x0
@@ -487,42 +488,42 @@ END GROUP
 .debug_sfnames
  *(.debug_sfnames)
 
-.debug_aranges  0x00000000       0xa0
+.debug_aranges  0x00000000       0x98
  *(.debug_aranges)
  .debug_aranges
-                0x00000000       0xa0 main.o
+                0x00000000       0x98 main.o
 
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x00000000      0xc68
+.debug_info     0x00000000      0xc4e
  *(.debug_info .gnu.linkonce.wi.*)
  .debug_info    0x00000000      0x792 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega1284/avr51/crtatmega1284.o
- .debug_info    0x00000792      0x4d6 main.o
+ .debug_info    0x00000792      0x4bc main.o
 
 .debug_abbrev   0x00000000      0x8c5
  *(.debug_abbrev)
  .debug_abbrev  0x00000000      0x729 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega1284/avr51/crtatmega1284.o
  .debug_abbrev  0x00000729      0x19c main.o
 
-.debug_line     0x00000000      0x75a
+.debug_line     0x00000000      0x75f
  *(.debug_line .debug_line.* .debug_line_end)
  .debug_line    0x00000000      0x169 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega1284/avr51/crtatmega1284.o
- .debug_line    0x00000169      0x5f1 main.o
+ .debug_line    0x00000169      0x5f6 main.o
 
-.debug_frame    0x00000000      0x2c4
+.debug_frame    0x00000000      0x2a4
  *(.debug_frame)
- .debug_frame   0x00000000      0x2c4 main.o
+ .debug_frame   0x00000000      0x2a4 main.o
 
-.debug_str      0x00000000      0x62b
+.debug_str      0x00000000      0x617
  *(.debug_str)
  .debug_str     0x00000000      0x296 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega1284/avr51/crtatmega1284.o
- .debug_str     0x00000296      0x395 main.o
-                                0x3d4 (size before relaxing)
+ .debug_str     0x00000296      0x381 main.o
+                                0x3c0 (size before relaxing)
 
-.debug_loc      0x00000000      0x5d9
+.debug_loc      0x00000000      0x591
  *(.debug_loc)
- .debug_loc     0x00000000      0x5d9 main.o
+ .debug_loc     0x00000000      0x591 main.o
 
 .debug_macinfo
  *(.debug_macinfo)
@@ -542,9 +543,9 @@ END GROUP
 .debug_pubtypes
  *(.debug_pubtypes)
 
-.debug_ranges   0x00000000       0x90
+.debug_ranges   0x00000000       0x88
  *(.debug_ranges)
- .debug_ranges  0x00000000       0x90 main.o
+ .debug_ranges  0x00000000       0x88 main.o
 
 .debug_macro
  *(.debug_macro)
