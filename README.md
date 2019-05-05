@@ -1,6 +1,7 @@
 # CS179J-Spring 2019
 
 Group 10:
+
   Adriel Bustamante
   
   Colton Vosburg
@@ -9,5 +10,6 @@ Group 10:
   
   Jonathan Woolf
   
-CS179J - Embedded Systems Senior Design
+  
+CS179J - Embedded Systems Senior Design - **MADLADS**
 
