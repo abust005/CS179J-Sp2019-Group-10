@@ -1,7 +1,6 @@
 /*
  * MADLADS_controller.c
  *
- * WILL NOT CURRENTLY COMPILE AS IT IS BEING ADJUSTED TO MEET CURRENT NEEDS
  *
  * Created: 4/16/2019 7:30:36 PM
  * Authors : Jonathan "Cuomo" Woolf
@@ -18,13 +17,17 @@
 #include "scheduler.h"
 #include "spi.h"
 
+// === Inputs and Variables ===
+#define topButton (~PINC & 0x01)
+#define bottomButton (~PINC & 0x02)
+
 unsigned char temp, counter = 0x00; // SPI variables 
 
 unsigned char droneSignal = 0x00; // bits 0-1 are up/down, 2-4 are left/right/forward/reverse, 5 is claw, 6 is button2, 7 is parity bit
 
 unsigned short joystick, joystick2, joystick3 = 0x0000; // Variables to store ADC values of joysticks
 
-unsigned char upFlag, downFlag = 0x00;
+unsigned char upFlag, downFlag, clawFlag = 0x00; // Flags for bitmasking logic
 
 // Code provided by UCR for ADC
 
@@ -104,21 +107,13 @@ int TickFct_movement(int movement_state)
 					droneSignal = ((droneSignal & 0xE3) | 0x04); // L/R set to 001 for right
 				}
 			}
-			else
+			else // Joysticks are not being tilted
 			{
 				if (downFlag == 0)
 				{
-					droneSignal = (droneSignal & 0xEB);
+					droneSignal = (droneSignal & 0xEB); // Bits anded with 010 to clear all but forward
 				}
 			}
-// 			else if((droneSignal &  0x1c) == 0x04)
-// 			{
-// 				droneSignal = droneSignal & 0xEB;
-// 			}
-// 			else if((droneSignal &  0x1c) == 0x10)
-// 			{
-// 				droneSignal = droneSignal & 0xEB;
-// 			}
 			movement_state = forward_reverse; // Return to the forward reverse state
 			break;
 		case forward_reverse: // Left joystick controls forward and reverse movements
@@ -137,9 +132,9 @@ int TickFct_movement(int movement_state)
 				upFlag = 0;
 				downFlag = 1;
 			}
-			else 
+			else // Joystick is not being tilted
 			{
-				droneSignal = droneSignal & 0xF7;
+				droneSignal = droneSignal & 0xF7; // Bits anded with 101 to clear forward
 				upFlag = 0;
 				downFlag = 0;
 			}
@@ -167,15 +162,39 @@ int TickFct_movement(int movement_state)
 	return movement_state;
 }
 
+/* Button one controls the claw while button two is currently misc. but will likely down the drone
+00 - neither b
+10 - claw is engaged until the first button is pressed again
+X1 - Drop it like its hot
+*/
 enum button_states {buttons} button_state;
 
 int TickFct_button(int button_state)
 {	
-	return -1;
 	switch(button_state)
 	{
 		case buttons: // Right joystick controls up and down movements
-			droneSignal = (droneSignal & 0x9F); // buttons set to 00 for unused
+			if(topButton && !bottomButton)
+			{
+				if(clawFlag == 0) // Engage the claw 
+				{
+					clawFlag = 1;
+					droneSignal = (droneSignal & 0x9F) | 0x40; // Buttons set to 10
+				}
+				else // Disengage the claw
+				{
+					clawFlag = 0;
+					droneSignal = (droneSignal & 0x9F); // Buttons set to 00
+				}
+			}
+			else if(bottomButton) // Button must be held down to prevent accidental drone loss
+			{
+				droneSignal = droneSignal | 0x20;
+			}
+			else
+			{
+				droneSignal = (droneSignal & 0xDF); // buttons set to 00 for unused
+			}
 			button_state = buttons;
 			break;
 		default:
@@ -186,11 +205,11 @@ int TickFct_button(int button_state)
 }
 
 // SPI
-enum uart_states {wait, send} uart_state;
+enum spi_states {wait, send} spi_state;
 	
-int spi_master(int uart_state)
+int spi_master(int spi_state)
 {
-	switch(uart_state)
+	switch(spi_state)
 	{
 		case wait:
 			counter = 0; // Counts the number of bits set to 1
@@ -207,26 +226,25 @@ int spi_master(int uart_state)
 			{
 				droneSignal = droneSignal | 0x80; // Set parity bit to 1 for odd number of 1s
 			}
-			uart_state = send;
+			spi_state = send;
 			break;
 		case send:
 			SPI_MasterTransmit(droneSignal); // Transmit droneSignal over RF using SPI protocol
-			uart_state = wait;
+			spi_state = wait;
 			break;
 		default:
-			uart_state = wait;
+			spi_state = wait;
 			break;
 	}
-	return uart_state;
+	return spi_state;
 }
 
 
 int main(void)
 {
 	DDRA = 0x00; PORTA = 0xFF; // Input from ADC
-	DDRD = 0xFF; PORTD = 0x00; // Output for testing
-	//DDRC = 0x00; PORTC = 0xFF; // Input from button 2
-	//DDRD = 0x00; PORTD = 0xFF; // Input from button 1 (claw)
+	DDRC = 0x00; PORTC = 0xFF; // Input from buttons
+	// DDRD = 0xFF; PORTD = 0x00; // Output for testing
 	// Output from RF transmitter will be sent from MOSI do not initialize DDRB 
 
 	A2D_init();
@@ -252,7 +270,7 @@ int main(void)
 
 	while (1)
 	{
-		PORTD = droneSignal; // Test that we are generating the correct signal DELETE ONCE DONE
+		//PORTD = droneSignal; // Test that we are generating the correct signal DELETE ONCE DONE
 	}
 }
 
