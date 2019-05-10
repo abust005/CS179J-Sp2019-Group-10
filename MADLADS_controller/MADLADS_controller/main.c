@@ -15,8 +15,8 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include "scheduler.h"
-#include "spi.h"
-
+//#include "spi.h"
+#include "nrf24l01.h"
 // === Inputs and Variables ===
 #define topButton (~PINC & 0x01)
 #define bottomButton (~PINC & 0x02)
@@ -24,6 +24,8 @@
 unsigned char temp, counter = 0x00; // SPI variables 
 
 unsigned char droneSignal = 0x00; // bits 0-1 are up/down, 2-4 are left/right/forward/reverse, 5 is claw, 6 is button2, 7 is parity bit
+
+unsigned char payload[1] = {0x00};
 
 unsigned short joystick, joystick2, joystick3 = 0x0000; // Variables to store ADC values of joysticks
 
@@ -229,10 +231,12 @@ int spi_master(int spi_state)
 			spi_state = send;
 			break;
 		case send:
-			SPI_MasterTransmit(droneSignal); // Transmit droneSignal over RF using SPI protocol
+			payload[0] = droneSignal; // Update payload with the droneSignal
+			Radio_TxTransmit(payload, 1); // 1 specifies the number of bytes to transmit. 32 is max
 			spi_state = wait;
 			break;
 		default:
+			Radio_TxInit();
 			spi_state = wait;
 			break;
 	}
@@ -248,7 +252,7 @@ int main(void)
 	// Output from RF transmitter will be sent from MOSI do not initialize DDRB 
 
 	A2D_init();
-	SPI_MasterInit();
+	//SPI_MasterInit();
 	TimerSet(timerPeriod);
 	TimerOn();
 

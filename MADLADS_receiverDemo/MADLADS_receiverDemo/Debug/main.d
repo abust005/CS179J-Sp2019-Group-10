@@ -11,7 +11,7 @@ main.d main.o: .././main.c \
  d:\applications\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\fuse.h \
  d:\applications\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\lock.h \
  d:\applications\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\interrupt.h \
- ../../../headers/scheduler.h ../../../headers/spi.h
+ ../../../headers/scheduler.h ../../../headers/nrf24l01.h
 
 d:\applications\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\io.h:
 
@@ -39,4 +39,4 @@ d:\applications\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\interrupt.
 
 ../../../headers/scheduler.h:
 
-../../../headers/spi.h:
+../../../headers/nrf24l01.h:

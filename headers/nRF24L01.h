@@ -23,32 +23,43 @@
 #define CSN_PIN 0
 #define CE_PIN 1
 #define IRQ_PIN 2
+
 #define MOSI_PIN 5
 #define MISO_PIN 6
 #define SCK_PIN 7
 
-// Master code
-// void SPI_MasterInit(void) {
-// 	// Set DDRB to have MOSI, SCK, and SS as output and MISO as input
-// 	RF_DDR=(1<<SCK_PIN)|(1<<MOSI_PIN)|(1<<4);
-// 	// Set SPCR register to enable SPI, enable master, and use SCK frequency
-// 	//   of fosc/16  (pg. 168)
-// 	SPCR|=(1<<SPE)|(1<<MSTR)|(1<<SPR0);
-// 	// Make sure global interrupts are enabled on SREG register (pg. 9)
-// 	SREG|=0x80;
-// }
+void delay_ms(int miliSec) //for 8 Mhz crystal
+{
+	int i,j;
+	for(i=0;i<miliSec;i++)
+	for(j=0;j<775;j++)
+	{
+		asm("nop");
+	}
+}
 
-// void SPI_MasterTransmit(unsigned char *txData, unsigned char *rxData, volatile uint8_t *port, unsigned char pin) {
-// 	// data in SPDR will be transmitted, e.g. SPDR = cData;
-// 	unsigned char bytes = sizeof(txData);
-// 	*port&=~(1<<pin);
-// 	for(unsigned char i=0;i<bytes;++i) {
-// 			SPDR=txData[i];
-// 			while(!(SPSR & (1<<SPIF)));
-// 			rxData[i]=SPDR;
-// 	}
-// 	*port|=(1<<pin);
-// }
+// Master code
+void SPI_MasterInit(void) {
+	// Set DDRB to have MOSI, SCK, and SS as output and MISO as input
+	DDRB=(1<<SCK_PIN)|(1<<MOSI_PIN)|(1<<4);
+	// Set SPCR register to enable SPI, enable master, and use SCK frequency
+	//   of fosc/16  (pg. 168)
+	SPCR|=(1<<SPE)|(1<<MSTR)|(1<<SPR0);
+	// Make sure global interrupts are enabled on SREG register (pg. 9)
+	SREG|=0x80;
+}
+
+void SPI_MasterTransmit(unsigned char *txData, unsigned char *rxData, volatile uint8_t *port, unsigned char pin) {
+	// data in SPDR will be transmitted, e.g. SPDR = cData;
+	unsigned char bytes = sizeof(txData);
+	*port&=~(1<<pin);
+	for(unsigned char i=0;i<bytes;++i) {
+			SPDR=txData[i];
+			while(!(SPSR & (1<<SPIF)));
+			rxData[i]=SPDR;
+	}
+	*port|=(1<<pin);
+}
 
 unsigned char writeRegister(unsigned char regAddr, unsigned char regValue[], unsigned char bytes) {
 
@@ -160,7 +171,7 @@ void Radio_TxInit() {
 	RF_PORT|=(1<<CE_PIN);
 }
 
-void Radio_TxTransmitt(unsigned char msg[], unsigned char bytes) {
+void Radio_TxTransmit(unsigned char msg[], unsigned char bytes) {
 	writePayloadTxNoack(msg, bytes);
 }
 

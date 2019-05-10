@@ -3,31 +3,31 @@ MADLADS_controller.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .data         00000004  00800100  00000aec  00000b80  2**0
+  0 .data         00000004  00800100  00000d3e  00000dd2  2**0
                   CONTENTS, ALLOC, LOAD, DATA
-  1 .text         00000aec  00000000  00000000  00000094  2**1
+  1 .text         00000d3e  00000000  00000000  00000094  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  2 .bss          0000003a  00800104  00800104  00000b84  2**0
+  2 .bss          0000003c  00800104  00800104  00000dd6  2**0
                   ALLOC
-  3 .comment      00000030  00000000  00000000  00000b84  2**0
+  3 .comment      00000030  00000000  00000000  00000dd6  2**0
                   CONTENTS, READONLY
-  4 .note.gnu.avr.deviceinfo 00000040  00000000  00000000  00000bb4  2**2
+  4 .note.gnu.avr.deviceinfo 00000040  00000000  00000000  00000e08  2**2
                   CONTENTS, READONLY
-  5 .debug_aranges 00000098  00000000  00000000  00000bf4  2**0
+  5 .debug_aranges 00000100  00000000  00000000  00000e48  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_info   00000c60  00000000  00000000  00000c8c  2**0
+  6 .debug_info   00001118  00000000  00000000  00000f48  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_abbrev 000008c5  00000000  00000000  000018ec  2**0
+  7 .debug_abbrev 00000961  00000000  00000000  00002060  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_line   000007ad  00000000  00000000  000021b1  2**0
+  8 .debug_line   00000d79  00000000  00000000  000029c1  2**0
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_frame  000002a4  00000000  00000000  00002960  2**2
+  9 .debug_frame  00000428  00000000  00000000  0000373c  2**2
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_str    00000613  00000000  00000000  00002c04  2**0
+ 10 .debug_str    00000751  00000000  00000000  00003b64  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_loc    00000591  00000000  00000000  00003217  2**0
+ 11 .debug_loc    000008f6  00000000  00000000  000042b5  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_ranges 00000088  00000000  00000000  000037a8  2**0
+ 12 .debug_ranges 000000f0  00000000  00000000  00004bab  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -71,7 +71,7 @@ Disassembly of section .text:
   46:	00 00       	nop
   48:	3e c0       	rjmp	.+124    	; 0xc6 <__bad_interrupt>
   4a:	00 00       	nop
-  4c:	54 c2       	rjmp	.+1192   	; 0x4f6 <__vector_19>
+  4c:	3c c0       	rjmp	.+120    	; 0xc6 <__bad_interrupt>
   4e:	00 00       	nop
   50:	3a c0       	rjmp	.+116    	; 0xc6 <__bad_interrupt>
   52:	00 00       	nop
@@ -116,8 +116,8 @@ Disassembly of section .text:
   98:	11 e0       	ldi	r17, 0x01	; 1
   9a:	a0 e0       	ldi	r26, 0x00	; 0
   9c:	b1 e0       	ldi	r27, 0x01	; 1
-  9e:	ec ee       	ldi	r30, 0xEC	; 236
-  a0:	fa e0       	ldi	r31, 0x0A	; 10
+  9e:	ee e3       	ldi	r30, 0x3E	; 62
+  a0:	fd e0       	ldi	r31, 0x0D	; 13
   a2:	00 e0       	ldi	r16, 0x00	; 0
   a4:	0b bf       	out	0x3b, r16	; 59
   a6:	02 c0       	rjmp	.+4      	; 0xac <__do_copy_data+0x14>
@@ -137,21 +137,21 @@ Disassembly of section .text:
   ba:	1d 92       	st	X+, r1
 
 000000bc <.do_clear_bss_start>:
-  bc:	ae 33       	cpi	r26, 0x3E	; 62
+  bc:	a0 34       	cpi	r26, 0x40	; 64
   be:	b2 07       	cpc	r27, r18
   c0:	e1 f7       	brne	.-8      	; 0xba <.do_clear_bss_loop>
-  c2:	22 d4       	rcall	.+2116   	; 0x908 <main>
-  c4:	11 c5       	rjmp	.+2594   	; 0xae8 <_exit>
+  c2:	4c d5       	rcall	.+2712   	; 0xb5c <main>
+  c4:	3a c6       	rjmp	.+3188   	; 0xd3a <_exit>
 
 000000c6 <__bad_interrupt>:
   c6:	9c cf       	rjmp	.-200    	; 0x0 <__vectors>
 
 000000c8 <TimerISR>:
-	DDRB |= (0<<DDB4)|(0<<DDB5)|(1<<DDB6)|(0<<DDB7);
-	// set SPR register to enable SPI and enable SPI interrupt (pg. 168)
-	SPCR |= (1<<SPIE)|(1<<SPE);
-	// make sure global interrupts are enabled on SREG register (pg. 9)
-	SREG |= 0x80;
+    default: {
+      return(radioInit);
+      break;
+    }
+  }
 }
   c8:	0f 93       	push	r16
   ca:	1f 93       	push	r17
@@ -542,1073 +542,1379 @@ Disassembly of section .text:
  446:	cf 91       	pop	r28
  448:	08 95       	ret
 
-0000044a <SPI_MasterInit>:
+0000044a <delay_ms>:
  44a:	cf 93       	push	r28
  44c:	df 93       	push	r29
- 44e:	cd b7       	in	r28, 0x3d	; 61
- 450:	de b7       	in	r29, 0x3e	; 62
- 452:	84 e2       	ldi	r24, 0x24	; 36
- 454:	90 e0       	ldi	r25, 0x00	; 0
- 456:	24 e2       	ldi	r18, 0x24	; 36
- 458:	30 e0       	ldi	r19, 0x00	; 0
- 45a:	f9 01       	movw	r30, r18
- 45c:	20 81       	ld	r18, Z
- 45e:	20 6b       	ori	r18, 0xB0	; 176
- 460:	fc 01       	movw	r30, r24
- 462:	20 83       	st	Z, r18
- 464:	8c e4       	ldi	r24, 0x4C	; 76
- 466:	90 e0       	ldi	r25, 0x00	; 0
- 468:	2c e4       	ldi	r18, 0x4C	; 76
- 46a:	30 e0       	ldi	r19, 0x00	; 0
- 46c:	f9 01       	movw	r30, r18
- 46e:	20 81       	ld	r18, Z
- 470:	21 65       	ori	r18, 0x51	; 81
- 472:	fc 01       	movw	r30, r24
- 474:	20 83       	st	Z, r18
- 476:	8f e5       	ldi	r24, 0x5F	; 95
- 478:	90 e0       	ldi	r25, 0x00	; 0
- 47a:	2f e5       	ldi	r18, 0x5F	; 95
- 47c:	30 e0       	ldi	r19, 0x00	; 0
- 47e:	f9 01       	movw	r30, r18
- 480:	20 81       	ld	r18, Z
- 482:	20 68       	ori	r18, 0x80	; 128
- 484:	fc 01       	movw	r30, r24
- 486:	20 83       	st	Z, r18
- 488:	00 00       	nop
- 48a:	df 91       	pop	r29
- 48c:	cf 91       	pop	r28
- 48e:	08 95       	ret
+ 44e:	00 d0       	rcall	.+0      	; 0x450 <delay_ms+0x6>
+ 450:	00 d0       	rcall	.+0      	; 0x452 <delay_ms+0x8>
+ 452:	00 d0       	rcall	.+0      	; 0x454 <delay_ms+0xa>
+ 454:	cd b7       	in	r28, 0x3d	; 61
+ 456:	de b7       	in	r29, 0x3e	; 62
+ 458:	9e 83       	std	Y+6, r25	; 0x06
+ 45a:	8d 83       	std	Y+5, r24	; 0x05
+ 45c:	1a 82       	std	Y+2, r1	; 0x02
+ 45e:	19 82       	std	Y+1, r1	; 0x01
+ 460:	13 c0       	rjmp	.+38     	; 0x488 <delay_ms+0x3e>
+ 462:	1c 82       	std	Y+4, r1	; 0x04
+ 464:	1b 82       	std	Y+3, r1	; 0x03
+ 466:	06 c0       	rjmp	.+12     	; 0x474 <delay_ms+0x2a>
+ 468:	00 00       	nop
+ 46a:	8b 81       	ldd	r24, Y+3	; 0x03
+ 46c:	9c 81       	ldd	r25, Y+4	; 0x04
+ 46e:	01 96       	adiw	r24, 0x01	; 1
+ 470:	9c 83       	std	Y+4, r25	; 0x04
+ 472:	8b 83       	std	Y+3, r24	; 0x03
+ 474:	8b 81       	ldd	r24, Y+3	; 0x03
+ 476:	9c 81       	ldd	r25, Y+4	; 0x04
+ 478:	87 30       	cpi	r24, 0x07	; 7
+ 47a:	93 40       	sbci	r25, 0x03	; 3
+ 47c:	ac f3       	brlt	.-22     	; 0x468 <delay_ms+0x1e>
+ 47e:	89 81       	ldd	r24, Y+1	; 0x01
+ 480:	9a 81       	ldd	r25, Y+2	; 0x02
+ 482:	01 96       	adiw	r24, 0x01	; 1
+ 484:	9a 83       	std	Y+2, r25	; 0x02
+ 486:	89 83       	std	Y+1, r24	; 0x01
+ 488:	29 81       	ldd	r18, Y+1	; 0x01
+ 48a:	3a 81       	ldd	r19, Y+2	; 0x02
+ 48c:	8d 81       	ldd	r24, Y+5	; 0x05
+ 48e:	9e 81       	ldd	r25, Y+6	; 0x06
+ 490:	28 17       	cp	r18, r24
+ 492:	39 07       	cpc	r19, r25
+ 494:	34 f3       	brlt	.-52     	; 0x462 <delay_ms+0x18>
+ 496:	00 00       	nop
+ 498:	26 96       	adiw	r28, 0x06	; 6
+ 49a:	0f b6       	in	r0, 0x3f	; 63
+ 49c:	f8 94       	cli
+ 49e:	de bf       	out	0x3e, r29	; 62
+ 4a0:	0f be       	out	0x3f, r0	; 63
+ 4a2:	cd bf       	out	0x3d, r28	; 61
+ 4a4:	df 91       	pop	r29
+ 4a6:	cf 91       	pop	r28
+ 4a8:	08 95       	ret
 
-00000490 <SPI_MasterTransmit>:
- 490:	cf 93       	push	r28
- 492:	df 93       	push	r29
- 494:	1f 92       	push	r1
- 496:	cd b7       	in	r28, 0x3d	; 61
- 498:	de b7       	in	r29, 0x3e	; 62
- 49a:	89 83       	std	Y+1, r24	; 0x01
- 49c:	84 e2       	ldi	r24, 0x24	; 36
- 49e:	90 e0       	ldi	r25, 0x00	; 0
- 4a0:	24 e2       	ldi	r18, 0x24	; 36
- 4a2:	30 e0       	ldi	r19, 0x00	; 0
- 4a4:	f9 01       	movw	r30, r18
- 4a6:	20 81       	ld	r18, Z
- 4a8:	fc 01       	movw	r30, r24
- 4aa:	20 83       	st	Z, r18
- 4ac:	8e e4       	ldi	r24, 0x4E	; 78
- 4ae:	90 e0       	ldi	r25, 0x00	; 0
- 4b0:	fc 01       	movw	r30, r24
- 4b2:	10 82       	st	Z, r1
- 4b4:	00 00       	nop
- 4b6:	8d e4       	ldi	r24, 0x4D	; 77
- 4b8:	90 e0       	ldi	r25, 0x00	; 0
- 4ba:	fc 01       	movw	r30, r24
- 4bc:	80 81       	ld	r24, Z
- 4be:	88 23       	and	r24, r24
- 4c0:	d4 f7       	brge	.-12     	; 0x4b6 <SPI_MasterTransmit+0x26>
- 4c2:	8e e4       	ldi	r24, 0x4E	; 78
- 4c4:	90 e0       	ldi	r25, 0x00	; 0
- 4c6:	29 81       	ldd	r18, Y+1	; 0x01
- 4c8:	fc 01       	movw	r30, r24
- 4ca:	20 83       	st	Z, r18
- 4cc:	00 00       	nop
- 4ce:	8d e4       	ldi	r24, 0x4D	; 77
+000004aa <SPI_MasterInit>:
+ 4aa:	cf 93       	push	r28
+ 4ac:	df 93       	push	r29
+ 4ae:	cd b7       	in	r28, 0x3d	; 61
+ 4b0:	de b7       	in	r29, 0x3e	; 62
+ 4b2:	84 e2       	ldi	r24, 0x24	; 36
+ 4b4:	90 e0       	ldi	r25, 0x00	; 0
+ 4b6:	20 eb       	ldi	r18, 0xB0	; 176
+ 4b8:	fc 01       	movw	r30, r24
+ 4ba:	20 83       	st	Z, r18
+ 4bc:	8c e4       	ldi	r24, 0x4C	; 76
+ 4be:	90 e0       	ldi	r25, 0x00	; 0
+ 4c0:	2c e4       	ldi	r18, 0x4C	; 76
+ 4c2:	30 e0       	ldi	r19, 0x00	; 0
+ 4c4:	f9 01       	movw	r30, r18
+ 4c6:	20 81       	ld	r18, Z
+ 4c8:	21 65       	ori	r18, 0x51	; 81
+ 4ca:	fc 01       	movw	r30, r24
+ 4cc:	20 83       	st	Z, r18
+ 4ce:	8f e5       	ldi	r24, 0x5F	; 95
  4d0:	90 e0       	ldi	r25, 0x00	; 0
- 4d2:	fc 01       	movw	r30, r24
- 4d4:	80 81       	ld	r24, Z
- 4d6:	88 23       	and	r24, r24
- 4d8:	d4 f7       	brge	.-12     	; 0x4ce <SPI_MasterTransmit+0x3e>
- 4da:	84 e2       	ldi	r24, 0x24	; 36
- 4dc:	90 e0       	ldi	r25, 0x00	; 0
- 4de:	24 e2       	ldi	r18, 0x24	; 36
- 4e0:	30 e0       	ldi	r19, 0x00	; 0
- 4e2:	f9 01       	movw	r30, r18
- 4e4:	20 81       	ld	r18, Z
- 4e6:	20 61       	ori	r18, 0x10	; 16
- 4e8:	fc 01       	movw	r30, r24
- 4ea:	20 83       	st	Z, r18
- 4ec:	00 00       	nop
- 4ee:	0f 90       	pop	r0
- 4f0:	df 91       	pop	r29
- 4f2:	cf 91       	pop	r28
- 4f4:	08 95       	ret
+ 4d2:	2f e5       	ldi	r18, 0x5F	; 95
+ 4d4:	30 e0       	ldi	r19, 0x00	; 0
+ 4d6:	f9 01       	movw	r30, r18
+ 4d8:	20 81       	ld	r18, Z
+ 4da:	20 68       	ori	r18, 0x80	; 128
+ 4dc:	fc 01       	movw	r30, r24
+ 4de:	20 83       	st	Z, r18
+ 4e0:	00 00       	nop
+ 4e2:	df 91       	pop	r29
+ 4e4:	cf 91       	pop	r28
+ 4e6:	08 95       	ret
 
-000004f6 <__vector_19>:
+000004e8 <writeRegister>:
+ 4e8:	cf 93       	push	r28
+ 4ea:	df 93       	push	r29
+ 4ec:	00 d0       	rcall	.+0      	; 0x4ee <writeRegister+0x6>
+ 4ee:	00 d0       	rcall	.+0      	; 0x4f0 <writeRegister+0x8>
+ 4f0:	00 d0       	rcall	.+0      	; 0x4f2 <writeRegister+0xa>
+ 4f2:	cd b7       	in	r28, 0x3d	; 61
+ 4f4:	de b7       	in	r29, 0x3e	; 62
+ 4f6:	8b 83       	std	Y+3, r24	; 0x03
+ 4f8:	7d 83       	std	Y+5, r23	; 0x05
+ 4fa:	6c 83       	std	Y+4, r22	; 0x04
+ 4fc:	4e 83       	std	Y+6, r20	; 0x06
+ 4fe:	85 e2       	ldi	r24, 0x25	; 37
+ 500:	90 e0       	ldi	r25, 0x00	; 0
+ 502:	25 e2       	ldi	r18, 0x25	; 37
+ 504:	30 e0       	ldi	r19, 0x00	; 0
+ 506:	f9 01       	movw	r30, r18
+ 508:	20 81       	ld	r18, Z
+ 50a:	2e 7f       	andi	r18, 0xFE	; 254
+ 50c:	fc 01       	movw	r30, r24
+ 50e:	20 83       	st	Z, r18
+ 510:	8e e4       	ldi	r24, 0x4E	; 78
+ 512:	90 e0       	ldi	r25, 0x00	; 0
+ 514:	2b 81       	ldd	r18, Y+3	; 0x03
+ 516:	2f 71       	andi	r18, 0x1F	; 31
+ 518:	20 62       	ori	r18, 0x20	; 32
+ 51a:	fc 01       	movw	r30, r24
+ 51c:	20 83       	st	Z, r18
+ 51e:	00 00       	nop
+ 520:	8d e4       	ldi	r24, 0x4D	; 77
+ 522:	90 e0       	ldi	r25, 0x00	; 0
+ 524:	fc 01       	movw	r30, r24
+ 526:	80 81       	ld	r24, Z
+ 528:	88 23       	and	r24, r24
+ 52a:	d4 f7       	brge	.-12     	; 0x520 <writeRegister+0x38>
+ 52c:	8e e4       	ldi	r24, 0x4E	; 78
+ 52e:	90 e0       	ldi	r25, 0x00	; 0
+ 530:	fc 01       	movw	r30, r24
+ 532:	80 81       	ld	r24, Z
+ 534:	8a 83       	std	Y+2, r24	; 0x02
+ 536:	19 82       	std	Y+1, r1	; 0x01
+ 538:	17 c0       	rjmp	.+46     	; 0x568 <writeRegister+0x80>
+ 53a:	8e e4       	ldi	r24, 0x4E	; 78
+ 53c:	90 e0       	ldi	r25, 0x00	; 0
+ 53e:	29 81       	ldd	r18, Y+1	; 0x01
+ 540:	22 2f       	mov	r18, r18
+ 542:	30 e0       	ldi	r19, 0x00	; 0
+ 544:	4c 81       	ldd	r20, Y+4	; 0x04
+ 546:	5d 81       	ldd	r21, Y+5	; 0x05
+ 548:	24 0f       	add	r18, r20
+ 54a:	35 1f       	adc	r19, r21
+ 54c:	f9 01       	movw	r30, r18
+ 54e:	20 81       	ld	r18, Z
+ 550:	fc 01       	movw	r30, r24
+ 552:	20 83       	st	Z, r18
+ 554:	00 00       	nop
+ 556:	8d e4       	ldi	r24, 0x4D	; 77
+ 558:	90 e0       	ldi	r25, 0x00	; 0
+ 55a:	fc 01       	movw	r30, r24
+ 55c:	80 81       	ld	r24, Z
+ 55e:	88 23       	and	r24, r24
+ 560:	d4 f7       	brge	.-12     	; 0x556 <writeRegister+0x6e>
+ 562:	89 81       	ldd	r24, Y+1	; 0x01
+ 564:	8f 5f       	subi	r24, 0xFF	; 255
+ 566:	89 83       	std	Y+1, r24	; 0x01
+ 568:	99 81       	ldd	r25, Y+1	; 0x01
+ 56a:	8e 81       	ldd	r24, Y+6	; 0x06
+ 56c:	98 17       	cp	r25, r24
+ 56e:	28 f3       	brcs	.-54     	; 0x53a <writeRegister+0x52>
+ 570:	85 e2       	ldi	r24, 0x25	; 37
+ 572:	90 e0       	ldi	r25, 0x00	; 0
+ 574:	25 e2       	ldi	r18, 0x25	; 37
+ 576:	30 e0       	ldi	r19, 0x00	; 0
+ 578:	f9 01       	movw	r30, r18
+ 57a:	20 81       	ld	r18, Z
+ 57c:	21 60       	ori	r18, 0x01	; 1
+ 57e:	fc 01       	movw	r30, r24
+ 580:	20 83       	st	Z, r18
+ 582:	8a 81       	ldd	r24, Y+2	; 0x02
+ 584:	26 96       	adiw	r28, 0x06	; 6
+ 586:	0f b6       	in	r0, 0x3f	; 63
+ 588:	f8 94       	cli
+ 58a:	de bf       	out	0x3e, r29	; 62
+ 58c:	0f be       	out	0x3f, r0	; 63
+ 58e:	cd bf       	out	0x3d, r28	; 61
+ 590:	df 91       	pop	r29
+ 592:	cf 91       	pop	r28
+ 594:	08 95       	ret
 
-ISR(SPI_STC_vect) { // this is enabled in with the SPCR register’s “SPI Interrupt Enable”
- 4f6:	1f 92       	push	r1
- 4f8:	0f 92       	push	r0
- 4fa:	00 90 5f 00 	lds	r0, 0x005F	; 0x80005f <__TEXT_REGION_LENGTH__+0x7e005f>
- 4fe:	0f 92       	push	r0
- 500:	11 24       	eor	r1, r1
- 502:	00 90 5b 00 	lds	r0, 0x005B	; 0x80005b <__TEXT_REGION_LENGTH__+0x7e005b>
- 506:	0f 92       	push	r0
- 508:	8f 93       	push	r24
- 50a:	9f 93       	push	r25
- 50c:	ef 93       	push	r30
- 50e:	ff 93       	push	r31
- 510:	cf 93       	push	r28
- 512:	df 93       	push	r29
- 514:	cd b7       	in	r28, 0x3d	; 61
- 516:	de b7       	in	r29, 0x3e	; 62
-	// SPDR contains the received data, e.g. unsigned char receivedData = SPDR;
-	receivedData = SPDR;
- 518:	8e e4       	ldi	r24, 0x4E	; 78
- 51a:	90 e0       	ldi	r25, 0x00	; 0
- 51c:	fc 01       	movw	r30, r24
- 51e:	80 81       	ld	r24, Z
- 520:	80 93 0b 01 	sts	0x010B, r24	; 0x80010b <receivedData>
-}
- 524:	00 00       	nop
- 526:	df 91       	pop	r29
- 528:	cf 91       	pop	r28
- 52a:	ff 91       	pop	r31
- 52c:	ef 91       	pop	r30
- 52e:	9f 91       	pop	r25
- 530:	8f 91       	pop	r24
- 532:	0f 90       	pop	r0
- 534:	00 92 5b 00 	sts	0x005B, r0	; 0x80005b <__TEXT_REGION_LENGTH__+0x7e005b>
- 538:	0f 90       	pop	r0
- 53a:	00 92 5f 00 	sts	0x005F, r0	; 0x80005f <__TEXT_REGION_LENGTH__+0x7e005f>
- 53e:	0f 90       	pop	r0
- 540:	1f 90       	pop	r1
- 542:	18 95       	reti
+00000596 <writePayloadTxNoack>:
+ 596:	cf 93       	push	r28
+ 598:	df 93       	push	r29
+ 59a:	00 d0       	rcall	.+0      	; 0x59c <writePayloadTxNoack+0x6>
+ 59c:	00 d0       	rcall	.+0      	; 0x59e <writePayloadTxNoack+0x8>
+ 59e:	1f 92       	push	r1
+ 5a0:	cd b7       	in	r28, 0x3d	; 61
+ 5a2:	de b7       	in	r29, 0x3e	; 62
+ 5a4:	9c 83       	std	Y+4, r25	; 0x04
+ 5a6:	8b 83       	std	Y+3, r24	; 0x03
+ 5a8:	6d 83       	std	Y+5, r22	; 0x05
+ 5aa:	85 e2       	ldi	r24, 0x25	; 37
+ 5ac:	90 e0       	ldi	r25, 0x00	; 0
+ 5ae:	25 e2       	ldi	r18, 0x25	; 37
+ 5b0:	30 e0       	ldi	r19, 0x00	; 0
+ 5b2:	f9 01       	movw	r30, r18
+ 5b4:	20 81       	ld	r18, Z
+ 5b6:	2e 7f       	andi	r18, 0xFE	; 254
+ 5b8:	fc 01       	movw	r30, r24
+ 5ba:	20 83       	st	Z, r18
+ 5bc:	8e e4       	ldi	r24, 0x4E	; 78
+ 5be:	90 e0       	ldi	r25, 0x00	; 0
+ 5c0:	20 eb       	ldi	r18, 0xB0	; 176
+ 5c2:	fc 01       	movw	r30, r24
+ 5c4:	20 83       	st	Z, r18
+ 5c6:	00 00       	nop
+ 5c8:	8d e4       	ldi	r24, 0x4D	; 77
+ 5ca:	90 e0       	ldi	r25, 0x00	; 0
+ 5cc:	fc 01       	movw	r30, r24
+ 5ce:	80 81       	ld	r24, Z
+ 5d0:	88 23       	and	r24, r24
+ 5d2:	d4 f7       	brge	.-12     	; 0x5c8 <writePayloadTxNoack+0x32>
+ 5d4:	8e e4       	ldi	r24, 0x4E	; 78
+ 5d6:	90 e0       	ldi	r25, 0x00	; 0
+ 5d8:	fc 01       	movw	r30, r24
+ 5da:	80 81       	ld	r24, Z
+ 5dc:	8a 83       	std	Y+2, r24	; 0x02
+ 5de:	19 82       	std	Y+1, r1	; 0x01
+ 5e0:	17 c0       	rjmp	.+46     	; 0x610 <writePayloadTxNoack+0x7a>
+ 5e2:	8e e4       	ldi	r24, 0x4E	; 78
+ 5e4:	90 e0       	ldi	r25, 0x00	; 0
+ 5e6:	29 81       	ldd	r18, Y+1	; 0x01
+ 5e8:	22 2f       	mov	r18, r18
+ 5ea:	30 e0       	ldi	r19, 0x00	; 0
+ 5ec:	4b 81       	ldd	r20, Y+3	; 0x03
+ 5ee:	5c 81       	ldd	r21, Y+4	; 0x04
+ 5f0:	24 0f       	add	r18, r20
+ 5f2:	35 1f       	adc	r19, r21
+ 5f4:	f9 01       	movw	r30, r18
+ 5f6:	20 81       	ld	r18, Z
+ 5f8:	fc 01       	movw	r30, r24
+ 5fa:	20 83       	st	Z, r18
+ 5fc:	00 00       	nop
+ 5fe:	8d e4       	ldi	r24, 0x4D	; 77
+ 600:	90 e0       	ldi	r25, 0x00	; 0
+ 602:	fc 01       	movw	r30, r24
+ 604:	80 81       	ld	r24, Z
+ 606:	88 23       	and	r24, r24
+ 608:	d4 f7       	brge	.-12     	; 0x5fe <writePayloadTxNoack+0x68>
+ 60a:	89 81       	ldd	r24, Y+1	; 0x01
+ 60c:	8f 5f       	subi	r24, 0xFF	; 255
+ 60e:	89 83       	std	Y+1, r24	; 0x01
+ 610:	99 81       	ldd	r25, Y+1	; 0x01
+ 612:	8d 81       	ldd	r24, Y+5	; 0x05
+ 614:	98 17       	cp	r25, r24
+ 616:	28 f3       	brcs	.-54     	; 0x5e2 <writePayloadTxNoack+0x4c>
+ 618:	85 e2       	ldi	r24, 0x25	; 37
+ 61a:	90 e0       	ldi	r25, 0x00	; 0
+ 61c:	25 e2       	ldi	r18, 0x25	; 37
+ 61e:	30 e0       	ldi	r19, 0x00	; 0
+ 620:	f9 01       	movw	r30, r18
+ 622:	20 81       	ld	r18, Z
+ 624:	21 60       	ori	r18, 0x01	; 1
+ 626:	fc 01       	movw	r30, r24
+ 628:	20 83       	st	Z, r18
+ 62a:	8a 81       	ldd	r24, Y+2	; 0x02
+ 62c:	0f 90       	pop	r0
+ 62e:	0f 90       	pop	r0
+ 630:	0f 90       	pop	r0
+ 632:	0f 90       	pop	r0
+ 634:	0f 90       	pop	r0
+ 636:	df 91       	pop	r29
+ 638:	cf 91       	pop	r28
+ 63a:	08 95       	ret
 
-00000544 <Set_A2D_Pin>:
+0000063c <flushTx>:
+ 63c:	cf 93       	push	r28
+ 63e:	df 93       	push	r29
+ 640:	1f 92       	push	r1
+ 642:	cd b7       	in	r28, 0x3d	; 61
+ 644:	de b7       	in	r29, 0x3e	; 62
+ 646:	85 e2       	ldi	r24, 0x25	; 37
+ 648:	90 e0       	ldi	r25, 0x00	; 0
+ 64a:	25 e2       	ldi	r18, 0x25	; 37
+ 64c:	30 e0       	ldi	r19, 0x00	; 0
+ 64e:	f9 01       	movw	r30, r18
+ 650:	20 81       	ld	r18, Z
+ 652:	2e 7f       	andi	r18, 0xFE	; 254
+ 654:	fc 01       	movw	r30, r24
+ 656:	20 83       	st	Z, r18
+ 658:	8e e4       	ldi	r24, 0x4E	; 78
+ 65a:	90 e0       	ldi	r25, 0x00	; 0
+ 65c:	21 ee       	ldi	r18, 0xE1	; 225
+ 65e:	fc 01       	movw	r30, r24
+ 660:	20 83       	st	Z, r18
+ 662:	00 00       	nop
+ 664:	8d e4       	ldi	r24, 0x4D	; 77
+ 666:	90 e0       	ldi	r25, 0x00	; 0
+ 668:	fc 01       	movw	r30, r24
+ 66a:	80 81       	ld	r24, Z
+ 66c:	88 23       	and	r24, r24
+ 66e:	d4 f7       	brge	.-12     	; 0x664 <flushTx+0x28>
+ 670:	8e e4       	ldi	r24, 0x4E	; 78
+ 672:	90 e0       	ldi	r25, 0x00	; 0
+ 674:	fc 01       	movw	r30, r24
+ 676:	80 81       	ld	r24, Z
+ 678:	89 83       	std	Y+1, r24	; 0x01
+ 67a:	85 e2       	ldi	r24, 0x25	; 37
+ 67c:	90 e0       	ldi	r25, 0x00	; 0
+ 67e:	25 e2       	ldi	r18, 0x25	; 37
+ 680:	30 e0       	ldi	r19, 0x00	; 0
+ 682:	f9 01       	movw	r30, r18
+ 684:	20 81       	ld	r18, Z
+ 686:	21 60       	ori	r18, 0x01	; 1
+ 688:	fc 01       	movw	r30, r24
+ 68a:	20 83       	st	Z, r18
+ 68c:	89 81       	ldd	r24, Y+1	; 0x01
+ 68e:	0f 90       	pop	r0
+ 690:	df 91       	pop	r29
+ 692:	cf 91       	pop	r28
+ 694:	08 95       	ret
+
+00000696 <Radio_TxInit>:
+ 696:	cf 93       	push	r28
+ 698:	df 93       	push	r29
+ 69a:	00 d0       	rcall	.+0      	; 0x69c <Radio_TxInit+0x6>
+ 69c:	00 d0       	rcall	.+0      	; 0x69e <Radio_TxInit+0x8>
+ 69e:	cd b7       	in	r28, 0x3d	; 61
+ 6a0:	de b7       	in	r29, 0x3e	; 62
+ 6a2:	03 df       	rcall	.-506    	; 0x4aa <SPI_MasterInit>
+ 6a4:	84 e2       	ldi	r24, 0x24	; 36
+ 6a6:	90 e0       	ldi	r25, 0x00	; 0
+ 6a8:	24 e2       	ldi	r18, 0x24	; 36
+ 6aa:	30 e0       	ldi	r19, 0x00	; 0
+ 6ac:	f9 01       	movw	r30, r18
+ 6ae:	20 81       	ld	r18, Z
+ 6b0:	23 60       	ori	r18, 0x03	; 3
+ 6b2:	fc 01       	movw	r30, r24
+ 6b4:	20 83       	st	Z, r18
+ 6b6:	85 e2       	ldi	r24, 0x25	; 37
+ 6b8:	90 e0       	ldi	r25, 0x00	; 0
+ 6ba:	25 e2       	ldi	r18, 0x25	; 37
+ 6bc:	30 e0       	ldi	r19, 0x00	; 0
+ 6be:	f9 01       	movw	r30, r18
+ 6c0:	20 81       	ld	r18, Z
+ 6c2:	25 60       	ori	r18, 0x05	; 5
+ 6c4:	fc 01       	movw	r30, r24
+ 6c6:	20 83       	st	Z, r18
+ 6c8:	85 e0       	ldi	r24, 0x05	; 5
+ 6ca:	90 e0       	ldi	r25, 0x00	; 0
+ 6cc:	be de       	rcall	.-644    	; 0x44a <delay_ms>
+ 6ce:	82 e7       	ldi	r24, 0x72	; 114
+ 6d0:	89 83       	std	Y+1, r24	; 0x01
+ 6d2:	88 e1       	ldi	r24, 0x18	; 24
+ 6d4:	8a 83       	std	Y+2, r24	; 0x02
+ 6d6:	84 e0       	ldi	r24, 0x04	; 4
+ 6d8:	8b 83       	std	Y+3, r24	; 0x03
+ 6da:	86 e9       	ldi	r24, 0x96	; 150
+ 6dc:	8c 83       	std	Y+4, r24	; 0x04
+ 6de:	41 e0       	ldi	r20, 0x01	; 1
+ 6e0:	ce 01       	movw	r24, r28
+ 6e2:	01 96       	adiw	r24, 0x01	; 1
+ 6e4:	bc 01       	movw	r22, r24
+ 6e6:	80 e0       	ldi	r24, 0x00	; 0
+ 6e8:	ff de       	rcall	.-514    	; 0x4e8 <writeRegister>
+ 6ea:	81 e0       	ldi	r24, 0x01	; 1
+ 6ec:	89 83       	std	Y+1, r24	; 0x01
+ 6ee:	41 e0       	ldi	r20, 0x01	; 1
+ 6f0:	ce 01       	movw	r24, r28
+ 6f2:	01 96       	adiw	r24, 0x01	; 1
+ 6f4:	bc 01       	movw	r22, r24
+ 6f6:	83 e0       	ldi	r24, 0x03	; 3
+ 6f8:	f7 de       	rcall	.-530    	; 0x4e8 <writeRegister>
+ 6fa:	ce 01       	movw	r24, r28
+ 6fc:	02 96       	adiw	r24, 0x02	; 2
+ 6fe:	43 e0       	ldi	r20, 0x03	; 3
+ 700:	bc 01       	movw	r22, r24
+ 702:	80 e1       	ldi	r24, 0x10	; 16
+ 704:	f1 de       	rcall	.-542    	; 0x4e8 <writeRegister>
+ 706:	8c e4       	ldi	r24, 0x4C	; 76
+ 708:	89 83       	std	Y+1, r24	; 0x01
+ 70a:	41 e0       	ldi	r20, 0x01	; 1
+ 70c:	ce 01       	movw	r24, r28
+ 70e:	01 96       	adiw	r24, 0x01	; 1
+ 710:	bc 01       	movw	r22, r24
+ 712:	85 e0       	ldi	r24, 0x05	; 5
+ 714:	e9 de       	rcall	.-558    	; 0x4e8 <writeRegister>
+ 716:	19 82       	std	Y+1, r1	; 0x01
+ 718:	41 e0       	ldi	r20, 0x01	; 1
+ 71a:	ce 01       	movw	r24, r28
+ 71c:	01 96       	adiw	r24, 0x01	; 1
+ 71e:	bc 01       	movw	r22, r24
+ 720:	81 e0       	ldi	r24, 0x01	; 1
+ 722:	e2 de       	rcall	.-572    	; 0x4e8 <writeRegister>
+ 724:	41 e0       	ldi	r20, 0x01	; 1
+ 726:	ce 01       	movw	r24, r28
+ 728:	01 96       	adiw	r24, 0x01	; 1
+ 72a:	bc 01       	movw	r22, r24
+ 72c:	84 e0       	ldi	r24, 0x04	; 4
+ 72e:	dc de       	rcall	.-584    	; 0x4e8 <writeRegister>
+ 730:	81 e0       	ldi	r24, 0x01	; 1
+ 732:	89 83       	std	Y+1, r24	; 0x01
+ 734:	41 e0       	ldi	r20, 0x01	; 1
+ 736:	ce 01       	movw	r24, r28
+ 738:	01 96       	adiw	r24, 0x01	; 1
+ 73a:	bc 01       	movw	r22, r24
+ 73c:	8d e1       	ldi	r24, 0x1D	; 29
+ 73e:	d4 de       	rcall	.-600    	; 0x4e8 <writeRegister>
+ 740:	7d df       	rcall	.-262    	; 0x63c <flushTx>
+ 742:	85 e2       	ldi	r24, 0x25	; 37
+ 744:	90 e0       	ldi	r25, 0x00	; 0
+ 746:	25 e2       	ldi	r18, 0x25	; 37
+ 748:	30 e0       	ldi	r19, 0x00	; 0
+ 74a:	f9 01       	movw	r30, r18
+ 74c:	20 81       	ld	r18, Z
+ 74e:	22 60       	ori	r18, 0x02	; 2
+ 750:	fc 01       	movw	r30, r24
+ 752:	20 83       	st	Z, r18
+ 754:	00 00       	nop
+ 756:	0f 90       	pop	r0
+ 758:	0f 90       	pop	r0
+ 75a:	0f 90       	pop	r0
+ 75c:	0f 90       	pop	r0
+ 75e:	df 91       	pop	r29
+ 760:	cf 91       	pop	r28
+ 762:	08 95       	ret
+
+00000764 <Radio_TxTransmit>:
+ 764:	cf 93       	push	r28
+ 766:	df 93       	push	r29
+ 768:	00 d0       	rcall	.+0      	; 0x76a <Radio_TxTransmit+0x6>
+ 76a:	1f 92       	push	r1
+ 76c:	cd b7       	in	r28, 0x3d	; 61
+ 76e:	de b7       	in	r29, 0x3e	; 62
+ 770:	9a 83       	std	Y+2, r25	; 0x02
+ 772:	89 83       	std	Y+1, r24	; 0x01
+ 774:	6b 83       	std	Y+3, r22	; 0x03
+ 776:	89 81       	ldd	r24, Y+1	; 0x01
+ 778:	9a 81       	ldd	r25, Y+2	; 0x02
+ 77a:	6b 81       	ldd	r22, Y+3	; 0x03
+ 77c:	0c df       	rcall	.-488    	; 0x596 <writePayloadTxNoack>
+ 77e:	00 00       	nop
+ 780:	0f 90       	pop	r0
+ 782:	0f 90       	pop	r0
+ 784:	0f 90       	pop	r0
+ 786:	df 91       	pop	r29
+ 788:	cf 91       	pop	r28
+ 78a:	08 95       	ret
+
+0000078c <Set_A2D_Pin>:
 // Pins on PORTA are used as input for A2D conversion
 // The Default Channel is 0 (PA0)
 // The value of pinNum determines the pin on PORTA used for A2D conversion
 // Valid values range between 0 and 7, where the value represents the desired pin for A2D conversion
 void Set_A2D_Pin(unsigned char pinNum)
 {
- 544:	cf 93       	push	r28
- 546:	df 93       	push	r29
- 548:	1f 92       	push	r1
- 54a:	cd b7       	in	r28, 0x3d	; 61
- 54c:	de b7       	in	r29, 0x3e	; 62
- 54e:	89 83       	std	Y+1, r24	; 0x01
+ 78c:	cf 93       	push	r28
+ 78e:	df 93       	push	r29
+ 790:	1f 92       	push	r1
+ 792:	cd b7       	in	r28, 0x3d	; 61
+ 794:	de b7       	in	r29, 0x3e	; 62
+ 796:	89 83       	std	Y+1, r24	; 0x01
 	ADMUX = (pinNum <= 0x07) ? pinNum : ADMUX;
- 550:	8c e7       	ldi	r24, 0x7C	; 124
- 552:	90 e0       	ldi	r25, 0x00	; 0
- 554:	29 81       	ldd	r18, Y+1	; 0x01
- 556:	28 30       	cpi	r18, 0x08	; 8
- 558:	28 f0       	brcs	.+10     	; 0x564 <Set_A2D_Pin+0x20>
- 55a:	2c e7       	ldi	r18, 0x7C	; 124
- 55c:	30 e0       	ldi	r19, 0x00	; 0
- 55e:	f9 01       	movw	r30, r18
- 560:	20 81       	ld	r18, Z
- 562:	01 c0       	rjmp	.+2      	; 0x566 <Set_A2D_Pin+0x22>
- 564:	29 81       	ldd	r18, Y+1	; 0x01
- 566:	fc 01       	movw	r30, r24
- 568:	20 83       	st	Z, r18
+ 798:	8c e7       	ldi	r24, 0x7C	; 124
+ 79a:	90 e0       	ldi	r25, 0x00	; 0
+ 79c:	29 81       	ldd	r18, Y+1	; 0x01
+ 79e:	28 30       	cpi	r18, 0x08	; 8
+ 7a0:	28 f0       	brcs	.+10     	; 0x7ac <Set_A2D_Pin+0x20>
+ 7a2:	2c e7       	ldi	r18, 0x7C	; 124
+ 7a4:	30 e0       	ldi	r19, 0x00	; 0
+ 7a6:	f9 01       	movw	r30, r18
+ 7a8:	20 81       	ld	r18, Z
+ 7aa:	01 c0       	rjmp	.+2      	; 0x7ae <Set_A2D_Pin+0x22>
+ 7ac:	29 81       	ldd	r18, Y+1	; 0x01
+ 7ae:	fc 01       	movw	r30, r24
+ 7b0:	20 83       	st	Z, r18
 	// Allow channel to stabilize
 	static unsigned char i = 0;
 	for(i = 0; i < 15; ++i){asm("nop");}
- 56a:	10 92 12 01 	sts	0x0112, r1	; 0x800112 <i.1667>
- 56e:	06 c0       	rjmp	.+12     	; 0x57c <Set_A2D_Pin+0x38>
- 570:	00 00       	nop
- 572:	80 91 12 01 	lds	r24, 0x0112	; 0x800112 <i.1667>
- 576:	8f 5f       	subi	r24, 0xFF	; 255
- 578:	80 93 12 01 	sts	0x0112, r24	; 0x800112 <i.1667>
- 57c:	80 91 12 01 	lds	r24, 0x0112	; 0x800112 <i.1667>
- 580:	8f 30       	cpi	r24, 0x0F	; 15
- 582:	b0 f3       	brcs	.-20     	; 0x570 <Set_A2D_Pin+0x2c>
+ 7b2:	10 92 12 01 	sts	0x0112, r1	; 0x800112 <i.1800>
+ 7b6:	06 c0       	rjmp	.+12     	; 0x7c4 <Set_A2D_Pin+0x38>
+ 7b8:	00 00       	nop
+ 7ba:	80 91 12 01 	lds	r24, 0x0112	; 0x800112 <i.1800>
+ 7be:	8f 5f       	subi	r24, 0xFF	; 255
+ 7c0:	80 93 12 01 	sts	0x0112, r24	; 0x800112 <i.1800>
+ 7c4:	80 91 12 01 	lds	r24, 0x0112	; 0x800112 <i.1800>
+ 7c8:	8f 30       	cpi	r24, 0x0F	; 15
+ 7ca:	b0 f3       	brcs	.-20     	; 0x7b8 <Set_A2D_Pin+0x2c>
 }
- 584:	00 00       	nop
- 586:	0f 90       	pop	r0
- 588:	df 91       	pop	r29
- 58a:	cf 91       	pop	r28
- 58c:	08 95       	ret
+ 7cc:	00 00       	nop
+ 7ce:	0f 90       	pop	r0
+ 7d0:	df 91       	pop	r29
+ 7d2:	cf 91       	pop	r28
+ 7d4:	08 95       	ret
 
-0000058e <A2D_init>:
+000007d6 <A2D_init>:
 
 // ADEN: Enables analog-to-digital conversion
 // ADSC: Starts analog-to-digital conversion
 // ADATE: Enables auto-triggering, allowing for constant
 //		  analog to digital conversions.
 void A2D_init() { ADCSRA |= (1 << ADEN) | (1 << ADSC) | (1 << ADATE);}
- 58e:	cf 93       	push	r28
- 590:	df 93       	push	r29
- 592:	cd b7       	in	r28, 0x3d	; 61
- 594:	de b7       	in	r29, 0x3e	; 62
- 596:	8a e7       	ldi	r24, 0x7A	; 122
- 598:	90 e0       	ldi	r25, 0x00	; 0
- 59a:	2a e7       	ldi	r18, 0x7A	; 122
- 59c:	30 e0       	ldi	r19, 0x00	; 0
- 59e:	f9 01       	movw	r30, r18
- 5a0:	20 81       	ld	r18, Z
- 5a2:	20 6e       	ori	r18, 0xE0	; 224
- 5a4:	fc 01       	movw	r30, r24
- 5a6:	20 83       	st	Z, r18
- 5a8:	00 00       	nop
- 5aa:	df 91       	pop	r29
- 5ac:	cf 91       	pop	r28
- 5ae:	08 95       	ret
+ 7d6:	cf 93       	push	r28
+ 7d8:	df 93       	push	r29
+ 7da:	cd b7       	in	r28, 0x3d	; 61
+ 7dc:	de b7       	in	r29, 0x3e	; 62
+ 7de:	8a e7       	ldi	r24, 0x7A	; 122
+ 7e0:	90 e0       	ldi	r25, 0x00	; 0
+ 7e2:	2a e7       	ldi	r18, 0x7A	; 122
+ 7e4:	30 e0       	ldi	r19, 0x00	; 0
+ 7e6:	f9 01       	movw	r30, r18
+ 7e8:	20 81       	ld	r18, Z
+ 7ea:	20 6e       	ori	r18, 0xE0	; 224
+ 7ec:	fc 01       	movw	r30, r24
+ 7ee:	20 83       	st	Z, r18
+ 7f0:	00 00       	nop
+ 7f2:	df 91       	pop	r29
+ 7f4:	cf 91       	pop	r28
+ 7f6:	08 95       	ret
 
-000005b0 <convert>:
+000007f8 <convert>:
 
 void convert(){
- 5b0:	cf 93       	push	r28
- 5b2:	df 93       	push	r29
- 5b4:	cd b7       	in	r28, 0x3d	; 61
- 5b6:	de b7       	in	r29, 0x3e	; 62
+ 7f8:	cf 93       	push	r28
+ 7fa:	df 93       	push	r29
+ 7fc:	cd b7       	in	r28, 0x3d	; 61
+ 7fe:	de b7       	in	r29, 0x3e	; 62
 	ADCSRA |= (1 << ADSC); // start ADC conversion
- 5b8:	8a e7       	ldi	r24, 0x7A	; 122
- 5ba:	90 e0       	ldi	r25, 0x00	; 0
- 5bc:	2a e7       	ldi	r18, 0x7A	; 122
- 5be:	30 e0       	ldi	r19, 0x00	; 0
- 5c0:	f9 01       	movw	r30, r18
- 5c2:	20 81       	ld	r18, Z
- 5c4:	20 64       	ori	r18, 0x40	; 64
- 5c6:	fc 01       	movw	r30, r24
- 5c8:	20 83       	st	Z, r18
+ 800:	8a e7       	ldi	r24, 0x7A	; 122
+ 802:	90 e0       	ldi	r25, 0x00	; 0
+ 804:	2a e7       	ldi	r18, 0x7A	; 122
+ 806:	30 e0       	ldi	r19, 0x00	; 0
+ 808:	f9 01       	movw	r30, r18
+ 80a:	20 81       	ld	r18, Z
+ 80c:	20 64       	ori	r18, 0x40	; 64
+ 80e:	fc 01       	movw	r30, r24
+ 810:	20 83       	st	Z, r18
 	while ( !(ADCSRA & (1<<ADIF))); // wait till ADC conversion
- 5ca:	00 00       	nop
- 5cc:	8a e7       	ldi	r24, 0x7A	; 122
- 5ce:	90 e0       	ldi	r25, 0x00	; 0
- 5d0:	fc 01       	movw	r30, r24
- 5d2:	80 81       	ld	r24, Z
- 5d4:	88 2f       	mov	r24, r24
- 5d6:	90 e0       	ldi	r25, 0x00	; 0
- 5d8:	80 71       	andi	r24, 0x10	; 16
- 5da:	99 27       	eor	r25, r25
- 5dc:	89 2b       	or	r24, r25
- 5de:	b1 f3       	breq	.-20     	; 0x5cc <convert+0x1c>
+ 812:	00 00       	nop
+ 814:	8a e7       	ldi	r24, 0x7A	; 122
+ 816:	90 e0       	ldi	r25, 0x00	; 0
+ 818:	fc 01       	movw	r30, r24
+ 81a:	80 81       	ld	r24, Z
+ 81c:	88 2f       	mov	r24, r24
+ 81e:	90 e0       	ldi	r25, 0x00	; 0
+ 820:	80 71       	andi	r24, 0x10	; 16
+ 822:	99 27       	eor	r25, r25
+ 824:	89 2b       	or	r24, r25
+ 826:	b1 f3       	breq	.-20     	; 0x814 <convert+0x1c>
 }
- 5e0:	00 00       	nop
- 5e2:	df 91       	pop	r29
- 5e4:	cf 91       	pop	r28
- 5e6:	08 95       	ret
+ 828:	00 00       	nop
+ 82a:	df 91       	pop	r29
+ 82c:	cf 91       	pop	r28
+ 82e:	08 95       	ret
 
-000005e8 <TickFct_movement>:
+00000830 <TickFct_movement>:
 11 - N/A
 */
 enum movement_states {left_right, forward_reverse, up_down} movement_state;
 
 int TickFct_movement(int movement_state)
 {
- 5e8:	cf 93       	push	r28
- 5ea:	df 93       	push	r29
- 5ec:	00 d0       	rcall	.+0      	; 0x5ee <TickFct_movement+0x6>
- 5ee:	cd b7       	in	r28, 0x3d	; 61
- 5f0:	de b7       	in	r29, 0x3e	; 62
- 5f2:	9a 83       	std	Y+2, r25	; 0x02
- 5f4:	89 83       	std	Y+1, r24	; 0x01
+ 830:	cf 93       	push	r28
+ 832:	df 93       	push	r29
+ 834:	00 d0       	rcall	.+0      	; 0x836 <TickFct_movement+0x6>
+ 836:	cd b7       	in	r28, 0x3d	; 61
+ 838:	de b7       	in	r29, 0x3e	; 62
+ 83a:	9a 83       	std	Y+2, r25	; 0x02
+ 83c:	89 83       	std	Y+1, r24	; 0x01
 	switch(movement_state)
- 5f6:	89 81       	ldd	r24, Y+1	; 0x01
- 5f8:	9a 81       	ldd	r25, Y+2	; 0x02
- 5fa:	81 30       	cpi	r24, 0x01	; 1
- 5fc:	91 05       	cpc	r25, r1
- 5fe:	09 f4       	brne	.+2      	; 0x602 <TickFct_movement+0x1a>
- 600:	5b c0       	rjmp	.+182    	; 0x6b8 <TickFct_movement+0xd0>
- 602:	82 30       	cpi	r24, 0x02	; 2
- 604:	91 05       	cpc	r25, r1
- 606:	09 f4       	brne	.+2      	; 0x60a <TickFct_movement+0x22>
- 608:	96 c0       	rjmp	.+300    	; 0x736 <TickFct_movement+0x14e>
- 60a:	89 2b       	or	r24, r25
- 60c:	09 f0       	breq	.+2      	; 0x610 <TickFct_movement+0x28>
- 60e:	c0 c0       	rjmp	.+384    	; 0x790 <TickFct_movement+0x1a8>
+ 83e:	89 81       	ldd	r24, Y+1	; 0x01
+ 840:	9a 81       	ldd	r25, Y+2	; 0x02
+ 842:	81 30       	cpi	r24, 0x01	; 1
+ 844:	91 05       	cpc	r25, r1
+ 846:	09 f4       	brne	.+2      	; 0x84a <TickFct_movement+0x1a>
+ 848:	5b c0       	rjmp	.+182    	; 0x900 <TickFct_movement+0xd0>
+ 84a:	82 30       	cpi	r24, 0x02	; 2
+ 84c:	91 05       	cpc	r25, r1
+ 84e:	09 f4       	brne	.+2      	; 0x852 <TickFct_movement+0x22>
+ 850:	96 c0       	rjmp	.+300    	; 0x97e <TickFct_movement+0x14e>
+ 852:	89 2b       	or	r24, r25
+ 854:	09 f0       	breq	.+2      	; 0x858 <TickFct_movement+0x28>
+ 856:	c0 c0       	rjmp	.+384    	; 0x9d8 <TickFct_movement+0x1a8>
 	{
 		case left_right: // Left joystick controls left and right movements
 			Set_A2D_Pin(0x02); // Sets analog signal to the left/right axis of the left joystick
- 610:	82 e0       	ldi	r24, 0x02	; 2
- 612:	98 df       	rcall	.-208    	; 0x544 <Set_A2D_Pin>
+ 858:	82 e0       	ldi	r24, 0x02	; 2
+ 85a:	98 df       	rcall	.-208    	; 0x78c <Set_A2D_Pin>
 			convert();
- 614:	cd df       	rcall	.-102    	; 0x5b0 <convert>
- 616:	88 e7       	ldi	r24, 0x78	; 120
+ 85c:	cd df       	rcall	.-102    	; 0x7f8 <convert>
+ 85e:	88 e7       	ldi	r24, 0x78	; 120
 			joystick = ADC; // Read ADC value into joystick variable
- 618:	90 e0       	ldi	r25, 0x00	; 0
- 61a:	fc 01       	movw	r30, r24
- 61c:	80 81       	ld	r24, Z
- 61e:	91 81       	ldd	r25, Z+1	; 0x01
- 620:	90 93 38 01 	sts	0x0138, r25	; 0x800138 <joystick+0x1>
- 624:	80 93 37 01 	sts	0x0137, r24	; 0x800137 <joystick>
- 628:	80 91 37 01 	lds	r24, 0x0137	; 0x800137 <joystick>
+ 860:	90 e0       	ldi	r25, 0x00	; 0
+ 862:	fc 01       	movw	r30, r24
+ 864:	80 81       	ld	r24, Z
+ 866:	91 81       	ldd	r25, Z+1	; 0x01
+ 868:	90 93 3a 01 	sts	0x013A, r25	; 0x80013a <joystick+0x1>
+ 86c:	80 93 39 01 	sts	0x0139, r24	; 0x800139 <joystick>
+ 870:	80 91 39 01 	lds	r24, 0x0139	; 0x800139 <joystick>
 			//droneSignal = (droneSignal & 0xE3); // L/R/F/R set to 000 for hover
 			if(joystick > 700 && downFlag == 0) // Joystick is being tilted left
- 62c:	90 91 38 01 	lds	r25, 0x0138	; 0x800138 <joystick+0x1>
- 630:	8d 3b       	cpi	r24, 0xBD	; 189
- 632:	92 40       	sbci	r25, 0x02	; 2
- 634:	b0 f0       	brcs	.+44     	; 0x662 <TickFct_movement+0x7a>
- 636:	80 91 3c 01 	lds	r24, 0x013C	; 0x80013c <downFlag>
- 63a:	88 23       	and	r24, r24
- 63c:	91 f4       	brne	.+36     	; 0x662 <TickFct_movement+0x7a>
- 63e:	80 91 35 01 	lds	r24, 0x0135	; 0x800135 <upFlag>
+ 874:	90 91 3a 01 	lds	r25, 0x013A	; 0x80013a <joystick+0x1>
+ 878:	8d 3b       	cpi	r24, 0xBD	; 189
+ 87a:	92 40       	sbci	r25, 0x02	; 2
+ 87c:	b0 f0       	brcs	.+44     	; 0x8aa <TickFct_movement+0x7a>
+ 87e:	80 91 3f 01 	lds	r24, 0x013F	; 0x80013f <downFlag>
+ 882:	88 23       	and	r24, r24
+ 884:	91 f4       	brne	.+36     	; 0x8aa <TickFct_movement+0x7a>
+ 886:	80 91 37 01 	lds	r24, 0x0137	; 0x800137 <upFlag>
 			{
 				if(upFlag == 1)
- 642:	81 30       	cpi	r24, 0x01	; 1
- 644:	39 f4       	brne	.+14     	; 0x654 <TickFct_movement+0x6c>
- 646:	80 91 0d 01 	lds	r24, 0x010D	; 0x80010d <droneSignal>
+ 88a:	81 30       	cpi	r24, 0x01	; 1
+ 88c:	39 f4       	brne	.+14     	; 0x89c <TickFct_movement+0x6c>
+ 88e:	80 91 0c 01 	lds	r24, 0x010C	; 0x80010c <droneSignal>
 				{
 					droneSignal = (droneSignal & 0xFB) | 0x10;
- 64a:	8b 7e       	andi	r24, 0xEB	; 235
- 64c:	80 61       	ori	r24, 0x10	; 16
- 64e:	80 93 0d 01 	sts	0x010D, r24	; 0x80010d <droneSignal>
- 652:	2d c0       	rjmp	.+90     	; 0x6ae <TickFct_movement+0xc6>
+ 892:	8b 7e       	andi	r24, 0xEB	; 235
+ 894:	80 61       	ori	r24, 0x10	; 16
+ 896:	80 93 0c 01 	sts	0x010C, r24	; 0x80010c <droneSignal>
+ 89a:	2d c0       	rjmp	.+90     	; 0x8f6 <TickFct_movement+0xc6>
 			convert();
 			joystick = ADC; // Read ADC value into joystick variable
 			//droneSignal = (droneSignal & 0xE3); // L/R/F/R set to 000 for hover
 			if(joystick > 700 && downFlag == 0) // Joystick is being tilted left
 			{
 				if(upFlag == 1)
- 654:	80 91 0d 01 	lds	r24, 0x010D	; 0x80010d <droneSignal>
+ 89c:	80 91 0c 01 	lds	r24, 0x010C	; 0x80010c <droneSignal>
 				{
 					droneSignal = (droneSignal & 0xFB) | 0x10;
 				}
 				else
 				{
 					droneSignal = ((droneSignal & 0xE3) | 0x10); // L/R set to 100 for left 
- 658:	83 7e       	andi	r24, 0xE3	; 227
- 65a:	80 61       	ori	r24, 0x10	; 16
- 65c:	80 93 0d 01 	sts	0x010D, r24	; 0x80010d <droneSignal>
- 660:	26 c0       	rjmp	.+76     	; 0x6ae <TickFct_movement+0xc6>
+ 8a0:	83 7e       	andi	r24, 0xE3	; 227
+ 8a2:	80 61       	ori	r24, 0x10	; 16
+ 8a4:	80 93 0c 01 	sts	0x010C, r24	; 0x80010c <droneSignal>
+ 8a8:	26 c0       	rjmp	.+76     	; 0x8f6 <TickFct_movement+0xc6>
 			convert();
 			joystick = ADC; // Read ADC value into joystick variable
 			//droneSignal = (droneSignal & 0xE3); // L/R/F/R set to 000 for hover
 			if(joystick > 700 && downFlag == 0) // Joystick is being tilted left
 			{
 				if(upFlag == 1)
- 662:	80 91 37 01 	lds	r24, 0x0137	; 0x800137 <joystick>
+ 8aa:	80 91 39 01 	lds	r24, 0x0139	; 0x800139 <joystick>
 				else
 				{
 					droneSignal = ((droneSignal & 0xE3) | 0x10); // L/R set to 100 for left 
 				} 
 			}
 			else if(joystick < 350 && downFlag == 0) // Joystick is being tilted right
- 666:	90 91 38 01 	lds	r25, 0x0138	; 0x800138 <joystick+0x1>
- 66a:	8e 35       	cpi	r24, 0x5E	; 94
- 66c:	91 40       	sbci	r25, 0x01	; 1
- 66e:	b0 f4       	brcc	.+44     	; 0x69c <TickFct_movement+0xb4>
- 670:	80 91 3c 01 	lds	r24, 0x013C	; 0x80013c <downFlag>
- 674:	88 23       	and	r24, r24
- 676:	91 f4       	brne	.+36     	; 0x69c <TickFct_movement+0xb4>
- 678:	80 91 35 01 	lds	r24, 0x0135	; 0x800135 <upFlag>
+ 8ae:	90 91 3a 01 	lds	r25, 0x013A	; 0x80013a <joystick+0x1>
+ 8b2:	8e 35       	cpi	r24, 0x5E	; 94
+ 8b4:	91 40       	sbci	r25, 0x01	; 1
+ 8b6:	b0 f4       	brcc	.+44     	; 0x8e4 <TickFct_movement+0xb4>
+ 8b8:	80 91 3f 01 	lds	r24, 0x013F	; 0x80013f <downFlag>
+ 8bc:	88 23       	and	r24, r24
+ 8be:	91 f4       	brne	.+36     	; 0x8e4 <TickFct_movement+0xb4>
+ 8c0:	80 91 37 01 	lds	r24, 0x0137	; 0x800137 <upFlag>
 			{
 				if(upFlag == 1)
- 67c:	81 30       	cpi	r24, 0x01	; 1
- 67e:	39 f4       	brne	.+14     	; 0x68e <TickFct_movement+0xa6>
- 680:	80 91 0d 01 	lds	r24, 0x010D	; 0x80010d <droneSignal>
+ 8c4:	81 30       	cpi	r24, 0x01	; 1
+ 8c6:	39 f4       	brne	.+14     	; 0x8d6 <TickFct_movement+0xa6>
+ 8c8:	80 91 0c 01 	lds	r24, 0x010C	; 0x80010c <droneSignal>
 				{
 					droneSignal = (droneSignal & 0xEF) | 0x04;
- 684:	8b 7e       	andi	r24, 0xEB	; 235
- 686:	84 60       	ori	r24, 0x04	; 4
- 688:	80 93 0d 01 	sts	0x010D, r24	; 0x80010d <droneSignal>
- 68c:	10 c0       	rjmp	.+32     	; 0x6ae <TickFct_movement+0xc6>
+ 8cc:	8b 7e       	andi	r24, 0xEB	; 235
+ 8ce:	84 60       	ori	r24, 0x04	; 4
+ 8d0:	80 93 0c 01 	sts	0x010C, r24	; 0x80010c <droneSignal>
+ 8d4:	10 c0       	rjmp	.+32     	; 0x8f6 <TickFct_movement+0xc6>
 					droneSignal = ((droneSignal & 0xE3) | 0x10); // L/R set to 100 for left 
 				} 
 			}
 			else if(joystick < 350 && downFlag == 0) // Joystick is being tilted right
 			{
 				if(upFlag == 1)
- 68e:	80 91 0d 01 	lds	r24, 0x010D	; 0x80010d <droneSignal>
+ 8d6:	80 91 0c 01 	lds	r24, 0x010C	; 0x80010c <droneSignal>
 				{
 					droneSignal = (droneSignal & 0xEF) | 0x04;
 				}
 				else
 				{
 					droneSignal = ((droneSignal & 0xE3) | 0x04); // L/R set to 001 for right
- 692:	83 7e       	andi	r24, 0xE3	; 227
- 694:	84 60       	ori	r24, 0x04	; 4
- 696:	80 93 0d 01 	sts	0x010D, r24	; 0x80010d <droneSignal>
- 69a:	09 c0       	rjmp	.+18     	; 0x6ae <TickFct_movement+0xc6>
+ 8da:	83 7e       	andi	r24, 0xE3	; 227
+ 8dc:	84 60       	ori	r24, 0x04	; 4
+ 8de:	80 93 0c 01 	sts	0x010C, r24	; 0x80010c <droneSignal>
+ 8e2:	09 c0       	rjmp	.+18     	; 0x8f6 <TickFct_movement+0xc6>
 					droneSignal = ((droneSignal & 0xE3) | 0x10); // L/R set to 100 for left 
 				} 
 			}
 			else if(joystick < 350 && downFlag == 0) // Joystick is being tilted right
 			{
 				if(upFlag == 1)
- 69c:	80 91 3c 01 	lds	r24, 0x013C	; 0x80013c <downFlag>
+ 8e4:	80 91 3f 01 	lds	r24, 0x013F	; 0x80013f <downFlag>
 					droneSignal = ((droneSignal & 0xE3) | 0x04); // L/R set to 001 for right
 				}
 			}
 			else // Joysticks are not being tilted
 			{
 				if (downFlag == 0)
- 6a0:	88 23       	and	r24, r24
- 6a2:	29 f4       	brne	.+10     	; 0x6ae <TickFct_movement+0xc6>
- 6a4:	80 91 0d 01 	lds	r24, 0x010D	; 0x80010d <droneSignal>
+ 8e8:	88 23       	and	r24, r24
+ 8ea:	29 f4       	brne	.+10     	; 0x8f6 <TickFct_movement+0xc6>
+ 8ec:	80 91 0c 01 	lds	r24, 0x010C	; 0x80010c <droneSignal>
 				{
 					droneSignal = (droneSignal & 0xEB); // Bits anded with 010 to clear all but forward
- 6a8:	8b 7e       	andi	r24, 0xEB	; 235
- 6aa:	80 93 0d 01 	sts	0x010D, r24	; 0x80010d <droneSignal>
- 6ae:	81 e0       	ldi	r24, 0x01	; 1
+ 8f0:	8b 7e       	andi	r24, 0xEB	; 235
+ 8f2:	80 93 0c 01 	sts	0x010C, r24	; 0x80010c <droneSignal>
+ 8f6:	81 e0       	ldi	r24, 0x01	; 1
 				}
 			}
 			movement_state = forward_reverse; // Return to the forward reverse state
- 6b0:	90 e0       	ldi	r25, 0x00	; 0
- 6b2:	9a 83       	std	Y+2, r25	; 0x02
- 6b4:	89 83       	std	Y+1, r24	; 0x01
- 6b6:	6f c0       	rjmp	.+222    	; 0x796 <TickFct_movement+0x1ae>
+ 8f8:	90 e0       	ldi	r25, 0x00	; 0
+ 8fa:	9a 83       	std	Y+2, r25	; 0x02
+ 8fc:	89 83       	std	Y+1, r24	; 0x01
+ 8fe:	6f c0       	rjmp	.+222    	; 0x9de <TickFct_movement+0x1ae>
 			break;
 		case forward_reverse: // Left joystick controls forward and reverse movements
 			Set_A2D_Pin(0x03); // Sets analog signal to the left/right axis of the right joystick
- 6b8:	83 e0       	ldi	r24, 0x03	; 3
- 6ba:	44 df       	rcall	.-376    	; 0x544 <Set_A2D_Pin>
+ 900:	83 e0       	ldi	r24, 0x03	; 3
+ 902:	44 df       	rcall	.-376    	; 0x78c <Set_A2D_Pin>
 			convert();
- 6bc:	79 df       	rcall	.-270    	; 0x5b0 <convert>
- 6be:	88 e7       	ldi	r24, 0x78	; 120
+ 904:	79 df       	rcall	.-270    	; 0x7f8 <convert>
+ 906:	88 e7       	ldi	r24, 0x78	; 120
 			joystick2 = ADC; // Read ADC value into joystick2 variable
- 6c0:	90 e0       	ldi	r25, 0x00	; 0
- 6c2:	fc 01       	movw	r30, r24
- 6c4:	80 81       	ld	r24, Z
- 6c6:	91 81       	ldd	r25, Z+1	; 0x01
- 6c8:	90 93 3b 01 	sts	0x013B, r25	; 0x80013b <joystick2+0x1>
- 6cc:	80 93 3a 01 	sts	0x013A, r24	; 0x80013a <joystick2>
- 6d0:	80 91 3a 01 	lds	r24, 0x013A	; 0x80013a <joystick2>
+ 908:	90 e0       	ldi	r25, 0x00	; 0
+ 90a:	fc 01       	movw	r30, r24
+ 90c:	80 81       	ld	r24, Z
+ 90e:	91 81       	ldd	r25, Z+1	; 0x01
+ 910:	90 93 3e 01 	sts	0x013E, r25	; 0x80013e <joystick2+0x1>
+ 914:	80 93 3d 01 	sts	0x013D, r24	; 0x80013d <joystick2>
+ 918:	80 91 3d 01 	lds	r24, 0x013D	; 0x80013d <joystick2>
 			if(joystick2 > 700) // Joystick is being tilted up
- 6d4:	90 91 3b 01 	lds	r25, 0x013B	; 0x80013b <joystick2+0x1>
- 6d8:	8d 3b       	cpi	r24, 0xBD	; 189
- 6da:	92 40       	sbci	r25, 0x02	; 2
- 6dc:	58 f0       	brcs	.+22     	; 0x6f4 <TickFct_movement+0x10c>
- 6de:	80 91 0d 01 	lds	r24, 0x010D	; 0x80010d <droneSignal>
+ 91c:	90 91 3e 01 	lds	r25, 0x013E	; 0x80013e <joystick2+0x1>
+ 920:	8d 3b       	cpi	r24, 0xBD	; 189
+ 922:	92 40       	sbci	r25, 0x02	; 2
+ 924:	58 f0       	brcs	.+22     	; 0x93c <TickFct_movement+0x10c>
+ 926:	80 91 0c 01 	lds	r24, 0x010C	; 0x80010c <droneSignal>
 			{
 				droneSignal = (droneSignal | 0x08); // F/R set to 1 for forward
- 6e2:	88 60       	ori	r24, 0x08	; 8
- 6e4:	80 93 0d 01 	sts	0x010D, r24	; 0x80010d <droneSignal>
- 6e8:	81 e0       	ldi	r24, 0x01	; 1
+ 92a:	88 60       	ori	r24, 0x08	; 8
+ 92c:	80 93 0c 01 	sts	0x010C, r24	; 0x80010c <droneSignal>
+ 930:	81 e0       	ldi	r24, 0x01	; 1
 				upFlag = 1;
- 6ea:	80 93 35 01 	sts	0x0135, r24	; 0x800135 <upFlag>
- 6ee:	10 92 3c 01 	sts	0x013C, r1	; 0x80013c <downFlag>
+ 932:	80 93 37 01 	sts	0x0137, r24	; 0x800137 <upFlag>
+ 936:	10 92 3f 01 	sts	0x013F, r1	; 0x80013f <downFlag>
 				downFlag = 0;
- 6f2:	1c c0       	rjmp	.+56     	; 0x72c <TickFct_movement+0x144>
- 6f4:	80 91 3a 01 	lds	r24, 0x013A	; 0x80013a <joystick2>
+ 93a:	1c c0       	rjmp	.+56     	; 0x974 <TickFct_movement+0x144>
+ 93c:	80 91 3d 01 	lds	r24, 0x013D	; 0x80013d <joystick2>
 			}
 			else if(joystick2 < 350) // Joystick is being tilted down
- 6f8:	90 91 3b 01 	lds	r25, 0x013B	; 0x80013b <joystick2+0x1>
- 6fc:	8e 35       	cpi	r24, 0x5E	; 94
- 6fe:	91 40       	sbci	r25, 0x01	; 1
- 700:	60 f4       	brcc	.+24     	; 0x71a <TickFct_movement+0x132>
- 702:	80 91 0d 01 	lds	r24, 0x010D	; 0x80010d <droneSignal>
+ 940:	90 91 3e 01 	lds	r25, 0x013E	; 0x80013e <joystick2+0x1>
+ 944:	8e 35       	cpi	r24, 0x5E	; 94
+ 946:	91 40       	sbci	r25, 0x01	; 1
+ 948:	60 f4       	brcc	.+24     	; 0x962 <TickFct_movement+0x132>
+ 94a:	80 91 0c 01 	lds	r24, 0x010C	; 0x80010c <droneSignal>
 			{
 				droneSignal = (droneSignal & 0xF7) | 0x14; // F/R set to 101 for reverse
- 706:	83 7e       	andi	r24, 0xE3	; 227
- 708:	84 61       	ori	r24, 0x14	; 20
- 70a:	80 93 0d 01 	sts	0x010D, r24	; 0x80010d <droneSignal>
- 70e:	10 92 35 01 	sts	0x0135, r1	; 0x800135 <upFlag>
+ 94e:	83 7e       	andi	r24, 0xE3	; 227
+ 950:	84 61       	ori	r24, 0x14	; 20
+ 952:	80 93 0c 01 	sts	0x010C, r24	; 0x80010c <droneSignal>
+ 956:	10 92 37 01 	sts	0x0137, r1	; 0x800137 <upFlag>
 				upFlag = 0;
- 712:	81 e0       	ldi	r24, 0x01	; 1
+ 95a:	81 e0       	ldi	r24, 0x01	; 1
 				downFlag = 1;
- 714:	80 93 3c 01 	sts	0x013C, r24	; 0x80013c <downFlag>
- 718:	09 c0       	rjmp	.+18     	; 0x72c <TickFct_movement+0x144>
- 71a:	80 91 0d 01 	lds	r24, 0x010D	; 0x80010d <droneSignal>
+ 95c:	80 93 3f 01 	sts	0x013F, r24	; 0x80013f <downFlag>
+ 960:	09 c0       	rjmp	.+18     	; 0x974 <TickFct_movement+0x144>
+ 962:	80 91 0c 01 	lds	r24, 0x010C	; 0x80010c <droneSignal>
 			}
 			else // Joystick is not being tilted
 			{
 				droneSignal = droneSignal & 0xF7; // Bits anded with 101 to clear forward
- 71e:	87 7f       	andi	r24, 0xF7	; 247
- 720:	80 93 0d 01 	sts	0x010D, r24	; 0x80010d <droneSignal>
- 724:	10 92 35 01 	sts	0x0135, r1	; 0x800135 <upFlag>
+ 966:	87 7f       	andi	r24, 0xF7	; 247
+ 968:	80 93 0c 01 	sts	0x010C, r24	; 0x80010c <droneSignal>
+ 96c:	10 92 37 01 	sts	0x0137, r1	; 0x800137 <upFlag>
 				upFlag = 0;
- 728:	10 92 3c 01 	sts	0x013C, r1	; 0x80013c <downFlag>
+ 970:	10 92 3f 01 	sts	0x013F, r1	; 0x80013f <downFlag>
 				downFlag = 0;
- 72c:	82 e0       	ldi	r24, 0x02	; 2
+ 974:	82 e0       	ldi	r24, 0x02	; 2
 			}
 			movement_state = up_down; // Return to up down state
- 72e:	90 e0       	ldi	r25, 0x00	; 0
- 730:	9a 83       	std	Y+2, r25	; 0x02
- 732:	89 83       	std	Y+1, r24	; 0x01
+ 976:	90 e0       	ldi	r25, 0x00	; 0
+ 978:	9a 83       	std	Y+2, r25	; 0x02
+ 97a:	89 83       	std	Y+1, r24	; 0x01
 			break;
- 734:	30 c0       	rjmp	.+96     	; 0x796 <TickFct_movement+0x1ae>
+ 97c:	30 c0       	rjmp	.+96     	; 0x9de <TickFct_movement+0x1ae>
 		case up_down: // Right joystick controls up and down movements
 			Set_A2D_Pin(0x00); // Sets analog signal to the left/right axis of the right joystick
- 736:	80 e0       	ldi	r24, 0x00	; 0
- 738:	05 df       	rcall	.-502    	; 0x544 <Set_A2D_Pin>
- 73a:	3a df       	rcall	.-396    	; 0x5b0 <convert>
+ 97e:	80 e0       	ldi	r24, 0x00	; 0
+ 980:	05 df       	rcall	.-502    	; 0x78c <Set_A2D_Pin>
+ 982:	3a df       	rcall	.-396    	; 0x7f8 <convert>
 			convert();
- 73c:	88 e7       	ldi	r24, 0x78	; 120
- 73e:	90 e0       	ldi	r25, 0x00	; 0
+ 984:	88 e7       	ldi	r24, 0x78	; 120
+ 986:	90 e0       	ldi	r25, 0x00	; 0
 			joystick3 = ADC; // Read ADC value into joystick variable
- 740:	fc 01       	movw	r30, r24
- 742:	80 81       	ld	r24, Z
- 744:	91 81       	ldd	r25, Z+1	; 0x01
- 746:	90 93 0f 01 	sts	0x010F, r25	; 0x80010f <joystick3+0x1>
- 74a:	80 93 0e 01 	sts	0x010E, r24	; 0x80010e <joystick3>
- 74e:	80 91 0d 01 	lds	r24, 0x010D	; 0x80010d <droneSignal>
+ 988:	fc 01       	movw	r30, r24
+ 98a:	80 81       	ld	r24, Z
+ 98c:	91 81       	ldd	r25, Z+1	; 0x01
+ 98e:	90 93 0f 01 	sts	0x010F, r25	; 0x80010f <joystick3+0x1>
+ 992:	80 93 0e 01 	sts	0x010E, r24	; 0x80010e <joystick3>
+ 996:	80 91 0c 01 	lds	r24, 0x010C	; 0x80010c <droneSignal>
 			droneSignal = (droneSignal & 0xFC); // Up/Down set to 00 for maintain altitude
- 752:	8c 7f       	andi	r24, 0xFC	; 252
- 754:	80 93 0d 01 	sts	0x010D, r24	; 0x80010d <droneSignal>
- 758:	80 91 0e 01 	lds	r24, 0x010E	; 0x80010e <joystick3>
+ 99a:	8c 7f       	andi	r24, 0xFC	; 252
+ 99c:	80 93 0c 01 	sts	0x010C, r24	; 0x80010c <droneSignal>
+ 9a0:	80 91 0e 01 	lds	r24, 0x010E	; 0x80010e <joystick3>
 			if(joystick3 > 700) // Joystick is being tilted up
- 75c:	90 91 0f 01 	lds	r25, 0x010F	; 0x80010f <joystick3+0x1>
- 760:	8d 3b       	cpi	r24, 0xBD	; 189
- 762:	92 40       	sbci	r25, 0x02	; 2
- 764:	30 f0       	brcs	.+12     	; 0x772 <TickFct_movement+0x18a>
- 766:	80 91 0d 01 	lds	r24, 0x010D	; 0x80010d <droneSignal>
+ 9a4:	90 91 0f 01 	lds	r25, 0x010F	; 0x80010f <joystick3+0x1>
+ 9a8:	8d 3b       	cpi	r24, 0xBD	; 189
+ 9aa:	92 40       	sbci	r25, 0x02	; 2
+ 9ac:	30 f0       	brcs	.+12     	; 0x9ba <TickFct_movement+0x18a>
+ 9ae:	80 91 0c 01 	lds	r24, 0x010C	; 0x80010c <droneSignal>
 			{
 				droneSignal |= 0x01; // Up/Down set to 10 for down
- 76a:	81 60       	ori	r24, 0x01	; 1
- 76c:	80 93 0d 01 	sts	0x010D, r24	; 0x80010d <droneSignal>
- 770:	0c c0       	rjmp	.+24     	; 0x78a <TickFct_movement+0x1a2>
- 772:	80 91 0e 01 	lds	r24, 0x010E	; 0x80010e <joystick3>
+ 9b2:	81 60       	ori	r24, 0x01	; 1
+ 9b4:	80 93 0c 01 	sts	0x010C, r24	; 0x80010c <droneSignal>
+ 9b8:	0c c0       	rjmp	.+24     	; 0x9d2 <TickFct_movement+0x1a2>
+ 9ba:	80 91 0e 01 	lds	r24, 0x010E	; 0x80010e <joystick3>
 			}
 			else if(joystick3 < 350) // Joystick is being tilted left
- 776:	90 91 0f 01 	lds	r25, 0x010F	; 0x80010f <joystick3+0x1>
- 77a:	8e 35       	cpi	r24, 0x5E	; 94
- 77c:	91 40       	sbci	r25, 0x01	; 1
- 77e:	28 f4       	brcc	.+10     	; 0x78a <TickFct_movement+0x1a2>
- 780:	80 91 0d 01 	lds	r24, 0x010D	; 0x80010d <droneSignal>
+ 9be:	90 91 0f 01 	lds	r25, 0x010F	; 0x80010f <joystick3+0x1>
+ 9c2:	8e 35       	cpi	r24, 0x5E	; 94
+ 9c4:	91 40       	sbci	r25, 0x01	; 1
+ 9c6:	28 f4       	brcc	.+10     	; 0x9d2 <TickFct_movement+0x1a2>
+ 9c8:	80 91 0c 01 	lds	r24, 0x010C	; 0x80010c <droneSignal>
 			{
 				droneSignal |= 0x02; // Up/Down set to 01 for up
- 784:	82 60       	ori	r24, 0x02	; 2
- 786:	80 93 0d 01 	sts	0x010D, r24	; 0x80010d <droneSignal>
- 78a:	1a 82       	std	Y+2, r1	; 0x02
- 78c:	19 82       	std	Y+1, r1	; 0x01
+ 9cc:	82 60       	ori	r24, 0x02	; 2
+ 9ce:	80 93 0c 01 	sts	0x010C, r24	; 0x80010c <droneSignal>
+ 9d2:	1a 82       	std	Y+2, r1	; 0x02
+ 9d4:	19 82       	std	Y+1, r1	; 0x01
 			}
 			movement_state = left_right; // Return to left right state
- 78e:	03 c0       	rjmp	.+6      	; 0x796 <TickFct_movement+0x1ae>
- 790:	1a 82       	std	Y+2, r1	; 0x02
+ 9d6:	03 c0       	rjmp	.+6      	; 0x9de <TickFct_movement+0x1ae>
+ 9d8:	1a 82       	std	Y+2, r1	; 0x02
 			break;
- 792:	19 82       	std	Y+1, r1	; 0x01
+ 9da:	19 82       	std	Y+1, r1	; 0x01
 		default:
 			movement_state = left_right; // Return to left right state
- 794:	00 00       	nop
- 796:	89 81       	ldd	r24, Y+1	; 0x01
+ 9dc:	00 00       	nop
+ 9de:	89 81       	ldd	r24, Y+1	; 0x01
 			break;
- 798:	9a 81       	ldd	r25, Y+2	; 0x02
+ 9e0:	9a 81       	ldd	r25, Y+2	; 0x02
 	}
 	return movement_state;
- 79a:	0f 90       	pop	r0
- 79c:	0f 90       	pop	r0
+ 9e2:	0f 90       	pop	r0
+ 9e4:	0f 90       	pop	r0
 }
- 79e:	df 91       	pop	r29
- 7a0:	cf 91       	pop	r28
- 7a2:	08 95       	ret
+ 9e6:	df 91       	pop	r29
+ 9e8:	cf 91       	pop	r28
+ 9ea:	08 95       	ret
 
-000007a4 <TickFct_button>:
- 7a4:	cf 93       	push	r28
- 7a6:	df 93       	push	r29
+000009ec <TickFct_button>:
+ 9ec:	cf 93       	push	r28
+ 9ee:	df 93       	push	r29
 X1 - Drop it like its hot
 */
 enum button_states {buttons} button_state;
 
 int TickFct_button(int button_state)
 {	
- 7a8:	00 d0       	rcall	.+0      	; 0x7aa <TickFct_button+0x6>
- 7aa:	cd b7       	in	r28, 0x3d	; 61
- 7ac:	de b7       	in	r29, 0x3e	; 62
- 7ae:	9a 83       	std	Y+2, r25	; 0x02
- 7b0:	89 83       	std	Y+1, r24	; 0x01
+ 9f0:	00 d0       	rcall	.+0      	; 0x9f2 <TickFct_button+0x6>
+ 9f2:	cd b7       	in	r28, 0x3d	; 61
+ 9f4:	de b7       	in	r29, 0x3e	; 62
+ 9f6:	9a 83       	std	Y+2, r25	; 0x02
+ 9f8:	89 83       	std	Y+1, r24	; 0x01
 	switch(button_state)
- 7b2:	89 81       	ldd	r24, Y+1	; 0x01
- 7b4:	9a 81       	ldd	r25, Y+2	; 0x02
- 7b6:	89 2b       	or	r24, r25
- 7b8:	09 f0       	breq	.+2      	; 0x7bc <TickFct_button+0x18>
- 7ba:	42 c0       	rjmp	.+132    	; 0x840 <TickFct_button+0x9c>
+ 9fa:	89 81       	ldd	r24, Y+1	; 0x01
+ 9fc:	9a 81       	ldd	r25, Y+2	; 0x02
+ 9fe:	89 2b       	or	r24, r25
+ a00:	09 f0       	breq	.+2      	; 0xa04 <TickFct_button+0x18>
+ a02:	42 c0       	rjmp	.+132    	; 0xa88 <TickFct_button+0x9c>
 	{
 		case buttons: // Right joystick controls up and down movements
 			if(topButton && !bottomButton)
- 7bc:	86 e2       	ldi	r24, 0x26	; 38
- 7be:	90 e0       	ldi	r25, 0x00	; 0
- 7c0:	fc 01       	movw	r30, r24
- 7c2:	80 81       	ld	r24, Z
- 7c4:	88 2f       	mov	r24, r24
- 7c6:	90 e0       	ldi	r25, 0x00	; 0
- 7c8:	81 70       	andi	r24, 0x01	; 1
- 7ca:	99 27       	eor	r25, r25
- 7cc:	89 2b       	or	r24, r25
- 7ce:	01 f5       	brne	.+64     	; 0x810 <TickFct_button+0x6c>
- 7d0:	86 e2       	ldi	r24, 0x26	; 38
- 7d2:	90 e0       	ldi	r25, 0x00	; 0
- 7d4:	fc 01       	movw	r30, r24
- 7d6:	80 81       	ld	r24, Z
- 7d8:	88 2f       	mov	r24, r24
- 7da:	90 e0       	ldi	r25, 0x00	; 0
- 7dc:	82 70       	andi	r24, 0x02	; 2
- 7de:	99 27       	eor	r25, r25
- 7e0:	89 2b       	or	r24, r25
- 7e2:	b1 f0       	breq	.+44     	; 0x810 <TickFct_button+0x6c>
+ a04:	86 e2       	ldi	r24, 0x26	; 38
+ a06:	90 e0       	ldi	r25, 0x00	; 0
+ a08:	fc 01       	movw	r30, r24
+ a0a:	80 81       	ld	r24, Z
+ a0c:	88 2f       	mov	r24, r24
+ a0e:	90 e0       	ldi	r25, 0x00	; 0
+ a10:	81 70       	andi	r24, 0x01	; 1
+ a12:	99 27       	eor	r25, r25
+ a14:	89 2b       	or	r24, r25
+ a16:	01 f5       	brne	.+64     	; 0xa58 <TickFct_button+0x6c>
+ a18:	86 e2       	ldi	r24, 0x26	; 38
+ a1a:	90 e0       	ldi	r25, 0x00	; 0
+ a1c:	fc 01       	movw	r30, r24
+ a1e:	80 81       	ld	r24, Z
+ a20:	88 2f       	mov	r24, r24
+ a22:	90 e0       	ldi	r25, 0x00	; 0
+ a24:	82 70       	andi	r24, 0x02	; 2
+ a26:	99 27       	eor	r25, r25
+ a28:	89 2b       	or	r24, r25
+ a2a:	b1 f0       	breq	.+44     	; 0xa58 <TickFct_button+0x6c>
 			{
 				if(clawFlag == 0) // Engage the claw 
- 7e4:	80 91 10 01 	lds	r24, 0x0110	; 0x800110 <clawFlag>
- 7e8:	88 23       	and	r24, r24
- 7ea:	51 f4       	brne	.+20     	; 0x800 <TickFct_button+0x5c>
+ a2c:	80 91 10 01 	lds	r24, 0x0110	; 0x800110 <clawFlag>
+ a30:	88 23       	and	r24, r24
+ a32:	51 f4       	brne	.+20     	; 0xa48 <TickFct_button+0x5c>
 				{
 					clawFlag = 1;
- 7ec:	81 e0       	ldi	r24, 0x01	; 1
- 7ee:	80 93 10 01 	sts	0x0110, r24	; 0x800110 <clawFlag>
+ a34:	81 e0       	ldi	r24, 0x01	; 1
+ a36:	80 93 10 01 	sts	0x0110, r24	; 0x800110 <clawFlag>
 					droneSignal = (droneSignal & 0x9F) | 0x40; // Buttons set to 10
- 7f2:	80 91 0d 01 	lds	r24, 0x010D	; 0x80010d <droneSignal>
- 7f6:	8f 79       	andi	r24, 0x9F	; 159
- 7f8:	80 64       	ori	r24, 0x40	; 64
- 7fa:	80 93 0d 01 	sts	0x010D, r24	; 0x80010d <droneSignal>
+ a3a:	80 91 0c 01 	lds	r24, 0x010C	; 0x80010c <droneSignal>
+ a3e:	8f 79       	andi	r24, 0x9F	; 159
+ a40:	80 64       	ori	r24, 0x40	; 64
+ a42:	80 93 0c 01 	sts	0x010C, r24	; 0x80010c <droneSignal>
 	switch(button_state)
 	{
 		case buttons: // Right joystick controls up and down movements
 			if(topButton && !bottomButton)
 			{
 				if(clawFlag == 0) // Engage the claw 
- 7fe:	1d c0       	rjmp	.+58     	; 0x83a <TickFct_button+0x96>
+ a46:	1d c0       	rjmp	.+58     	; 0xa82 <TickFct_button+0x96>
 					clawFlag = 1;
 					droneSignal = (droneSignal & 0x9F) | 0x40; // Buttons set to 10
 				}
 				else // Disengage the claw
 				{
 					clawFlag = 0;
- 800:	10 92 10 01 	sts	0x0110, r1	; 0x800110 <clawFlag>
+ a48:	10 92 10 01 	sts	0x0110, r1	; 0x800110 <clawFlag>
 					droneSignal = (droneSignal & 0x9F); // Buttons set to 00
- 804:	80 91 0d 01 	lds	r24, 0x010D	; 0x80010d <droneSignal>
- 808:	8f 79       	andi	r24, 0x9F	; 159
- 80a:	80 93 0d 01 	sts	0x010D, r24	; 0x80010d <droneSignal>
+ a4c:	80 91 0c 01 	lds	r24, 0x010C	; 0x80010c <droneSignal>
+ a50:	8f 79       	andi	r24, 0x9F	; 159
+ a52:	80 93 0c 01 	sts	0x010C, r24	; 0x80010c <droneSignal>
 	switch(button_state)
 	{
 		case buttons: // Right joystick controls up and down movements
 			if(topButton && !bottomButton)
 			{
 				if(clawFlag == 0) // Engage the claw 
- 80e:	15 c0       	rjmp	.+42     	; 0x83a <TickFct_button+0x96>
+ a56:	15 c0       	rjmp	.+42     	; 0xa82 <TickFct_button+0x96>
 				{
 					clawFlag = 0;
 					droneSignal = (droneSignal & 0x9F); // Buttons set to 00
 				}
 			}
 			else if(bottomButton) // Button must be held down to prevent accidental drone loss
- 810:	86 e2       	ldi	r24, 0x26	; 38
- 812:	90 e0       	ldi	r25, 0x00	; 0
- 814:	fc 01       	movw	r30, r24
- 816:	80 81       	ld	r24, Z
- 818:	88 2f       	mov	r24, r24
- 81a:	90 e0       	ldi	r25, 0x00	; 0
- 81c:	82 70       	andi	r24, 0x02	; 2
- 81e:	99 27       	eor	r25, r25
- 820:	89 2b       	or	r24, r25
- 822:	31 f4       	brne	.+12     	; 0x830 <TickFct_button+0x8c>
+ a58:	86 e2       	ldi	r24, 0x26	; 38
+ a5a:	90 e0       	ldi	r25, 0x00	; 0
+ a5c:	fc 01       	movw	r30, r24
+ a5e:	80 81       	ld	r24, Z
+ a60:	88 2f       	mov	r24, r24
+ a62:	90 e0       	ldi	r25, 0x00	; 0
+ a64:	82 70       	andi	r24, 0x02	; 2
+ a66:	99 27       	eor	r25, r25
+ a68:	89 2b       	or	r24, r25
+ a6a:	31 f4       	brne	.+12     	; 0xa78 <TickFct_button+0x8c>
 			{
 				droneSignal = droneSignal | 0x20;
- 824:	80 91 0d 01 	lds	r24, 0x010D	; 0x80010d <droneSignal>
- 828:	80 62       	ori	r24, 0x20	; 32
- 82a:	80 93 0d 01 	sts	0x010D, r24	; 0x80010d <droneSignal>
- 82e:	05 c0       	rjmp	.+10     	; 0x83a <TickFct_button+0x96>
+ a6c:	80 91 0c 01 	lds	r24, 0x010C	; 0x80010c <droneSignal>
+ a70:	80 62       	ori	r24, 0x20	; 32
+ a72:	80 93 0c 01 	sts	0x010C, r24	; 0x80010c <droneSignal>
+ a76:	05 c0       	rjmp	.+10     	; 0xa82 <TickFct_button+0x96>
 			}
 			else
 			{
 				droneSignal = (droneSignal & 0xDF); // buttons set to 00 for unused
- 830:	80 91 0d 01 	lds	r24, 0x010D	; 0x80010d <droneSignal>
- 834:	8f 7d       	andi	r24, 0xDF	; 223
- 836:	80 93 0d 01 	sts	0x010D, r24	; 0x80010d <droneSignal>
+ a78:	80 91 0c 01 	lds	r24, 0x010C	; 0x80010c <droneSignal>
+ a7c:	8f 7d       	andi	r24, 0xDF	; 223
+ a7e:	80 93 0c 01 	sts	0x010C, r24	; 0x80010c <droneSignal>
 			}
 			button_state = buttons;
- 83a:	1a 82       	std	Y+2, r1	; 0x02
- 83c:	19 82       	std	Y+1, r1	; 0x01
+ a82:	1a 82       	std	Y+2, r1	; 0x02
+ a84:	19 82       	std	Y+1, r1	; 0x01
 			break;
- 83e:	03 c0       	rjmp	.+6      	; 0x846 <TickFct_button+0xa2>
+ a86:	03 c0       	rjmp	.+6      	; 0xa8e <TickFct_button+0xa2>
 		default:
 			button_state = buttons;
- 840:	1a 82       	std	Y+2, r1	; 0x02
- 842:	19 82       	std	Y+1, r1	; 0x01
+ a88:	1a 82       	std	Y+2, r1	; 0x02
+ a8a:	19 82       	std	Y+1, r1	; 0x01
 			break;
- 844:	00 00       	nop
+ a8c:	00 00       	nop
 	}
 	return button_state;
- 846:	89 81       	ldd	r24, Y+1	; 0x01
- 848:	9a 81       	ldd	r25, Y+2	; 0x02
+ a8e:	89 81       	ldd	r24, Y+1	; 0x01
+ a90:	9a 81       	ldd	r25, Y+2	; 0x02
 }
- 84a:	0f 90       	pop	r0
- 84c:	0f 90       	pop	r0
- 84e:	df 91       	pop	r29
- 850:	cf 91       	pop	r28
- 852:	08 95       	ret
+ a92:	0f 90       	pop	r0
+ a94:	0f 90       	pop	r0
+ a96:	df 91       	pop	r29
+ a98:	cf 91       	pop	r28
+ a9a:	08 95       	ret
 
-00000854 <spi_master>:
+00000a9c <spi_master>:
 
 // SPI
-enum uart_states {wait, send} uart_state;
+enum spi_states {wait, send} spi_state;
 	
-int spi_master(int uart_state)
+int spi_master(int spi_state)
 {
- 854:	cf 93       	push	r28
- 856:	df 93       	push	r29
- 858:	00 d0       	rcall	.+0      	; 0x85a <spi_master+0x6>
- 85a:	00 d0       	rcall	.+0      	; 0x85c <spi_master+0x8>
- 85c:	cd b7       	in	r28, 0x3d	; 61
- 85e:	de b7       	in	r29, 0x3e	; 62
- 860:	9c 83       	std	Y+4, r25	; 0x04
- 862:	8b 83       	std	Y+3, r24	; 0x03
-	switch(uart_state)
- 864:	8b 81       	ldd	r24, Y+3	; 0x03
- 866:	9c 81       	ldd	r25, Y+4	; 0x04
- 868:	00 97       	sbiw	r24, 0x00	; 0
- 86a:	19 f0       	breq	.+6      	; 0x872 <spi_master+0x1e>
- 86c:	01 97       	sbiw	r24, 0x01	; 1
- 86e:	d1 f1       	breq	.+116    	; 0x8e4 <spi_master+0x90>
- 870:	3f c0       	rjmp	.+126    	; 0x8f0 <spi_master+0x9c>
+ a9c:	cf 93       	push	r28
+ a9e:	df 93       	push	r29
+ aa0:	00 d0       	rcall	.+0      	; 0xaa2 <spi_master+0x6>
+ aa2:	00 d0       	rcall	.+0      	; 0xaa4 <spi_master+0x8>
+ aa4:	cd b7       	in	r28, 0x3d	; 61
+ aa6:	de b7       	in	r29, 0x3e	; 62
+ aa8:	9c 83       	std	Y+4, r25	; 0x04
+ aaa:	8b 83       	std	Y+3, r24	; 0x03
+	switch(spi_state)
+ aac:	8b 81       	ldd	r24, Y+3	; 0x03
+ aae:	9c 81       	ldd	r25, Y+4	; 0x04
+ ab0:	00 97       	sbiw	r24, 0x00	; 0
+ ab2:	19 f0       	breq	.+6      	; 0xaba <spi_master+0x1e>
+ ab4:	01 97       	sbiw	r24, 0x01	; 1
+ ab6:	d1 f1       	breq	.+116    	; 0xb2c <spi_master+0x90>
+ ab8:	44 c0       	rjmp	.+136    	; 0xb42 <spi_master+0xa6>
 	{
 		case wait:
 			counter = 0; // Counts the number of bits set to 1
- 872:	10 92 0c 01 	sts	0x010C, r1	; 0x80010c <counter>
+ aba:	10 92 0b 01 	sts	0x010B, r1	; 0x80010b <counter>
 			for(int i = 0; i < 7; i++)
- 876:	1a 82       	std	Y+2, r1	; 0x02
- 878:	19 82       	std	Y+1, r1	; 0x01
- 87a:	1b c0       	rjmp	.+54     	; 0x8b2 <spi_master+0x5e>
+ abe:	1a 82       	std	Y+2, r1	; 0x02
+ ac0:	19 82       	std	Y+1, r1	; 0x01
+ ac2:	1b c0       	rjmp	.+54     	; 0xafa <spi_master+0x5e>
 			{
 				temp = (droneSignal >> i) &  0x01; // Right shift by i and clear unwanted bits
- 87c:	80 91 0d 01 	lds	r24, 0x010D	; 0x80010d <droneSignal>
- 880:	88 2f       	mov	r24, r24
- 882:	90 e0       	ldi	r25, 0x00	; 0
- 884:	09 80       	ldd	r0, Y+1	; 0x01
- 886:	02 c0       	rjmp	.+4      	; 0x88c <spi_master+0x38>
- 888:	95 95       	asr	r25
- 88a:	87 95       	ror	r24
- 88c:	0a 94       	dec	r0
- 88e:	e2 f7       	brpl	.-8      	; 0x888 <spi_master+0x34>
- 890:	81 70       	andi	r24, 0x01	; 1
- 892:	80 93 34 01 	sts	0x0134, r24	; 0x800134 <temp>
+ ac4:	80 91 0c 01 	lds	r24, 0x010C	; 0x80010c <droneSignal>
+ ac8:	88 2f       	mov	r24, r24
+ aca:	90 e0       	ldi	r25, 0x00	; 0
+ acc:	09 80       	ldd	r0, Y+1	; 0x01
+ ace:	02 c0       	rjmp	.+4      	; 0xad4 <spi_master+0x38>
+ ad0:	95 95       	asr	r25
+ ad2:	87 95       	ror	r24
+ ad4:	0a 94       	dec	r0
+ ad6:	e2 f7       	brpl	.-8      	; 0xad0 <spi_master+0x34>
+ ad8:	81 70       	andi	r24, 0x01	; 1
+ ada:	80 93 36 01 	sts	0x0136, r24	; 0x800136 <temp>
 				if(temp == 0x01){ counter++;} // If the bit we are checking is set to 1, update the counter
- 896:	80 91 34 01 	lds	r24, 0x0134	; 0x800134 <temp>
- 89a:	81 30       	cpi	r24, 0x01	; 1
- 89c:	29 f4       	brne	.+10     	; 0x8a8 <spi_master+0x54>
- 89e:	80 91 0c 01 	lds	r24, 0x010C	; 0x80010c <counter>
- 8a2:	8f 5f       	subi	r24, 0xFF	; 255
- 8a4:	80 93 0c 01 	sts	0x010C, r24	; 0x80010c <counter>
+ ade:	80 91 36 01 	lds	r24, 0x0136	; 0x800136 <temp>
+ ae2:	81 30       	cpi	r24, 0x01	; 1
+ ae4:	29 f4       	brne	.+10     	; 0xaf0 <spi_master+0x54>
+ ae6:	80 91 0b 01 	lds	r24, 0x010B	; 0x80010b <counter>
+ aea:	8f 5f       	subi	r24, 0xFF	; 255
+ aec:	80 93 0b 01 	sts	0x010B, r24	; 0x80010b <counter>
 {
-	switch(uart_state)
+	switch(spi_state)
 	{
 		case wait:
 			counter = 0; // Counts the number of bits set to 1
 			for(int i = 0; i < 7; i++)
- 8a8:	89 81       	ldd	r24, Y+1	; 0x01
- 8aa:	9a 81       	ldd	r25, Y+2	; 0x02
- 8ac:	01 96       	adiw	r24, 0x01	; 1
- 8ae:	9a 83       	std	Y+2, r25	; 0x02
- 8b0:	89 83       	std	Y+1, r24	; 0x01
- 8b2:	89 81       	ldd	r24, Y+1	; 0x01
- 8b4:	9a 81       	ldd	r25, Y+2	; 0x02
- 8b6:	07 97       	sbiw	r24, 0x07	; 7
- 8b8:	0c f3       	brlt	.-62     	; 0x87c <spi_master+0x28>
+ af0:	89 81       	ldd	r24, Y+1	; 0x01
+ af2:	9a 81       	ldd	r25, Y+2	; 0x02
+ af4:	01 96       	adiw	r24, 0x01	; 1
+ af6:	9a 83       	std	Y+2, r25	; 0x02
+ af8:	89 83       	std	Y+1, r24	; 0x01
+ afa:	89 81       	ldd	r24, Y+1	; 0x01
+ afc:	9a 81       	ldd	r25, Y+2	; 0x02
+ afe:	07 97       	sbiw	r24, 0x07	; 7
+ b00:	0c f3       	brlt	.-62     	; 0xac4 <spi_master+0x28>
 			{
 				temp = (droneSignal >> i) &  0x01; // Right shift by i and clear unwanted bits
 				if(temp == 0x01){ counter++;} // If the bit we are checking is set to 1, update the counter
 			}
 			if((counter % 2) == 0) // Checks whether or not we have an even number of bits
- 8ba:	80 91 0c 01 	lds	r24, 0x010C	; 0x80010c <counter>
- 8be:	81 70       	andi	r24, 0x01	; 1
- 8c0:	88 23       	and	r24, r24
- 8c2:	31 f4       	brne	.+12     	; 0x8d0 <spi_master+0x7c>
+ b02:	80 91 0b 01 	lds	r24, 0x010B	; 0x80010b <counter>
+ b06:	81 70       	andi	r24, 0x01	; 1
+ b08:	88 23       	and	r24, r24
+ b0a:	31 f4       	brne	.+12     	; 0xb18 <spi_master+0x7c>
 			{
 				droneSignal = droneSignal & 0x7F; // Set parity bit to 0 for even number of 1s
- 8c4:	80 91 0d 01 	lds	r24, 0x010D	; 0x80010d <droneSignal>
- 8c8:	8f 77       	andi	r24, 0x7F	; 127
- 8ca:	80 93 0d 01 	sts	0x010D, r24	; 0x80010d <droneSignal>
- 8ce:	05 c0       	rjmp	.+10     	; 0x8da <spi_master+0x86>
+ b0c:	80 91 0c 01 	lds	r24, 0x010C	; 0x80010c <droneSignal>
+ b10:	8f 77       	andi	r24, 0x7F	; 127
+ b12:	80 93 0c 01 	sts	0x010C, r24	; 0x80010c <droneSignal>
+ b16:	05 c0       	rjmp	.+10     	; 0xb22 <spi_master+0x86>
 			}
 			else
 			{
 				droneSignal = droneSignal | 0x80; // Set parity bit to 1 for odd number of 1s
- 8d0:	80 91 0d 01 	lds	r24, 0x010D	; 0x80010d <droneSignal>
- 8d4:	80 68       	ori	r24, 0x80	; 128
- 8d6:	80 93 0d 01 	sts	0x010D, r24	; 0x80010d <droneSignal>
+ b18:	80 91 0c 01 	lds	r24, 0x010C	; 0x80010c <droneSignal>
+ b1c:	80 68       	ori	r24, 0x80	; 128
+ b1e:	80 93 0c 01 	sts	0x010C, r24	; 0x80010c <droneSignal>
 			}
-			uart_state = send;
- 8da:	81 e0       	ldi	r24, 0x01	; 1
- 8dc:	90 e0       	ldi	r25, 0x00	; 0
- 8de:	9c 83       	std	Y+4, r25	; 0x04
- 8e0:	8b 83       	std	Y+3, r24	; 0x03
+			spi_state = send;
+ b22:	81 e0       	ldi	r24, 0x01	; 1
+ b24:	90 e0       	ldi	r25, 0x00	; 0
+ b26:	9c 83       	std	Y+4, r25	; 0x04
+ b28:	8b 83       	std	Y+3, r24	; 0x03
 			break;
- 8e2:	09 c0       	rjmp	.+18     	; 0x8f6 <spi_master+0xa2>
+ b2a:	0f c0       	rjmp	.+30     	; 0xb4a <spi_master+0xae>
 		case send:
-			SPI_MasterTransmit(droneSignal); // Transmit droneSignal over RF using SPI protocol
- 8e4:	80 91 0d 01 	lds	r24, 0x010D	; 0x80010d <droneSignal>
- 8e8:	d3 dd       	rcall	.-1114   	; 0x490 <SPI_MasterTransmit>
-			uart_state = wait;
- 8ea:	1c 82       	std	Y+4, r1	; 0x04
- 8ec:	1b 82       	std	Y+3, r1	; 0x03
+			payload[0] = droneSignal; // Update payload with the droneSignal
+ b2c:	80 91 0c 01 	lds	r24, 0x010C	; 0x80010c <droneSignal>
+ b30:	80 93 0d 01 	sts	0x010D, r24	; 0x80010d <payload>
+			Radio_TxTransmit(payload, 1); // 1 specifies the number of bytes to transmit. 32 is max
+ b34:	61 e0       	ldi	r22, 0x01	; 1
+ b36:	8d e0       	ldi	r24, 0x0D	; 13
+ b38:	91 e0       	ldi	r25, 0x01	; 1
+ b3a:	14 de       	rcall	.-984    	; 0x764 <Radio_TxTransmit>
+			spi_state = wait;
+ b3c:	1c 82       	std	Y+4, r1	; 0x04
+ b3e:	1b 82       	std	Y+3, r1	; 0x03
 			break;
- 8ee:	03 c0       	rjmp	.+6      	; 0x8f6 <spi_master+0xa2>
 		default:
-			uart_state = wait;
- 8f0:	1c 82       	std	Y+4, r1	; 0x04
- 8f2:	1b 82       	std	Y+3, r1	; 0x03
+			Radio_TxInit();
+ b40:	04 c0       	rjmp	.+8      	; 0xb4a <spi_master+0xae>
+ b42:	a9 dd       	rcall	.-1198   	; 0x696 <Radio_TxInit>
+			spi_state = wait;
+ b44:	1c 82       	std	Y+4, r1	; 0x04
+ b46:	1b 82       	std	Y+3, r1	; 0x03
 			break;
- 8f4:	00 00       	nop
+ b48:	00 00       	nop
 	}
-	return uart_state;
- 8f6:	8b 81       	ldd	r24, Y+3	; 0x03
- 8f8:	9c 81       	ldd	r25, Y+4	; 0x04
+	return spi_state;
+ b4a:	8b 81       	ldd	r24, Y+3	; 0x03
+ b4c:	9c 81       	ldd	r25, Y+4	; 0x04
 }
- 8fa:	0f 90       	pop	r0
- 8fc:	0f 90       	pop	r0
- 8fe:	0f 90       	pop	r0
- 900:	0f 90       	pop	r0
- 902:	df 91       	pop	r29
- 904:	cf 91       	pop	r28
- 906:	08 95       	ret
+ b4e:	0f 90       	pop	r0
+ b50:	0f 90       	pop	r0
+ b52:	0f 90       	pop	r0
+ b54:	0f 90       	pop	r0
+ b56:	df 91       	pop	r29
+ b58:	cf 91       	pop	r28
+ b5a:	08 95       	ret
 
-00000908 <main>:
+00000b5c <main>:
 
 
 int main(void)
 {
- 908:	cf 93       	push	r28
- 90a:	df 93       	push	r29
- 90c:	1f 92       	push	r1
- 90e:	cd b7       	in	r28, 0x3d	; 61
- 910:	de b7       	in	r29, 0x3e	; 62
+ b5c:	cf 93       	push	r28
+ b5e:	df 93       	push	r29
+ b60:	1f 92       	push	r1
+ b62:	cd b7       	in	r28, 0x3d	; 61
+ b64:	de b7       	in	r29, 0x3e	; 62
 	DDRA = 0x00; PORTA = 0xFF; // Input from ADC
- 912:	81 e2       	ldi	r24, 0x21	; 33
- 914:	90 e0       	ldi	r25, 0x00	; 0
- 916:	fc 01       	movw	r30, r24
- 918:	10 82       	st	Z, r1
- 91a:	82 e2       	ldi	r24, 0x22	; 34
- 91c:	90 e0       	ldi	r25, 0x00	; 0
- 91e:	2f ef       	ldi	r18, 0xFF	; 255
- 920:	fc 01       	movw	r30, r24
- 922:	20 83       	st	Z, r18
+ b66:	81 e2       	ldi	r24, 0x21	; 33
+ b68:	90 e0       	ldi	r25, 0x00	; 0
+ b6a:	fc 01       	movw	r30, r24
+ b6c:	10 82       	st	Z, r1
+ b6e:	82 e2       	ldi	r24, 0x22	; 34
+ b70:	90 e0       	ldi	r25, 0x00	; 0
+ b72:	2f ef       	ldi	r18, 0xFF	; 255
+ b74:	fc 01       	movw	r30, r24
+ b76:	20 83       	st	Z, r18
 	DDRC = 0x00; PORTC = 0xFF; // Input from buttons
- 924:	87 e2       	ldi	r24, 0x27	; 39
- 926:	90 e0       	ldi	r25, 0x00	; 0
- 928:	fc 01       	movw	r30, r24
- 92a:	10 82       	st	Z, r1
- 92c:	88 e2       	ldi	r24, 0x28	; 40
- 92e:	90 e0       	ldi	r25, 0x00	; 0
- 930:	2f ef       	ldi	r18, 0xFF	; 255
- 932:	fc 01       	movw	r30, r24
- 934:	20 83       	st	Z, r18
+ b78:	87 e2       	ldi	r24, 0x27	; 39
+ b7a:	90 e0       	ldi	r25, 0x00	; 0
+ b7c:	fc 01       	movw	r30, r24
+ b7e:	10 82       	st	Z, r1
+ b80:	88 e2       	ldi	r24, 0x28	; 40
+ b82:	90 e0       	ldi	r25, 0x00	; 0
+ b84:	2f ef       	ldi	r18, 0xFF	; 255
+ b86:	fc 01       	movw	r30, r24
+ b88:	20 83       	st	Z, r18
 	// DDRD = 0xFF; PORTD = 0x00; // Output for testing
 	// Output from RF transmitter will be sent from MOSI do not initialize DDRB 
 
 	A2D_init();
- 936:	2b de       	rcall	.-938    	; 0x58e <A2D_init>
-	SPI_MasterInit();
- 938:	88 dd       	rcall	.-1264   	; 0x44a <SPI_MasterInit>
- 93a:	61 e0       	ldi	r22, 0x01	; 1
+ b8a:	25 de       	rcall	.-950    	; 0x7d6 <A2D_init>
+	//SPI_MasterInit();
 	TimerSet(timerPeriod);
- 93c:	70 e0       	ldi	r23, 0x00	; 0
- 93e:	80 e0       	ldi	r24, 0x00	; 0
- 940:	90 e0       	ldi	r25, 0x00	; 0
- 942:	1e dd       	rcall	.-1476   	; 0x380 <TimerSet>
+ b8c:	61 e0       	ldi	r22, 0x01	; 1
+ b8e:	70 e0       	ldi	r23, 0x00	; 0
+ b90:	80 e0       	ldi	r24, 0x00	; 0
+ b92:	90 e0       	ldi	r25, 0x00	; 0
 	TimerOn();
- 944:	4b dd       	rcall	.-1386   	; 0x3dc <TimerOn>
- 946:	19 82       	std	Y+1, r1	; 0x01
+ b94:	f5 db       	rcall	.-2070   	; 0x380 <TimerSet>
+ b96:	22 dc       	rcall	.-1980   	; 0x3dc <TimerOn>
 
 	unsigned char i = 0;
- 948:	89 81       	ldd	r24, Y+1	; 0x01
+ b98:	19 82       	std	Y+1, r1	; 0x01
 	tasks[i].state = -1;
- 94a:	28 2f       	mov	r18, r24
- 94c:	30 e0       	ldi	r19, 0x00	; 0
- 94e:	4b e0       	ldi	r20, 0x0B	; 11
- 950:	42 9f       	mul	r20, r18
- 952:	c0 01       	movw	r24, r0
- 954:	43 9f       	mul	r20, r19
- 956:	90 0d       	add	r25, r0
- 958:	11 24       	eor	r1, r1
- 95a:	8d 5e       	subi	r24, 0xED	; 237
- 95c:	9e 4f       	sbci	r25, 0xFE	; 254
- 95e:	2f ef       	ldi	r18, 0xFF	; 255
- 960:	fc 01       	movw	r30, r24
- 962:	20 83       	st	Z, r18
- 964:	89 81       	ldd	r24, Y+1	; 0x01
+ b9a:	89 81       	ldd	r24, Y+1	; 0x01
+ b9c:	28 2f       	mov	r18, r24
+ b9e:	30 e0       	ldi	r19, 0x00	; 0
+ ba0:	4b e0       	ldi	r20, 0x0B	; 11
+ ba2:	42 9f       	mul	r20, r18
+ ba4:	c0 01       	movw	r24, r0
+ ba6:	43 9f       	mul	r20, r19
+ ba8:	90 0d       	add	r25, r0
+ baa:	11 24       	eor	r1, r1
+ bac:	8d 5e       	subi	r24, 0xED	; 237
+ bae:	9e 4f       	sbci	r25, 0xFE	; 254
+ bb0:	2f ef       	ldi	r18, 0xFF	; 255
+ bb2:	fc 01       	movw	r30, r24
+ bb4:	20 83       	st	Z, r18
 	tasks[i].period = 50;
- 966:	28 2f       	mov	r18, r24
- 968:	30 e0       	ldi	r19, 0x00	; 0
- 96a:	4b e0       	ldi	r20, 0x0B	; 11
- 96c:	42 9f       	mul	r20, r18
- 96e:	c0 01       	movw	r24, r0
- 970:	43 9f       	mul	r20, r19
- 972:	90 0d       	add	r25, r0
- 974:	11 24       	eor	r1, r1
- 976:	9c 01       	movw	r18, r24
- 978:	2c 5e       	subi	r18, 0xEC	; 236
- 97a:	3e 4f       	sbci	r19, 0xFE	; 254
- 97c:	82 e3       	ldi	r24, 0x32	; 50
- 97e:	90 e0       	ldi	r25, 0x00	; 0
- 980:	a0 e0       	ldi	r26, 0x00	; 0
- 982:	b0 e0       	ldi	r27, 0x00	; 0
- 984:	f9 01       	movw	r30, r18
- 986:	80 83       	st	Z, r24
- 988:	91 83       	std	Z+1, r25	; 0x01
- 98a:	a2 83       	std	Z+2, r26	; 0x02
- 98c:	b3 83       	std	Z+3, r27	; 0x03
- 98e:	89 81       	ldd	r24, Y+1	; 0x01
+ bb6:	89 81       	ldd	r24, Y+1	; 0x01
+ bb8:	28 2f       	mov	r18, r24
+ bba:	30 e0       	ldi	r19, 0x00	; 0
+ bbc:	4b e0       	ldi	r20, 0x0B	; 11
+ bbe:	42 9f       	mul	r20, r18
+ bc0:	c0 01       	movw	r24, r0
+ bc2:	43 9f       	mul	r20, r19
+ bc4:	90 0d       	add	r25, r0
+ bc6:	11 24       	eor	r1, r1
+ bc8:	9c 01       	movw	r18, r24
+ bca:	2c 5e       	subi	r18, 0xEC	; 236
+ bcc:	3e 4f       	sbci	r19, 0xFE	; 254
+ bce:	82 e3       	ldi	r24, 0x32	; 50
+ bd0:	90 e0       	ldi	r25, 0x00	; 0
+ bd2:	a0 e0       	ldi	r26, 0x00	; 0
+ bd4:	b0 e0       	ldi	r27, 0x00	; 0
+ bd6:	f9 01       	movw	r30, r18
+ bd8:	80 83       	st	Z, r24
+ bda:	91 83       	std	Z+1, r25	; 0x01
+ bdc:	a2 83       	std	Z+2, r26	; 0x02
+ bde:	b3 83       	std	Z+3, r27	; 0x03
 	tasks[i].elapsedTime = 0;
- 990:	28 2f       	mov	r18, r24
- 992:	30 e0       	ldi	r19, 0x00	; 0
- 994:	4b e0       	ldi	r20, 0x0B	; 11
- 996:	42 9f       	mul	r20, r18
- 998:	c0 01       	movw	r24, r0
- 99a:	43 9f       	mul	r20, r19
- 99c:	90 0d       	add	r25, r0
- 99e:	11 24       	eor	r1, r1
- 9a0:	88 5e       	subi	r24, 0xE8	; 232
- 9a2:	9e 4f       	sbci	r25, 0xFE	; 254
- 9a4:	fc 01       	movw	r30, r24
- 9a6:	10 82       	st	Z, r1
- 9a8:	11 82       	std	Z+1, r1	; 0x01
- 9aa:	12 82       	std	Z+2, r1	; 0x02
- 9ac:	13 82       	std	Z+3, r1	; 0x03
- 9ae:	89 81       	ldd	r24, Y+1	; 0x01
+ be0:	89 81       	ldd	r24, Y+1	; 0x01
+ be2:	28 2f       	mov	r18, r24
+ be4:	30 e0       	ldi	r19, 0x00	; 0
+ be6:	4b e0       	ldi	r20, 0x0B	; 11
+ be8:	42 9f       	mul	r20, r18
+ bea:	c0 01       	movw	r24, r0
+ bec:	43 9f       	mul	r20, r19
+ bee:	90 0d       	add	r25, r0
+ bf0:	11 24       	eor	r1, r1
+ bf2:	88 5e       	subi	r24, 0xE8	; 232
+ bf4:	9e 4f       	sbci	r25, 0xFE	; 254
+ bf6:	fc 01       	movw	r30, r24
+ bf8:	10 82       	st	Z, r1
+ bfa:	11 82       	std	Z+1, r1	; 0x01
+ bfc:	12 82       	std	Z+2, r1	; 0x02
+ bfe:	13 82       	std	Z+3, r1	; 0x03
 	tasks[i].TickFct = &TickFct_movement;
- 9b0:	28 2f       	mov	r18, r24
- 9b2:	30 e0       	ldi	r19, 0x00	; 0
- 9b4:	4b e0       	ldi	r20, 0x0B	; 11
- 9b6:	42 9f       	mul	r20, r18
- 9b8:	c0 01       	movw	r24, r0
- 9ba:	43 9f       	mul	r20, r19
- 9bc:	90 0d       	add	r25, r0
- 9be:	11 24       	eor	r1, r1
- 9c0:	84 5e       	subi	r24, 0xE4	; 228
- 9c2:	9e 4f       	sbci	r25, 0xFE	; 254
- 9c4:	24 ef       	ldi	r18, 0xF4	; 244
- 9c6:	32 e0       	ldi	r19, 0x02	; 2
- 9c8:	fc 01       	movw	r30, r24
- 9ca:	31 83       	std	Z+1, r19	; 0x01
- 9cc:	20 83       	st	Z, r18
- 9ce:	89 81       	ldd	r24, Y+1	; 0x01
+ c00:	89 81       	ldd	r24, Y+1	; 0x01
+ c02:	28 2f       	mov	r18, r24
+ c04:	30 e0       	ldi	r19, 0x00	; 0
+ c06:	4b e0       	ldi	r20, 0x0B	; 11
+ c08:	42 9f       	mul	r20, r18
+ c0a:	c0 01       	movw	r24, r0
+ c0c:	43 9f       	mul	r20, r19
+ c0e:	90 0d       	add	r25, r0
+ c10:	11 24       	eor	r1, r1
+ c12:	84 5e       	subi	r24, 0xE4	; 228
+ c14:	9e 4f       	sbci	r25, 0xFE	; 254
+ c16:	28 e1       	ldi	r18, 0x18	; 24
+ c18:	34 e0       	ldi	r19, 0x04	; 4
+ c1a:	fc 01       	movw	r30, r24
+ c1c:	31 83       	std	Z+1, r19	; 0x01
+ c1e:	20 83       	st	Z, r18
 	i++;
- 9d0:	8f 5f       	subi	r24, 0xFF	; 255
- 9d2:	89 83       	std	Y+1, r24	; 0x01
- 9d4:	89 81       	ldd	r24, Y+1	; 0x01
+ c20:	89 81       	ldd	r24, Y+1	; 0x01
+ c22:	8f 5f       	subi	r24, 0xFF	; 255
+ c24:	89 83       	std	Y+1, r24	; 0x01
  	tasks[i].state = -1;
- 9d6:	28 2f       	mov	r18, r24
- 9d8:	30 e0       	ldi	r19, 0x00	; 0
- 9da:	4b e0       	ldi	r20, 0x0B	; 11
- 9dc:	42 9f       	mul	r20, r18
- 9de:	c0 01       	movw	r24, r0
- 9e0:	43 9f       	mul	r20, r19
- 9e2:	90 0d       	add	r25, r0
- 9e4:	11 24       	eor	r1, r1
- 9e6:	8d 5e       	subi	r24, 0xED	; 237
- 9e8:	9e 4f       	sbci	r25, 0xFE	; 254
- 9ea:	2f ef       	ldi	r18, 0xFF	; 255
- 9ec:	fc 01       	movw	r30, r24
- 9ee:	20 83       	st	Z, r18
- 9f0:	89 81       	ldd	r24, Y+1	; 0x01
+ c26:	89 81       	ldd	r24, Y+1	; 0x01
+ c28:	28 2f       	mov	r18, r24
+ c2a:	30 e0       	ldi	r19, 0x00	; 0
+ c2c:	4b e0       	ldi	r20, 0x0B	; 11
+ c2e:	42 9f       	mul	r20, r18
+ c30:	c0 01       	movw	r24, r0
+ c32:	43 9f       	mul	r20, r19
+ c34:	90 0d       	add	r25, r0
+ c36:	11 24       	eor	r1, r1
+ c38:	8d 5e       	subi	r24, 0xED	; 237
+ c3a:	9e 4f       	sbci	r25, 0xFE	; 254
+ c3c:	2f ef       	ldi	r18, 0xFF	; 255
+ c3e:	fc 01       	movw	r30, r24
+ c40:	20 83       	st	Z, r18
  	tasks[i].period = 50;
- 9f2:	28 2f       	mov	r18, r24
- 9f4:	30 e0       	ldi	r19, 0x00	; 0
- 9f6:	4b e0       	ldi	r20, 0x0B	; 11
- 9f8:	42 9f       	mul	r20, r18
- 9fa:	c0 01       	movw	r24, r0
- 9fc:	43 9f       	mul	r20, r19
- 9fe:	90 0d       	add	r25, r0
- a00:	11 24       	eor	r1, r1
- a02:	9c 01       	movw	r18, r24
- a04:	2c 5e       	subi	r18, 0xEC	; 236
- a06:	3e 4f       	sbci	r19, 0xFE	; 254
- a08:	82 e3       	ldi	r24, 0x32	; 50
- a0a:	90 e0       	ldi	r25, 0x00	; 0
- a0c:	a0 e0       	ldi	r26, 0x00	; 0
- a0e:	b0 e0       	ldi	r27, 0x00	; 0
- a10:	f9 01       	movw	r30, r18
- a12:	80 83       	st	Z, r24
- a14:	91 83       	std	Z+1, r25	; 0x01
- a16:	a2 83       	std	Z+2, r26	; 0x02
- a18:	b3 83       	std	Z+3, r27	; 0x03
- a1a:	89 81       	ldd	r24, Y+1	; 0x01
+ c42:	89 81       	ldd	r24, Y+1	; 0x01
+ c44:	28 2f       	mov	r18, r24
+ c46:	30 e0       	ldi	r19, 0x00	; 0
+ c48:	4b e0       	ldi	r20, 0x0B	; 11
+ c4a:	42 9f       	mul	r20, r18
+ c4c:	c0 01       	movw	r24, r0
+ c4e:	43 9f       	mul	r20, r19
+ c50:	90 0d       	add	r25, r0
+ c52:	11 24       	eor	r1, r1
+ c54:	9c 01       	movw	r18, r24
+ c56:	2c 5e       	subi	r18, 0xEC	; 236
+ c58:	3e 4f       	sbci	r19, 0xFE	; 254
+ c5a:	82 e3       	ldi	r24, 0x32	; 50
+ c5c:	90 e0       	ldi	r25, 0x00	; 0
+ c5e:	a0 e0       	ldi	r26, 0x00	; 0
+ c60:	b0 e0       	ldi	r27, 0x00	; 0
+ c62:	f9 01       	movw	r30, r18
+ c64:	80 83       	st	Z, r24
+ c66:	91 83       	std	Z+1, r25	; 0x01
+ c68:	a2 83       	std	Z+2, r26	; 0x02
+ c6a:	b3 83       	std	Z+3, r27	; 0x03
  	tasks[i].elapsedTime = 0;
- a1c:	28 2f       	mov	r18, r24
- a1e:	30 e0       	ldi	r19, 0x00	; 0
- a20:	4b e0       	ldi	r20, 0x0B	; 11
- a22:	42 9f       	mul	r20, r18
- a24:	c0 01       	movw	r24, r0
- a26:	43 9f       	mul	r20, r19
- a28:	90 0d       	add	r25, r0
- a2a:	11 24       	eor	r1, r1
- a2c:	88 5e       	subi	r24, 0xE8	; 232
- a2e:	9e 4f       	sbci	r25, 0xFE	; 254
- a30:	fc 01       	movw	r30, r24
- a32:	10 82       	st	Z, r1
- a34:	11 82       	std	Z+1, r1	; 0x01
- a36:	12 82       	std	Z+2, r1	; 0x02
- a38:	13 82       	std	Z+3, r1	; 0x03
- a3a:	89 81       	ldd	r24, Y+1	; 0x01
+ c6c:	89 81       	ldd	r24, Y+1	; 0x01
+ c6e:	28 2f       	mov	r18, r24
+ c70:	30 e0       	ldi	r19, 0x00	; 0
+ c72:	4b e0       	ldi	r20, 0x0B	; 11
+ c74:	42 9f       	mul	r20, r18
+ c76:	c0 01       	movw	r24, r0
+ c78:	43 9f       	mul	r20, r19
+ c7a:	90 0d       	add	r25, r0
+ c7c:	11 24       	eor	r1, r1
+ c7e:	88 5e       	subi	r24, 0xE8	; 232
+ c80:	9e 4f       	sbci	r25, 0xFE	; 254
+ c82:	fc 01       	movw	r30, r24
+ c84:	10 82       	st	Z, r1
+ c86:	11 82       	std	Z+1, r1	; 0x01
+ c88:	12 82       	std	Z+2, r1	; 0x02
+ c8a:	13 82       	std	Z+3, r1	; 0x03
  	tasks[i].TickFct = &TickFct_button;
- a3c:	28 2f       	mov	r18, r24
- a3e:	30 e0       	ldi	r19, 0x00	; 0
- a40:	4b e0       	ldi	r20, 0x0B	; 11
- a42:	42 9f       	mul	r20, r18
- a44:	c0 01       	movw	r24, r0
- a46:	43 9f       	mul	r20, r19
- a48:	90 0d       	add	r25, r0
- a4a:	11 24       	eor	r1, r1
- a4c:	84 5e       	subi	r24, 0xE4	; 228
- a4e:	9e 4f       	sbci	r25, 0xFE	; 254
- a50:	22 ed       	ldi	r18, 0xD2	; 210
- a52:	33 e0       	ldi	r19, 0x03	; 3
- a54:	fc 01       	movw	r30, r24
- a56:	31 83       	std	Z+1, r19	; 0x01
- a58:	20 83       	st	Z, r18
- a5a:	89 81       	ldd	r24, Y+1	; 0x01
+ c8c:	89 81       	ldd	r24, Y+1	; 0x01
+ c8e:	28 2f       	mov	r18, r24
+ c90:	30 e0       	ldi	r19, 0x00	; 0
+ c92:	4b e0       	ldi	r20, 0x0B	; 11
+ c94:	42 9f       	mul	r20, r18
+ c96:	c0 01       	movw	r24, r0
+ c98:	43 9f       	mul	r20, r19
+ c9a:	90 0d       	add	r25, r0
+ c9c:	11 24       	eor	r1, r1
+ c9e:	84 5e       	subi	r24, 0xE4	; 228
+ ca0:	9e 4f       	sbci	r25, 0xFE	; 254
+ ca2:	26 ef       	ldi	r18, 0xF6	; 246
+ ca4:	34 e0       	ldi	r19, 0x04	; 4
+ ca6:	fc 01       	movw	r30, r24
+ ca8:	31 83       	std	Z+1, r19	; 0x01
+ caa:	20 83       	st	Z, r18
 	i++;
- a5c:	8f 5f       	subi	r24, 0xFF	; 255
- a5e:	89 83       	std	Y+1, r24	; 0x01
- a60:	89 81       	ldd	r24, Y+1	; 0x01
+ cac:	89 81       	ldd	r24, Y+1	; 0x01
+ cae:	8f 5f       	subi	r24, 0xFF	; 255
+ cb0:	89 83       	std	Y+1, r24	; 0x01
 	tasks[i].state = -1;
- a62:	28 2f       	mov	r18, r24
- a64:	30 e0       	ldi	r19, 0x00	; 0
- a66:	4b e0       	ldi	r20, 0x0B	; 11
- a68:	42 9f       	mul	r20, r18
- a6a:	c0 01       	movw	r24, r0
- a6c:	43 9f       	mul	r20, r19
- a6e:	90 0d       	add	r25, r0
- a70:	11 24       	eor	r1, r1
- a72:	8d 5e       	subi	r24, 0xED	; 237
- a74:	9e 4f       	sbci	r25, 0xFE	; 254
- a76:	2f ef       	ldi	r18, 0xFF	; 255
- a78:	fc 01       	movw	r30, r24
- a7a:	20 83       	st	Z, r18
- a7c:	89 81       	ldd	r24, Y+1	; 0x01
+ cb2:	89 81       	ldd	r24, Y+1	; 0x01
+ cb4:	28 2f       	mov	r18, r24
+ cb6:	30 e0       	ldi	r19, 0x00	; 0
+ cb8:	4b e0       	ldi	r20, 0x0B	; 11
+ cba:	42 9f       	mul	r20, r18
+ cbc:	c0 01       	movw	r24, r0
+ cbe:	43 9f       	mul	r20, r19
+ cc0:	90 0d       	add	r25, r0
+ cc2:	11 24       	eor	r1, r1
+ cc4:	8d 5e       	subi	r24, 0xED	; 237
+ cc6:	9e 4f       	sbci	r25, 0xFE	; 254
+ cc8:	2f ef       	ldi	r18, 0xFF	; 255
+ cca:	fc 01       	movw	r30, r24
+ ccc:	20 83       	st	Z, r18
 	tasks[i].period = 25;
- a7e:	28 2f       	mov	r18, r24
- a80:	30 e0       	ldi	r19, 0x00	; 0
- a82:	4b e0       	ldi	r20, 0x0B	; 11
- a84:	42 9f       	mul	r20, r18
- a86:	c0 01       	movw	r24, r0
- a88:	43 9f       	mul	r20, r19
- a8a:	90 0d       	add	r25, r0
- a8c:	11 24       	eor	r1, r1
- a8e:	9c 01       	movw	r18, r24
- a90:	2c 5e       	subi	r18, 0xEC	; 236
- a92:	3e 4f       	sbci	r19, 0xFE	; 254
- a94:	89 e1       	ldi	r24, 0x19	; 25
- a96:	90 e0       	ldi	r25, 0x00	; 0
- a98:	a0 e0       	ldi	r26, 0x00	; 0
- a9a:	b0 e0       	ldi	r27, 0x00	; 0
- a9c:	f9 01       	movw	r30, r18
- a9e:	80 83       	st	Z, r24
- aa0:	91 83       	std	Z+1, r25	; 0x01
- aa2:	a2 83       	std	Z+2, r26	; 0x02
- aa4:	b3 83       	std	Z+3, r27	; 0x03
- aa6:	89 81       	ldd	r24, Y+1	; 0x01
+ cce:	89 81       	ldd	r24, Y+1	; 0x01
+ cd0:	28 2f       	mov	r18, r24
+ cd2:	30 e0       	ldi	r19, 0x00	; 0
+ cd4:	4b e0       	ldi	r20, 0x0B	; 11
+ cd6:	42 9f       	mul	r20, r18
+ cd8:	c0 01       	movw	r24, r0
+ cda:	43 9f       	mul	r20, r19
+ cdc:	90 0d       	add	r25, r0
+ cde:	11 24       	eor	r1, r1
+ ce0:	9c 01       	movw	r18, r24
+ ce2:	2c 5e       	subi	r18, 0xEC	; 236
+ ce4:	3e 4f       	sbci	r19, 0xFE	; 254
+ ce6:	89 e1       	ldi	r24, 0x19	; 25
+ ce8:	90 e0       	ldi	r25, 0x00	; 0
+ cea:	a0 e0       	ldi	r26, 0x00	; 0
+ cec:	b0 e0       	ldi	r27, 0x00	; 0
+ cee:	f9 01       	movw	r30, r18
+ cf0:	80 83       	st	Z, r24
+ cf2:	91 83       	std	Z+1, r25	; 0x01
+ cf4:	a2 83       	std	Z+2, r26	; 0x02
+ cf6:	b3 83       	std	Z+3, r27	; 0x03
 	tasks[i].elapsedTime = 0;
- aa8:	28 2f       	mov	r18, r24
- aaa:	30 e0       	ldi	r19, 0x00	; 0
- aac:	4b e0       	ldi	r20, 0x0B	; 11
- aae:	42 9f       	mul	r20, r18
- ab0:	c0 01       	movw	r24, r0
- ab2:	43 9f       	mul	r20, r19
- ab4:	90 0d       	add	r25, r0
- ab6:	11 24       	eor	r1, r1
- ab8:	88 5e       	subi	r24, 0xE8	; 232
- aba:	9e 4f       	sbci	r25, 0xFE	; 254
- abc:	fc 01       	movw	r30, r24
- abe:	10 82       	st	Z, r1
- ac0:	11 82       	std	Z+1, r1	; 0x01
- ac2:	12 82       	std	Z+2, r1	; 0x02
- ac4:	13 82       	std	Z+3, r1	; 0x03
- ac6:	89 81       	ldd	r24, Y+1	; 0x01
+ cf8:	89 81       	ldd	r24, Y+1	; 0x01
+ cfa:	28 2f       	mov	r18, r24
+ cfc:	30 e0       	ldi	r19, 0x00	; 0
+ cfe:	4b e0       	ldi	r20, 0x0B	; 11
+ d00:	42 9f       	mul	r20, r18
+ d02:	c0 01       	movw	r24, r0
+ d04:	43 9f       	mul	r20, r19
+ d06:	90 0d       	add	r25, r0
+ d08:	11 24       	eor	r1, r1
+ d0a:	88 5e       	subi	r24, 0xE8	; 232
+ d0c:	9e 4f       	sbci	r25, 0xFE	; 254
+ d0e:	fc 01       	movw	r30, r24
+ d10:	10 82       	st	Z, r1
+ d12:	11 82       	std	Z+1, r1	; 0x01
+ d14:	12 82       	std	Z+2, r1	; 0x02
+ d16:	13 82       	std	Z+3, r1	; 0x03
 	tasks[i].TickFct = &spi_master;
- ac8:	28 2f       	mov	r18, r24
- aca:	30 e0       	ldi	r19, 0x00	; 0
- acc:	4b e0       	ldi	r20, 0x0B	; 11
- ace:	42 9f       	mul	r20, r18
- ad0:	c0 01       	movw	r24, r0
- ad2:	43 9f       	mul	r20, r19
- ad4:	90 0d       	add	r25, r0
- ad6:	11 24       	eor	r1, r1
- ad8:	84 5e       	subi	r24, 0xE4	; 228
- ada:	9e 4f       	sbci	r25, 0xFE	; 254
- adc:	2a e2       	ldi	r18, 0x2A	; 42
- ade:	34 e0       	ldi	r19, 0x04	; 4
- ae0:	fc 01       	movw	r30, r24
- ae2:	31 83       	std	Z+1, r19	; 0x01
- ae4:	20 83       	st	Z, r18
- ae6:	ff cf       	rjmp	.-2      	; 0xae6 <main+0x1de>
-
-00000ae8 <_exit>:
+ d18:	89 81       	ldd	r24, Y+1	; 0x01
+ d1a:	28 2f       	mov	r18, r24
+ d1c:	30 e0       	ldi	r19, 0x00	; 0
+ d1e:	4b e0       	ldi	r20, 0x0B	; 11
+ d20:	42 9f       	mul	r20, r18
+ d22:	c0 01       	movw	r24, r0
+ d24:	43 9f       	mul	r20, r19
+ d26:	90 0d       	add	r25, r0
+ d28:	11 24       	eor	r1, r1
+ d2a:	84 5e       	subi	r24, 0xE4	; 228
+ d2c:	9e 4f       	sbci	r25, 0xFE	; 254
+ d2e:	2e e4       	ldi	r18, 0x4E	; 78
+ d30:	35 e0       	ldi	r19, 0x05	; 5
+ d32:	fc 01       	movw	r30, r24
+ d34:	31 83       	std	Z+1, r19	; 0x01
+ d36:	20 83       	st	Z, r18
 
 	while (1)
 	{
 		//PORTD = droneSignal; // Test that we are generating the correct signal DELETE ONCE DONE
 	}
- ae8:	f8 94       	cli
+ d38:	ff cf       	rjmp	.-2      	; 0xd38 <main+0x1dc>
 
-00000aea <__stop_program>:
- aea:	ff cf       	rjmp	.-2      	; 0xaea <__stop_program>
+00000d3a <_exit>:
+ d3a:	f8 94       	cli
+
+00000d3c <__stop_program>:
+ d3c:	ff cf       	rjmp	.-2      	; 0xd3c <__stop_program>

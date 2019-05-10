@@ -15,10 +15,11 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include "scheduler.h"
-#include "spi.h"
+#include "nrf24l01.h"
 
 unsigned char temp, counter = 0x00; // SPI variables 
 
+unsigned char payload[1] = {0x00};
 unsigned char droneSignal = 0x00; // bits 0-1 are up/down, 2-4 are left/right/forward/reverse, 5 is button2, 6 is claw, 7 is parity bit
 unsigned char droneXY = 0; 
 unsigned char droneZ = 0;
@@ -28,72 +29,15 @@ unsigned char parity = 0;
 unsigned char column_val = 0x08; // Sets the pattern displayed on columns
 unsigned char column_sel = 0x10; // Grounds column to display pattern
 
-//Test code for SPI
-void transmit_data(unsigned char data) {
-	unsigned char i;
-	for (i = 0; i < 8 ; ++i) {
-		// Sets SRCLR to 1 allowing data to be set
-		// Also clears SRCLK in preparation of sending data
-		PORTC = 0x08;
-		// set SER = next bit of data to be sent.
-		PORTC |= ((data >> i) & 0x01);
-		// set SRCLK = 1. Rising edge shifts next bit of data into the shift register
-		PORTC |= 0x04;
-	}
-	// set RCLK = 1. Rising edge copies data from the “Shift” register to the “Storage” register
-	PORTC |= 0x02;
-	// clears all lines in preparation of a new transmission
-	PORTC = 0x00;
-}
-
-// enum uart_state{uart_start, receive, toggle};
-// int uart_tick(int state)
-// {
-// 	switch(state)
-// 	{
-// 		case uart_start:
-//  			tmpA = column_sel;
-//  			tmpB = ~column_val;
-// 			state = receive;
-// 			break;
-// 		case receive:
-// 			if(USART_HasReceived(1))
-// 			{
-// 				r_data = USART_Receive(1);
-// 			}
-// 			USART_Flush(1);
-// 			state = toggle;
-// 			break;
-// 		case toggle:
-// 			carValues = r_data;
-// 			carSpeed = (carValues & 0x03);  
-// 			carXAxis = ((carValues >> 2) & 0x03);
-// 			carYAxis = ((carValues >> 4) & 0x01);
-// 			if(carSpeed == 0x01) { tasks[1].period = 300;}
-// 			else if(carSpeed == 0x02) { tasks[1].period = 150;}
-// 			else if(carSpeed == 0x03) { tasks[1].period = 50;}
-// 			state = receive;
-// 			break;
-// 		default:
-// 			state = uart_start;
-// 			break;
-// 	}
-// 	return state;
-// }
-
 // SPI
-enum spi_states {wait, receive} spi_state;
+enum spi_states {receive, noSignal} spi_state;
+
+unsigned char droppedPackets;
 
 int spi_servant(int spi_state)
 {
 	switch(spi_state)
 	{
-		case wait:
-			droneZ = receivedData & 0x03;
-			droneXY = (receivedData >> 2) & 0x07;
-			b1 = (receivedData >> 6) & 0x01;
-			b2 = (receivedData >> 5) & 0x01;
-			parity = (receivedData >> 7) & 0x01;
 // 			counter = 0; // Counts the number of bits set to 1
 // 			for(int i = 0; i < 6; i++)
 // 			{
@@ -108,13 +52,61 @@ int spi_servant(int spi_state)
 // 			{
 // 				droneSignal = droneSignal | 0x80; // Set parity bit to 1 for odd number of 1s
 // 			}
+		case receive:
+			if(Radio_RxReady())
+			{
+				droppedPackets = 0;
+				Radio_RxRead(payload, 1);
+				droneSignal = payload[0];
+				
+				droneZ = droneSignal & 0x03;
+				droneXY = (droneSignal >> 2) & 0x07;
+				b1 = (droneSignal >> 6) & 0x01;
+				b2 = (droneSignal >> 5) & 0x01;
+				parity = (droneSignal >> 7) & 0x01;
+			}
+			else
+			{
+				droppedPackets++;
+				if(droppedPackets == 40)
+				{
+					droneSignal = 0x40; // Drone will hover, but claw will be closed incase it has a package
+					droppedPackets = 0;
+					spi_state = noSignal;
+					break;
+				}	
+			}
 			spi_state = receive;
 			break;
-		case receive:
-			transmit_data(receivedData); // Receive droneSignal over RF using SPI protocol
-			spi_state = wait;
+		case noSignal:
+			if(Radio_RxReady())
+			{
+				droppedPackets = 0;
+				Radio_RxRead(payload, 1);
+				droneSignal = payload[0];
+				
+				droneZ = droneSignal & 0x03;
+				droneXY = (droneSignal >> 2) & 0x07;
+				b1 = (droneSignal >> 6) & 0x01;
+				b2 = (droneSignal >> 5) & 0x01;
+				parity = (droneSignal >> 7) & 0x01;
+				spi_state = receive;
+				break;
+			}
+			else
+			{
+				droppedPackets++;
+				if(droppedPackets == 40)
+				{
+					Radio_RxReset();
+					droppedPackets = 0;
+				}
+			}
+			spi_state = noSignal;
 			break;
 		default:
+			droppedPackets = 0;
+			Radio_RxInit();
 			spi_state = receive;
 			break;
 	}
@@ -186,8 +178,6 @@ int main(void)
 	
 	TimerSet(timerPeriod);
 	TimerOn();
-	
-	SPI_ServantInit();
 	
 	unsigned char i = 0;
 	tasks[i].state = -1;

@@ -11,6 +11,8 @@ Allocating common symbols
 Common symbol       size              file
 
 tasks               0x21              main.o
+recievedPackets     0x1               main.o
+droppedPackets      0x1               main.o
 temp                0x1               main.o
 movement_state      0x1               main.o
 spi_state           0x1               main.o
@@ -23,13 +25,20 @@ Discarded input sections
  .text          0x00000000        0x0 main.o
  .data          0x00000000        0x0 main.o
  .bss           0x00000000        0x0 main.o
- .text.SPI_MasterInit
-                0x00000000       0x46 main.o
  .text.SPI_MasterTransmit
-                0x00000000       0x66 main.o
+                0x00000000       0xe4 main.o
+ .text.writePayloadTx
+                0x00000000       0xa6 main.o
+ .text.writePayloadTxNoack
+                0x00000000       0xa6 main.o
+ .text.flushTx  0x00000000       0x5a main.o
+ .text.Radio_TxInit
+                0x00000000       0xe2 main.o
+ .text.Radio_TxTransmit
+                0x00000000       0x2a main.o
+ .text.radioTick
+                0x00000000       0xfe main.o
  .bss.counter   0x00000000        0x1 main.o
- .bss.droneSignal
-                0x00000000        0x1 main.o
  .text          0x00000000        0x0 d:/applications/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_exit.o)
  .data          0x00000000        0x0 d:/applications/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_exit.o)
  .bss           0x00000000        0x0 d:/applications/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_exit.o)
@@ -203,7 +212,7 @@ END GROUP
 .rela.plt
  *(.rela.plt)
 
-.text           0x00000000      0x936
+.text           0x00000000      0xd5a
  *(.vectors)
  .vectors       0x00000000       0x8c D:/Applications/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega1284/avr51/crtatmega1284.o
                 0x00000000                __vector_default
@@ -278,6 +287,7 @@ END GROUP
                 0x000000c6                __vector_25
                 0x000000c6                __vector_11
                 0x000000c6                __vector_17
+                0x000000c6                __vector_19
                 0x000000c6                __vector_7
                 0x000000c6                __vector_27
                 0x000000c6                __vector_5
@@ -310,31 +320,51 @@ END GROUP
                 0x00000380                TimerSet
  .text.TimerOn  0x000003dc       0x6e main.o
                 0x000003dc                TimerOn
- .text.SPI_ServantInit
-                0x0000044a       0x46 main.o
-                0x0000044a                SPI_ServantInit
- .text.__vector_19
-                0x00000490       0x4e main.o
-                0x00000490                __vector_19
- .text.transmit_data
-                0x000004de       0x8a main.o
-                0x000004de                transmit_data
+ .text.delay_ms
+                0x0000044a       0x60 main.o
+                0x0000044a                delay_ms
+ .text.SPI_MasterInit
+                0x000004aa       0x3e main.o
+                0x000004aa                SPI_MasterInit
+ .text.writeRegister
+                0x000004e8       0xae main.o
+                0x000004e8                writeRegister
+ .text.readRegister
+                0x00000596       0xc6 main.o
+                0x00000596                readRegister
+ .text.readPayloadRx
+                0x0000065c       0xc0 main.o
+                0x0000065c                readPayloadRx
+ .text.flushRx  0x0000071c       0x5a main.o
+                0x0000071c                flushRx
+ .text.Radio_RxInit
+                0x00000776       0xc2 main.o
+                0x00000776                Radio_RxInit
+ .text.Radio_RxReset
+                0x00000838       0x3c main.o
+                0x00000838                Radio_RxReset
+ .text.Radio_RxReady
+                0x00000874       0x32 main.o
+                0x00000874                Radio_RxReady
+ .text.Radio_RxRead
+                0x000008a6       0x28 main.o
+                0x000008a6                Radio_RxRead
  .text.spi_servant
-                0x00000568       0x92 main.o
-                0x00000568                spi_servant
+                0x000008ce      0x152 main.o
+                0x000008ce                spi_servant
  .text.TickFct_movement
-                0x000005fa      0x108 main.o
-                0x000005fa                TickFct_movement
+                0x00000a20      0x108 main.o
+                0x00000a20                TickFct_movement
  .text.TickFct_LEDState
-                0x00000702       0x52 main.o
-                0x00000702                TickFct_LEDState
- .text.main     0x00000754      0x1de main.o
-                0x00000754                main
-                0x00000932                . = ALIGN (0x2)
+                0x00000b28       0x52 main.o
+                0x00000b28                TickFct_LEDState
+ .text.main     0x00000b7a      0x1dc main.o
+                0x00000b7a                main
+                0x00000d56                . = ALIGN (0x2)
  *(.fini9)
- .fini9         0x00000932        0x0 d:/applications/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_exit.o)
-                0x00000932                _exit
-                0x00000932                exit
+ .fini9         0x00000d56        0x0 d:/applications/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_exit.o)
+                0x00000d56                _exit
+                0x00000d56                exit
  *(.fini9)
  *(.fini8)
  *(.fini8)
@@ -353,11 +383,11 @@ END GROUP
  *(.fini1)
  *(.fini1)
  *(.fini0)
- .fini0         0x00000932        0x4 d:/applications/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_exit.o)
+ .fini0         0x00000d56        0x4 d:/applications/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_exit.o)
  *(.fini0)
-                0x00000936                _etext = .
+                0x00000d5a                _etext = .
 
-.data           0x00800100        0x6 load address 0x00000936
+.data           0x00800100        0x6 load address 0x00000d5a
                 0x00800100                PROVIDE (__data_start, .)
  *(.data)
  *(.data*)
@@ -378,7 +408,7 @@ END GROUP
                 0x00800106                _edata = .
                 0x00800106                PROVIDE (__data_end, .)
 
-.bss            0x00800106       0x33
+.bss            0x00800106       0x36
                 0x00800106                PROVIDE (__bss_start, .)
  *(.bss)
  *(.bss*)
@@ -390,36 +420,40 @@ END GROUP
  .bss.sonar_flag
                 0x0080010c        0x1 main.o
                 0x0080010c                sonar_flag
- .bss.receivedData
-                0x0080010d        0x1 main.o
-                0x0080010d                receivedData
- .bss.droneXY   0x0080010e        0x1 main.o
-                0x0080010e                droneXY
- .bss.droneZ    0x0080010f        0x1 main.o
-                0x0080010f                droneZ
- .bss.b1        0x00800110        0x1 main.o
-                0x00800110                b1
- .bss.b2        0x00800111        0x1 main.o
-                0x00800111                b2
- .bss.parity    0x00800112        0x1 main.o
-                0x00800112                parity
- .bss.i.1615    0x00800113        0x1 main.o
+ .bss.payload   0x0080010d        0x1 main.o
+                0x0080010d                payload
+ .bss.droneSignal
+                0x0080010e        0x1 main.o
+                0x0080010e                droneSignal
+ .bss.droneXY   0x0080010f        0x1 main.o
+                0x0080010f                droneXY
+ .bss.droneZ    0x00800110        0x1 main.o
+                0x00800110                droneZ
+ .bss.b1        0x00800111        0x1 main.o
+                0x00800111                b1
+ .bss.b2        0x00800112        0x1 main.o
+                0x00800112                b2
+ .bss.parity    0x00800113        0x1 main.o
+                0x00800113                parity
+ .bss.i.1615    0x00800114        0x1 main.o
  *(COMMON)
- COMMON         0x00800114       0x25 main.o
-                0x00800114                tasks
-                0x00800135                temp
-                0x00800136                movement_state
-                0x00800137                spi_state
-                0x00800138                LED_state
-                0x00800139                PROVIDE (__bss_end, .)
-                0x00000936                __data_load_start = LOADADDR (.data)
-                0x0000093c                __data_load_end = (__data_load_start + SIZEOF (.data))
+ COMMON         0x00800115       0x27 main.o
+                0x00800115                tasks
+                0x00800136                recievedPackets
+                0x00800137                droppedPackets
+                0x00800138                temp
+                0x00800139                movement_state
+                0x0080013a                spi_state
+                0x0080013b                LED_state
+                0x0080013c                PROVIDE (__bss_end, .)
+                0x00000d5a                __data_load_start = LOADADDR (.data)
+                0x00000d60                __data_load_end = (__data_load_start + SIZEOF (.data))
 
-.noinit         0x00800139        0x0
+.noinit         0x0080013c        0x0
                 [!provide]                PROVIDE (__noinit_start, .)
  *(.noinit*)
                 [!provide]                PROVIDE (__noinit_end, .)
-                0x00800139                _end = .
+                0x0080013c                _end = .
                 [!provide]                PROVIDE (__heap_start, .)
 
 .eeprom         0x00810000        0x0
@@ -484,42 +518,42 @@ END GROUP
 .debug_sfnames
  *(.debug_sfnames)
 
-.debug_aranges  0x00000000       0x88
+.debug_aranges  0x00000000       0xe8
  *(.debug_aranges)
  .debug_aranges
-                0x00000000       0x88 main.o
+                0x00000000       0xe8 main.o
 
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x00000000      0xc27
+.debug_info     0x00000000     0x10a9
  *(.debug_info .gnu.linkonce.wi.*)
  .debug_info    0x00000000      0x792 D:/Applications/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega1284/avr51/crtatmega1284.o
- .debug_info    0x00000792      0x495 main.o
+ .debug_info    0x00000792      0x917 main.o
 
-.debug_abbrev   0x00000000      0x8cd
+.debug_abbrev   0x00000000      0x963
  *(.debug_abbrev)
  .debug_abbrev  0x00000000      0x729 D:/Applications/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega1284/avr51/crtatmega1284.o
- .debug_abbrev  0x00000729      0x1a4 main.o
+ .debug_abbrev  0x00000729      0x23a main.o
 
-.debug_line     0x00000000      0x6b7
+.debug_line     0x00000000      0xcb4
  *(.debug_line .debug_line.* .debug_line_end)
  .debug_line    0x00000000      0x169 D:/Applications/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega1284/avr51/crtatmega1284.o
- .debug_line    0x00000169      0x54e main.o
+ .debug_line    0x00000169      0xb4b main.o
 
-.debug_frame    0x00000000      0x264
+.debug_frame    0x00000000      0x3c8
  *(.debug_frame)
- .debug_frame   0x00000000      0x264 main.o
+ .debug_frame   0x00000000      0x3c8 main.o
 
-.debug_str      0x00000000      0x5e3
+.debug_str      0x00000000      0x719
  *(.debug_str)
  .debug_str     0x00000000      0x296 D:/Applications/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega1284/avr51/crtatmega1284.o
- .debug_str     0x00000296      0x34d main.o
-                                0x391 (size before relaxing)
+ .debug_str     0x00000296      0x483 main.o
+                                0x4c2 (size before relaxing)
 
-.debug_loc      0x00000000      0x51b
+.debug_loc      0x00000000      0x838
  *(.debug_loc)
- .debug_loc     0x00000000      0x51b main.o
+ .debug_loc     0x00000000      0x838 main.o
 
 .debug_macinfo
  *(.debug_macinfo)
@@ -539,9 +573,9 @@ END GROUP
 .debug_pubtypes
  *(.debug_pubtypes)
 
-.debug_ranges   0x00000000       0x78
+.debug_ranges   0x00000000       0xd8
  *(.debug_ranges)
- .debug_ranges  0x00000000       0x78 main.o
+ .debug_ranges  0x00000000       0xd8 main.o
 
 .debug_macro
  *(.debug_macro)
