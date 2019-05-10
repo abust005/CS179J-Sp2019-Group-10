@@ -1,3 +1,4 @@
+from re import split
 import cv2 as cv
 import numpy as np
 import sys
@@ -12,7 +13,7 @@ def display(im, bbox):
     # Display results
     cv.imshow("Results", im)
 
-#inputImage = cv.imread('C:\\Users\\Adriel\\CS179J-Sp2019-Group-10\\CV\\Package3.jpg')
+inputImage = cv.imread('C:\\Users\\Adriel\\CS179J-Sp2019-Group-10\\CV\\CoordQR.jpg')
 
 qrDecoder = cv.QRCodeDetector()
 
@@ -27,13 +28,15 @@ while(True):
     # Capture frame-by-frame
     ret, frame = cap.read()
 
-    inputImage = frame;
+    #inputImage = frame
     # Detect and decode the qrcode
     t = time.time()
     data,bbox,rectifiedImage = qrDecoder.detectAndDecode(inputImage)
     print("Time Taken for Detect and Decode : {:.3f} seconds".format(time.time() - t))
     if len(data)>0:
         print("Decoded Data : {}".format(data))
+        coord = split(r',|\s|\[|\]', data)
+        print(coord)
         display(inputImage, bbox)
         rectifiedImage = np.uint8(rectifiedImage)
         cv.imshow("Rectified QRCode", rectifiedImage)
