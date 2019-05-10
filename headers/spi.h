@@ -3,6 +3,7 @@
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include "nrf24l01.h"
 
 unsigned char receivedData = 0;
 
