@@ -1163,10 +1163,10 @@ int spi_servant(int spi_state)
  8e6:	09 f4       	brne	.+2      	; 0x8ea <spi_servant+0x1c>
  8e8:	49 c0       	rjmp	.+146    	; 0x97c <spi_servant+0xae>
  8ea:	8d c0       	rjmp	.+282    	; 0xa06 <spi_servant+0x138>
+// 			else
+// 			{
 // 				droneSignal = droneSignal | 0x80; // Set parity bit to 1 for odd number of 1s
 // 			}
-// 			spi_state = receive;
-// 			break;
 		case receive:
 			if(Radio_RxReady())
  8ec:	c3 df       	rcall	.-122    	; 0x874 <Radio_RxReady>

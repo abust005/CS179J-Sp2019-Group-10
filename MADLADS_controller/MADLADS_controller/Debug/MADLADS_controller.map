@@ -11,8 +11,6 @@ Allocating common symbols
 Common symbol       size              file
 
 tasks               0x21              main.o
-recievedPackets     0x1               main.o
-droppedPackets      0x1               main.o
 temp                0x1               main.o
 upFlag              0x1               main.o
 movement_state      0x1               main.o
@@ -46,8 +44,6 @@ Discarded input sections
                 0x00000000       0x34 main.o
  .text.Radio_RxRead
                 0x00000000       0x2a main.o
- .text.radioTick
-                0x00000000       0xfe main.o
  .text          0x00000000        0x0 d:/applications/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_exit.o)
  .data          0x00000000        0x0 d:/applications/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_exit.o)
  .bss           0x00000000        0x0 d:/applications/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_exit.o)
@@ -410,7 +406,7 @@ END GROUP
                 0x00800104                _edata = .
                 0x00800104                PROVIDE (__data_end, .)
 
-.bss            0x00800104       0x3c
+.bss            0x00800104       0x3a
                 0x00800104                PROVIDE (__bss_start, .)
  *(.bss)
  *(.bss*)
@@ -435,29 +431,27 @@ END GROUP
  .bss.clawFlag  0x00800110        0x1 main.o
                 0x00800110                clawFlag
  .bss.i.1615    0x00800111        0x1 main.o
- .bss.i.1800    0x00800112        0x1 main.o
+ .bss.i.1785    0x00800112        0x1 main.o
  *(COMMON)
- COMMON         0x00800113       0x2d main.o
+ COMMON         0x00800113       0x2b main.o
                 0x00800113                tasks
-                0x00800134                recievedPackets
-                0x00800135                droppedPackets
-                0x00800136                temp
-                0x00800137                upFlag
-                0x00800138                movement_state
-                0x00800139                joystick
-                0x0080013b                spi_state
-                0x0080013c                button_state
-                0x0080013d                joystick2
-                0x0080013f                downFlag
-                0x00800140                PROVIDE (__bss_end, .)
+                0x00800134                temp
+                0x00800135                upFlag
+                0x00800136                movement_state
+                0x00800137                joystick
+                0x00800139                spi_state
+                0x0080013a                button_state
+                0x0080013b                joystick2
+                0x0080013d                downFlag
+                0x0080013e                PROVIDE (__bss_end, .)
                 0x00000d3e                __data_load_start = LOADADDR (.data)
                 0x00000d42                __data_load_end = (__data_load_start + SIZEOF (.data))
 
-.noinit         0x00800140        0x0
+.noinit         0x0080013e        0x0
                 [!provide]                PROVIDE (__noinit_start, .)
  *(.noinit*)
                 [!provide]                PROVIDE (__noinit_end, .)
-                0x00800140                _end = .
+                0x0080013e                _end = .
                 [!provide]                PROVIDE (__heap_start, .)
 
 .eeprom         0x00810000        0x0
@@ -522,42 +516,42 @@ END GROUP
 .debug_sfnames
  *(.debug_sfnames)
 
-.debug_aranges  0x00000000      0x100
+.debug_aranges  0x00000000       0xf8
  *(.debug_aranges)
  .debug_aranges
-                0x00000000      0x100 main.o
+                0x00000000       0xf8 main.o
 
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x00000000     0x1118
+.debug_info     0x00000000     0x105f
  *(.debug_info .gnu.linkonce.wi.*)
  .debug_info    0x00000000      0x792 D:/Applications/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega1284/avr51/crtatmega1284.o
- .debug_info    0x00000792      0x986 main.o
+ .debug_info    0x00000792      0x8cd main.o
 
-.debug_abbrev   0x00000000      0x961
+.debug_abbrev   0x00000000      0x947
  *(.debug_abbrev)
  .debug_abbrev  0x00000000      0x729 D:/Applications/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega1284/avr51/crtatmega1284.o
- .debug_abbrev  0x00000729      0x238 main.o
+ .debug_abbrev  0x00000729      0x21e main.o
 
-.debug_line     0x00000000      0xd79
+.debug_line     0x00000000      0xca8
  *(.debug_line .debug_line.* .debug_line_end)
  .debug_line    0x00000000      0x169 D:/Applications/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega1284/avr51/crtatmega1284.o
- .debug_line    0x00000169      0xc10 main.o
+ .debug_line    0x00000169      0xb3f main.o
 
-.debug_frame    0x00000000      0x428
+.debug_frame    0x00000000      0x408
  *(.debug_frame)
- .debug_frame   0x00000000      0x428 main.o
+ .debug_frame   0x00000000      0x408 main.o
 
-.debug_str      0x00000000      0x751
+.debug_str      0x00000000      0x6fe
  *(.debug_str)
  .debug_str     0x00000000      0x296 D:/Applications/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega1284/avr51/crtatmega1284.o
- .debug_str     0x00000296      0x4bb main.o
-                                0x4fa (size before relaxing)
+ .debug_str     0x00000296      0x468 main.o
+                                0x4a7 (size before relaxing)
 
-.debug_loc      0x00000000      0x8f6
+.debug_loc      0x00000000      0x8af
  *(.debug_loc)
- .debug_loc     0x00000000      0x8f6 main.o
+ .debug_loc     0x00000000      0x8af main.o
 
 .debug_macinfo
  *(.debug_macinfo)
@@ -577,9 +571,9 @@ END GROUP
 .debug_pubtypes
  *(.debug_pubtypes)
 
-.debug_ranges   0x00000000       0xf0
+.debug_ranges   0x00000000       0xe8
  *(.debug_ranges)
- .debug_ranges  0x00000000       0xf0 main.o
+ .debug_ranges  0x00000000       0xe8 main.o
 
 .debug_macro
  *(.debug_macro)
