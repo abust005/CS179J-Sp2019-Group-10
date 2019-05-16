@@ -49,6 +49,18 @@ void SPI_MasterInit(void) {
 	SREG|=0x80;
 }
 
+
+// Servant code
+void SPI_ServantInit(void) {
+	// Set DDRB to have MOSI, SCK, and SS as output and MISO as input
+	DDRB|=(1<<SCK_PIN)|(1<<MOSI_PIN)|(1<<4);
+	// Set SPCR register to enable SPI, enable master, and use SCK frequency
+	//   of fosc/16  (pg. 168)
+	SPCR|=(1<<SPE)|(1<<MSTR)|(1<<SPR0);
+	// Make sure global interrupts are enabled on SREG register (pg. 9)
+	SREG|=0x80;
+}
+
 void SPI_MasterTransmit(unsigned char *txData, unsigned char *rxData, volatile uint8_t *port, unsigned char pin) {
 	// data in SPDR will be transmitted, e.g. SPDR = cData;
 	unsigned char bytes = sizeof(txData);
@@ -176,7 +188,7 @@ void Radio_TxTransmit(unsigned char msg[], unsigned char bytes) {
 }
 
 void Radio_RxInit() {
-	SPI_MasterInit();
+	SPI_ServantInit();
 	RF_DDR|=(1<<CSN_PIN)|(1<<CE_PIN);
 	RF_PORT|=(1<<IRQ_PIN)|(1<<CSN_PIN);
 	delay_ms(5);
