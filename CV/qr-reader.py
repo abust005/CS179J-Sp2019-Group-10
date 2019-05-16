@@ -13,7 +13,7 @@ def display(im, bbox):
     # Display results
     cv.imshow("Results", im)
 
-inputImage = cv.imread('C:\\Users\\Adriel\\CS179J-Sp2019-Group-10\\CV\\CoordQR.jpg')
+#inputImage = cv.imread('C:\\Users\\Adriel\\CS179J-Sp2019-Group-10\\CV\\CoordQR.jpg')
 
 qrDecoder = cv.QRCodeDetector()
 
@@ -28,7 +28,7 @@ while(True):
     # Capture frame-by-frame
     ret, frame = cap.read()
 
-    #inputImage = frame
+    inputImage = frame
     # Detect and decode the qrcode
     t = time.time()
     data,bbox,rectifiedImage = qrDecoder.detectAndDecode(inputImage)

@@ -7,46 +7,78 @@ I = cv.imread('module.jpg',1)
 #cv.imshow('Image 1',I)
 #cv.waitKey(0)
 
+#sets the bounds for color detection
+lower_pink = np.array([140, 255, 170])
+upper_pink = np.array([190, 255, 190])
+
+#initiates video capture and gets the width and height of the frame
 cap = cv.VideoCapture(0)
 cap.open(0)
+width = int(cap.get(cv.CAP_PROP_FRAME_WIDTH))
+height = int(cap.get(cv.CAP_PROP_FRAME_HEIGHT))
 
+#reads the video capture
 ret, frame = cap.read()
 
-print(ret)
-
 while(True):
-    # Capture frame-by-frame
+    #Capture frame-by-frame
     ret, frame = cap.read()
 
-    # Our operations on the frame come here
-    gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
-    (thresh, im_bw) = cv.threshold(gray, 160, 255, cv.THRESH_BINARY_INV)
-    #ret, im_bw = cv.threshold(im_bw, 127, 255, 0)
-    im_bw_l = im_bw
-    #ret, labels, stats, cent = cv.connectedComponentsWithStats(im_bw[im_bw_l[cv.CC_STAT_LEFT, cv.CC_STAT_TOP, cv.CC_STAT_WIDTH, cv.CC_STAT_HEIGHT, cv.CC_STAT_AREA 
-    #                                                           [cent[8[cv.CV_16_L]]]]])
-    contours, hier = cv.findContours(im_bw, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+    #Our operations on the frame come here
 
+    #Converts the raw image into HSV for color detection
+    hsv = cv.cvtColor(frame, cv.COLOR_BGR2HSV)
+    mask = cv.inRange(hsv, lower_pink, upper_pink)
+    res = cv.bitwise_and(frame,frame, mask= mask)
+    cv.imshow("hsv", hsv) 
+    cv.imshow("recognize", res)
+    #thresholds and binarizes image for contour detection
+    gray = cv.cvtColor(res, cv.COLOR_HSV2BGR)
+    gray = cv.cvtColor(gray, cv.COLOR_BGR2GRAY)
+    (thresh, im_bw) = cv.threshold(gray, 160, 255, cv.THRESH_BINARY_INV)
+    
+    contours, hier = cv.findContours(im_bw, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+    maxArea = -1
+    box = contours[0]
+    #finds the contour (connected component) with the biggest area; should be the package
     for c in contours:
-        # get the bounding rect
-        x, y, w, h = cv.boundingRect(c)
-        # draw a green rectangle to visualize the bounding rect
+        area = cv.contourArea(c)
+        # print(area)
+        if (area > maxArea) & (area < 306080):
+            maxArea = area
+            box = c
+    #get the bounding box
+    x, y, w, h = cv.boundingRect(box)
+    #draw a green rectangle to visualize the bounding rect
+    if w < width:
         cv.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
     
         # get the min area rect
-        rect = cv.minAreaRect(c)
-        box = cv.boxPoints(rect)
-        # convert all coordinates floating point values to int
-        box = np.int0(box)
-        # draw a red 'nghien' rectangle
-        #cv.drawContours(im_bw, [box], 0, (0, 0, 255))
- 
-    #print(len(contours))
-    #cv.drawContours(im_bw, contours, -1, (255, 255, 0), 1)
- 
+        rect = cv.minAreaRect(box)
+        bBox = cv.boxPoints(rect)
+        #convert all coordinates floating point values to int
+        bBox = np.int0(bBox)
+        #detects the moments (weighted average of pixel intensities) of the image (finds the "blobs")
+        M = cv.moments(box)
+        #calculate x,y coordinate of center, avoids divide by 0
+        if M["m00"] != 0:
+            cX = int(M["m10"] / M["m00"])
+            cY = int(M["m01"] / M["m00"])
+        else:
+            cX, cY = 0, 0
+        cv.circle(frame, (cX, cY), 5, (255, 255, 255), -1)
+        cv.putText(frame, "centroid", (cX - 25, cY - 25),cv.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+
+        #checks to see if center of package is in center of frame
+        if (cX >= width * .75) & (cX <= width * 1.25):
+            print('package in X')
+            if (cY >= height * .75) & (cY <= height * 1.25):
+                print('pacakge in Y')
+    
+    #shows the bounding box around the package
     cv.imshow("contours",frame)
 
-#    # Display the resulting frame
+    # Display the resulting frame
     #cv.imshow('frame',im_bw)
     if cv.waitKey(1) & 0xFF == ord('q'):
         break
