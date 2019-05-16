@@ -1,5 +1,6 @@
 import cv2 as cv
 import numpy as np
+import qr_reader as qr
 
 print(cv.__version__)
 
@@ -16,6 +17,11 @@ cap = cv.VideoCapture(0)
 cap.open(0)
 width = int(cap.get(cv.CAP_PROP_FRAME_WIDTH))
 height = int(cap.get(cv.CAP_PROP_FRAME_HEIGHT))
+
+widthLower = int(width * .5)
+widthUpper = int(width * 1.5)
+heightLower = int(height * .5)
+heightUpper = int(height * 1.5)
 
 #reads the video capture
 ret, frame = cap.read()
@@ -70,10 +76,21 @@ while(True):
         cv.putText(frame, "centroid", (cX - 25, cY - 25),cv.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
 
         #checks to see if center of package is in center of frame
-        if (cX >= width * .75) & (cX <= width * 1.25):
+        xCheck = (cX >= widthLower) & (cX <= widthUpper)
+        yCheck = (cY >= heightLower) & (cY <= heightUpper)
+        if xCheck:
             print('package in X')
-            if (cY >= height * .75) & (cY <= height * 1.25):
-                print('pacakge in Y')
+        else:
+            #signal to correct position of drone is sent
+            print('package not in X')
+        if yCheck:
+            print('package in Y')
+        else:
+            #signal to correct position of drone is sent
+            print('package not in Y')
+        if xCheck & yCheck:
+            #initiate pickup routine
+            coords = qr.qr_read()
     
     #shows the bounding box around the package
     cv.imshow("contours",frame)
