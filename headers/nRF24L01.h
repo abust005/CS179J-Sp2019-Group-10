@@ -41,7 +41,7 @@ void delay_ms(int miliSec) //for 8 Mhz crystal
 // Master code
 void SPI_MasterInit(void) {
 	// Set DDRB to have MOSI, SCK, and SS as output and MISO as input
-	DDRB=(1<<SCK_PIN)|(1<<MOSI_PIN)|(1<<4);
+	RF_DDR = (1<<SCK_PIN)|(1<<MOSI_PIN)|(1<<4);
 	// Set SPCR register to enable SPI, enable master, and use SCK frequency
 	//   of fosc/16  (pg. 168)
 	SPCR|=(1<<SPE)|(1<<MSTR)|(1<<SPR0);
@@ -49,11 +49,10 @@ void SPI_MasterInit(void) {
 	SREG|=0x80;
 }
 
-
 // Servant code
 void SPI_ServantInit(void) {
 	// Set DDRB to have MOSI, SCK, and SS as output and MISO as input
-	DDRB|=(1<<SCK_PIN)|(1<<MOSI_PIN)|(1<<4);
+	RF_DDR |= (1<<SCK_PIN)|(1<<MOSI_PIN)|(1<<4);
 	// Set SPCR register to enable SPI, enable master, and use SCK frequency
 	//   of fosc/16  (pg. 168)
 	SPCR|=(1<<SPE)|(1<<MSTR)|(1<<SPR0);
