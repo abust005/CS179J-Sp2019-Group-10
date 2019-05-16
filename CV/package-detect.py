@@ -8,6 +8,11 @@ I = cv.imread('module.jpg',1)
 #cv.imshow('Image 1',I)
 #cv.waitKey(0)
 
+## Note to engineers: the color bounds are not set in stone.
+##  They can be further adjusted and tweaked, or a light-invariant representation
+##  can be used; these are still research-level questions and methods, and as
+##  such, I have stuck to what seems to work experimentally
+
 #sets the bounds for color detection
 lower_pink = np.array([140, 255, 170])
 upper_pink = np.array([190, 255, 190])
