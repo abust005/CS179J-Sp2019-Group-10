@@ -44,6 +44,8 @@ while(True):
         #Converts the raw image into HSV for color detection
         hsv = cv.cvtColor(frame, cv.COLOR_BGR2HSV)
         mask = cv.inRange(hsv, lower_pink, upper_pink)
+        # mask = cv.morphologyEx(mask, cv.MORPH_OPEN, np.ones((3,3),np.uint8))   These two lines could be useful
+        # mask = cv.morphologyEx(mask, cv.MORPH_DILATE, np.ones((3,3),np.uint8))
         res = cv.bitwise_and(frame,frame, mask= mask)
         cv.imshow("hsv", hsv) 
         cv.imshow("recognize", res)
