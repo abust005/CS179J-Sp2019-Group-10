@@ -50,7 +50,7 @@ def qr_read():
         if cv.waitKey(1) & 0xFF == ord('q'):
             break
 
-    cap.release()
-    cv.destroyAllWindows()
+    # cap.release()
+    # cv.destroyAllWindows()
 
     return coord
