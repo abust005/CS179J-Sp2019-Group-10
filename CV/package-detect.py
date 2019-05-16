@@ -5,8 +5,6 @@ import qr_reader as qr
 print(cv.__version__)
 
 I = cv.imread('module.jpg',1)
-#cv.imshow('Image 1',I)
-#cv.waitKey(0)
 
 ## Note to engineers: the color bounds are not set in stone.
 ##  They can be further adjusted and tweaked, or a light-invariant representation
@@ -14,6 +12,9 @@ I = cv.imread('module.jpg',1)
 ##  such, I have stuck to what seems to work experimentally
 
 #sets the bounds for color detection
+
+# First set is for home testing, second for in-lab testing 
+
 # lower_pink = np.array([140, 255, 170])
 # upper_pink = np.array([255, 255, 190])
 
