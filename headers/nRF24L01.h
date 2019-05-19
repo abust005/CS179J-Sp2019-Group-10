@@ -3,6 +3,7 @@
 */
 
 #include <avr/io.h>
+#include <avr/interrupt.h>
 
 // Modify these variables to customize the ports/pins the RF module will use
 #define R_REGISTER(R) (R&0x1F)
@@ -41,35 +42,37 @@ void delay_ms(int miliSec) //for 8 Mhz crystal
 // Master code
 void SPI_MasterInit(void) {
 	// Set DDRB to have MOSI, SCK, and SS as output and MISO as input
-	RF_DDR = (1<<SCK_PIN)|(1<<MOSI_PIN)|(1<<4);
-	// Set SPCR register to enable SPI, enable master, and use SCK frequency
-	//   of fosc/16  (pg. 168)
-	SPCR|=(1<<SPE)|(1<<MSTR)|(1<<SPR0);
+	RF_DDR |= (1<<DDB4)|(1<<DDB5)|(0<<DDB6)|(1<<DDB7);
+	// Set SPCR register to enable SPI, enable master, and use SCK frequency of fosc/16  (pg. 168)
+	SPCR |= (1<<SPE)|(1<<MSTR)|(1<<SPR0);
 	// Make sure global interrupts are enabled on SREG register (pg. 9)
-	SREG|=0x80;
+	SREG |= 0x80;
+}
+
+void SPI_MasterTransmit(unsigned char cData) {
+	// data in SPDR will be transmitted, e.g. SPDR = cData;
+	// set SS low
+	RF_DDR |= (0<<DDB4);
+	SPDR = 0x00;
+	while(!(SPSR & (1<<SPIF))) { // wait for transmission to complete
+		;
+	}
+	SPDR = cData;
+	while(!(SPSR & (1<<SPIF))) { // wait for transmission to complete
+		;
+	}
+	RF_DDR |= (1<<DDB4);
+	// set SS high
 }
 
 // Servant code
 void SPI_ServantInit(void) {
-	// Set DDRB to have MOSI, SCK, and SS as output and MISO as input
-	RF_DDR |= (1<<SCK_PIN)|(1<<MOSI_PIN)|(1<<4);
-	// Set SPCR register to enable SPI, enable master, and use SCK frequency
-	//   of fosc/16  (pg. 168)
-	SPCR|=(1<<SPE)|(1<<MSTR)|(1<<SPR0);
-	// Make sure global interrupts are enabled on SREG register (pg. 9)
-	SREG|=0x80;
-}
-
-void SPI_MasterTransmit(unsigned char *txData, unsigned char *rxData, volatile uint8_t *port, unsigned char pin) {
-	// data in SPDR will be transmitted, e.g. SPDR = cData;
-	unsigned char bytes = sizeof(txData);
-	*port&=~(1<<pin);
-	for(unsigned char i=0;i<bytes;++i) {
-			SPDR=txData[i];
-			while(!(SPSR & (1<<SPIF)));
-			rxData[i]=SPDR;
-	}
-	*port|=(1<<pin);
+	// set DDRB to have MISO line as output and MOSI, SCK, and SS as input
+	RF_DDR |= (0<<DDB4)|(0<<DDB5)|(1<<DDB6)|(0<<DDB7);
+	// set SPR register to enable SPI and enable SPI interrupt (pg. 168)
+	SPCR |= (1<<SPIE)|(1<<SPE);
+	// make sure global interrupts are enabled on SREG register (pg. 9)
+	SREG |= 0x80;
 }
 
 unsigned char writeRegister(unsigned char regAddr, unsigned char regValue[], unsigned char bytes) {
@@ -120,6 +123,8 @@ unsigned char writePayloadTxNoack(unsigned char msg[], unsigned char bytes) {
 	unsigned char status = SPDR;
 	for(unsigned char i=0;i<bytes;++i) {
 		SPDR=msg[i];
+// 		if(SPDR == msg[i]) { PORTD = 0x00;}
+// 		else { PORTD = 0x01;}
 		while(!(SPSR & (1<<SPIF)));
 	}
 	RF_PORT|=(1<<CSN_PIN);

@@ -58,6 +58,7 @@ int spi_servant(int spi_state)
 				droppedPackets = 0;
 				Radio_RxRead(payload, 1);
 				droneSignal = payload[0];
+				PORTA = droneSignal;
 				
 				droneZ = droneSignal & 0x03;
 				droneXY = (droneSignal >> 2) & 0x07;
@@ -84,6 +85,7 @@ int spi_servant(int spi_state)
 				droppedPackets = 0;
 				Radio_RxRead(payload, 1);
 				droneSignal = payload[0];
+				PORTA = droneSignal;
 				
 				droneZ = droneSignal & 0x03;
 				droneXY = (droneSignal >> 2) & 0x07;
@@ -117,6 +119,7 @@ int spi_servant(int spi_state)
 enum movement_states {left_right, up_down} movement_state;
 int TickFct_movement(int movement_state)
 {
+	return -1;
 	switch(movement_state)
 	{
 		case left_right: // Right joystick controls left and right movements
@@ -156,6 +159,7 @@ int TickFct_movement(int movement_state)
 enum LED_states {synch} LED_state;
 int TickFct_LEDState(int state)
 {
+	return -1;
 	switch(LED_state)
 	{
 		case synch:
