@@ -10,23 +10,22 @@
 #include <SPI.h>
 #include <nRF24L01.h>
 #include <RF24.h>
-//#define timerPeriod 1
 #define tasksNum 3 // Number of tasks
 #include "ardScheduler.h"
 
 // === Inputs and Variables ===
-#define topButton 9 // This is the button for <INSERT FUNCTION>
-#define bottomButton 10 // This is the button for <INSERT FUNCTION>
+int topButton = 30; // This is the button for claw operation
+int bottomButton = 31; // This is the button for emergency stop (kill switch)
 #define joystick1Pin A0 // This is the joystick for left and right movement
 #define joystick2Pin A1 // This is the joystick for forward and reverse movement
 #define joystick3Pin A2 // This is the joystick for up and down movement
 
 unsigned char temp, counter = 0x00; // SPI variables
 unsigned char droneSignal = 0x00; // bits 0-1 are up/down, 2-4 are left/right/forward/reverse, 5 is claw, 6 is button2, 7 is parity bit
-unsigned char payload[1] = {0x00};
+unsigned char payload;
 unsigned short joystick, joystick2, joystick3 = 0x0000; // Variables to store ADC values of joysticks
 unsigned char upFlag, downFlag, clawFlag = 0x00; // Flags for bitmasking logic
-const byte address[6] = "00001";
+const byte address[6] = "00001"; // Communication channel for RF module
 RF24 radio(7, 8); // CE, CSN
 
 // Joysticks are actually wired sideways so left/right and forward/reverse are switched but the states are labeled correctly for their observed actions
@@ -134,40 +133,56 @@ int TickFct_movement(int movement_state)
 10 - claw is engaged until the first button is pressed again
 X1 - Drop it like its hot
 */
-enum button_states {buttons} button_state;
+enum button_states {Wait, Top_Pressed, Bottom_Pressed} button_state;
 
 int TickFct_button(int button_state)
 {
+  static unsigned char bottomButtonCnt = 0;
   switch(button_state)
   {
-    case buttons: // Right joystick controls up and down movements
-      if (digitalRead(topButton) && !digitalRead(bottomButton))
-      {
-        if (clawFlag == 0) // Engage the claw
+    case Wait:
+      if (digitalRead(bottomButton) == HIGH){ // Button must be held down to prevent accidental drone loss
+        bottomButtonCnt = 0;
+        button_state = Bottom_Pressed;
+      }
+      else if (digitalRead(topButton) == HIGH){
+        clawFlag = clawFlag ? 0 : 1;
+        button_state = Top_Pressed;
+      }
+      droneSignal &= 0xDF; // buttons set to 00 for unused
+      break;
+    case Top_Pressed:
+      if (digitalRead(topButton) == LOW){
+        button_state = Wait;
+      }
+      else {
+        if (clawFlag)
         {
-          clawFlag = 1;
           droneSignal = (droneSignal & 0x9F) | 0x40; // Buttons set to 10
         }
-        else // Disengage the claw
-        {
-          clawFlag = 0;
-          droneSignal &= 0x9F; // Buttons set to 00
+        else {
+          droneSignal &= 0x9F;
         }
       }
-      else if (digitalRead(bottomButton)) // Button must be held down to prevent accidental drone loss
-      {
-        droneSignal |= 0x20;
+      break;
+    case Bottom_Pressed:
+      if (digitalRead(bottomButton) == LOW){
+        button_state = Wait;
       }
       else
       {
-        droneSignal &= 0xDF; // buttons set to 00 for unused
+        if (bottomButtonCnt++ >= 10) // Button must be held down to prevent accidental drone loss
+        {
+           bottomButtonCnt = 0;
+           droneSignal |= 0x20;
+        }
       }
-      button_state = buttons;
       break;
     default:
-      button_state = buttons;
+      button_state = Wait;
       break;
   }
+
   return button_state;
 }
 
@@ -199,8 +214,10 @@ int spi_master(int spi_state)
       spi_state = send;
       break;
     case send:
-      payload[0] = droneSignal; // Update payload with the droneSignal
-      radio.write(&payload[0], sizeof(payload[0]));
+      payload = droneSignal; // Update payload with the droneSignal
+      radio.write(&payload, sizeof(payload));
+      Serial.print("Sending: ");
+      Serial.println(payload, HEX);
       spi_state = wait;
       break;
     default:
@@ -225,7 +242,7 @@ void setup() {
   tasks[i].TickFct = &TickFct_movement;
   i++;
   tasks[i].state = -1;
-  tasks[i].period = 50;
+  tasks[i].period = 100;
   tasks[i].elapsedTime = 0;
   tasks[i].TickFct = &TickFct_button;
   i++;
@@ -234,7 +251,11 @@ void setup() {
   tasks[i].elapsedTime = 0;
   tasks[i].TickFct = &spi_master;
 
+  pinMode(topButton, INPUT);
+  pinMode(bottomButton, INPUT);
+
   Serial.begin(9600);
+  Serial.println("Beginning transmitter test");
   RadioInit();
   TimerSet(1); // Cannot be changed
 }
