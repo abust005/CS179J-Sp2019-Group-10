@@ -30,7 +30,7 @@ task tasks[tasksNum];
 
 ///////////////////////////////////////////////////////////////////////////////
 // Heart of the scheduler code
-// Currently: Interrupt is called once a millisecond,
+// Currently: Interrupt is called once a millisecond
 SIGNAL(TIMER0_COMPA_vect)
 {
   static unsigned char i;

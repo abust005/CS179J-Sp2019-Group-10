@@ -1,27 +1,27 @@
 /*
  * MADLADS Controller Test
  * Created: 4/16/2019 7:30:36 PM
- * Authors : Jonathan "Cuomo" Woolf
- *       Joshua Riley
- *       Colton Vosburg
- *       Adriel Bustamante
+ * Authors :  Jonathan "Cuomo" Woolf
+ *            Joshua Riley
+ *            Colton Vosburg
+ *            Adriel Bustamante
  * Library: TMRh20/RF24, https://github.com/tmrh20/RF24/
  */
 #ifndef CONTROLLER_TEST_H
 #define CONTROLLER_TEST_H
 
-//extern enum movement_state;
-//extern enum button_state;
-//extern enum spi_state;
-//extern int TickFct_movement(int);
-//extern int TickFct_button(int);
-//extern int spi_master(int);
-//extern unsigned short joystick, joystick2, joystick3;
-//extern unsigned char droneSignal, clawFlag;
-//extern unsigned char payload[32];
+extern int TickFct_movement(int);
+extern int TickFct_button(int);
+extern int spi_master(int);
+extern unsigned short joystick, joystick2, joystick3;
+extern unsigned char droneSignal, clawFlag;
+extern unsigned char payload;
 
+/* === Timer Interrupt Test ===
+ * Test: Verifies timer interrupt works
+ * Note: Requires Serial.begin(9600) in void setup()
+ */
 int SampleTickFct(int state)
-// Requires Serial.begin(9600)
 {
   switch (state)
   {
@@ -37,9 +37,14 @@ int SampleTickFct(int state)
   return state;
 }
 
-void movementPrintTest(){
-  // DEBUG: To be used without timer interrupt
-  // Test: Verify joystick input behavior
+/* === Movement Test ===
+ * DEBUG: To be used WITHOUT timer interrupt
+ * Test: Verify joystick input behavior for the following:
+ * - Left and right movement joystick
+ * - Forward and backward movement joystick
+ * - Upward and downward movement joystick
+ */
+void movementPrintTest(int movement_state){
   for (unsigned char i = 0; i < 3; i++){
     movement_state = TickFct_movement(movement_state);
     delay(50);
@@ -55,9 +60,11 @@ void movementPrintTest(){
   delay(500);
 }
 
-void buttonPrintTest(){
-  // DEBUG: To be used without timer interrupt
-  // Test: Verify button input behavior
+/* === Button Test ===
+ * DEBUG: To be used without timer interrupt
+ * Test: Verify button input behavior
+ */
+void buttonPrintTest(int button_state){
   button_state = TickFct_button(button_state);
   Serial.print("Claw Flag: ");
   Serial.println(clawFlag, BIN);
@@ -66,16 +73,19 @@ void buttonPrintTest(){
   delay(250);
 }
 
-void spiMasterPrintTest(){
-  // DEBUG: To be used without timer interrupt
-  // Test: Verify RF module wired correctly
-  //  Pass: Prints repeatedly if RF module wired correctly
-  spi_state = spi_master(spi_state);
+/* === Spi Master Transmit Test ===
+ * DEBUG: To be used WITHOUT timer interrupt
+ * Test: Verify RF module wired correctly
+ * Note: Can also test if signal is being transmitted
+ */
+void spiMasterPrintTest(int spi_state){
+  droneSignal = 0xAA;
   Serial.print("droneSignal: ");
   Serial.println(droneSignal, HEX);
+  spi_state = spi_master(spi_state);
   Serial.print("payload: ");
   Serial.println(payload, HEX);
-  delay(250);
+  delay(500);
 }
 
 #endif // CONTROLLER_TEST_H

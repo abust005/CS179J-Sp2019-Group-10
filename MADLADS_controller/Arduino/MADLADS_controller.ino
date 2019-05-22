@@ -1,10 +1,11 @@
 /*
  * MADLADS_controller.ino
  * Created: 4/16/2019 7:30:36 PM
- * Authors : Jonathan "Cuomo" Woolf
- *       Joshua Riley
- *       Colton Vosburg
- *       Adriel Bustamante
+ * Authors :  Jonathan "Cuomo" Woolf
+ *            Joshua Riley
+ *            Colton Vosburg
+ *            Adriel Bustamante
+ *
  * Library: TMRh20/RF24, https://github.com/tmrh20/RF24/
  */
 #include <SPI.h>
@@ -13,21 +14,47 @@
 #define tasksNum 3 // Number of tasks
 #include "ardScheduler.h"
 
+// ----------------------------------------
 // === Inputs and Variables ===
-int topButton = 30; // This is the button for claw operation
-int bottomButton = 31; // This is the button for emergency stop (kill switch)
-#define joystick1Pin A0 // This is the joystick for left and right movement
-#define joystick2Pin A1 // This is the joystick for forward and reverse movement
-#define joystick3Pin A2 // This is the joystick for up and down movement
+// ----------------------------------------
+#define topButtonPin    30 // This is the button for claw operation
+#define bottomButtonPin 31 // This is the button for emergency stop (kill switch)
+#define joystick1Pin    A0 // This is the joystick for left and right movement
+#define joystick2Pin    A1 // This is the joystick for forward and reverse movement
+#define joystick3Pin    A2 // This is the joystick for up and down movement
 
 unsigned char temp, counter = 0x00; // SPI variables
 unsigned char droneSignal = 0x00; // bits 0-1 are up/down, 2-4 are left/right/forward/reverse, 5 is claw, 6 is button2, 7 is parity bit
-unsigned char payload;
-unsigned short joystick, joystick2, joystick3 = 0x0000; // Variables to store ADC values of joysticks
 unsigned char upFlag, downFlag, clawFlag = 0x00; // Flags for bitmasking logic
+unsigned char payload; // Variable for holding trasmittable data
+unsigned short joystick, joystick2, joystick3 = 0x0000; // Variables to store ADC values of joysticks
 const byte address[6] = "00001"; // Communication channel for RF module
 RF24 radio(7, 8); // CE, CSN
 
+// ----------------------------------------
+// === Functions ===
+// ----------------------------------------
+/*
+ * Source code from:
+ * https://howtomechatronics.com/tutorials/arduino/arduino-wireless-communication-nrf24l01-tutorial/
+ */
+void RadioMasterInit() {
+  radio.begin();
+  radio.openWritingPipe(address);
+  radio.setPALevel(RF24_PA_MIN);
+  radio.stopListening();
+}
+
+// ----------------------------------------
+// === Tick Function State Declarations ===
+// ----------------------------------------
+enum movement_states {Movement_Left_Right, Movement_Forward_Reverse, Movement_Up_Down} movement_state;
+enum button_states {Button_Wait, Button_Top_Pressed, Button_Bottom_Pressed} button_state;
+enum spi_states {Spi_Wait, Spi_Send} spi_state;
+
+// ----------------------------------------
+// === Tick Functions ===
+// ----------------------------------------
 // Joysticks are actually wired sideways so left/right and forward/reverse are switched but the states are labeled correctly for their observed actions
 /*
 LEFT JOYSTICK BITS - ***X XX**
@@ -46,15 +73,12 @@ RIGHT JOYSTICK BITS - **** **XX
 10 - up
 11 - N/A
 */
-enum movement_states {left_right, forward_reverse, up_down} movement_state;
-
 int TickFct_movement(int movement_state)
 {
   switch(movement_state)
   {
-    case left_right: // Left joystick controls left and right movements
+    case Movement_Left_Right: // Left joystick controls left and right movements
       joystick = analogRead(joystick1Pin); // Read ADC value into joystick variable
-      // droneSignal = (droneSignal & 0xE3); // L/R/F/R set to 000 for hover
       if (joystick > 500 && downFlag == 0) // Joystick is being tilted left
       {
         if (upFlag == 1)
@@ -84,9 +108,9 @@ int TickFct_movement(int movement_state)
           droneSignal &= 0xEB; // Bits anded with 010 to clear all but forward
         }
       }
-      movement_state = forward_reverse; // Return to the forward reverse state
+      movement_state = Movement_Forward_Reverse; // Return to the forward reverse state
       break;
-    case forward_reverse: // Left joystick controls forward and reverse movements
+    case Movement_Forward_Reverse: // Left joystick controls forward and reverse movements
       joystick2 = analogRead(joystick2Pin); // Read ADC value into joystick2 variable
       if (joystick2 > 500) // Joystick is being tilted up
       {
@@ -106,9 +130,9 @@ int TickFct_movement(int movement_state)
         upFlag = 0;
         downFlag = 0;
       }
-      movement_state = up_down; // Return to up down state
+      movement_state = Movement_Up_Down; // Return to up down state
       break;
-    case up_down: // Right joystick controls up and down movements
+    case Movement_Up_Down: // Right joystick controls up and down movements
       joystick3 = analogRead(joystick3Pin); // Read ADC value into joystick variable
       droneSignal &= 0xFC; // Up/Down set to 00 for maintain altitude
       if (joystick3 > 500) // Joystick is being tilted up
@@ -119,10 +143,10 @@ int TickFct_movement(int movement_state)
       {
         droneSignal |= 0x02; // Up/Down set to 01 for up
       }
-      movement_state = left_right; // Return to left right state
+      movement_state = Movement_Left_Right; // Return to left right state
       break;
     default:
-      movement_state = left_right; // Return to left right state
+      movement_state = Movement_Left_Right; // Return to left right state
       break;
   }
   return movement_state;
@@ -133,27 +157,26 @@ int TickFct_movement(int movement_state)
 10 - claw is engaged until the first button is pressed again
 X1 - Drop it like its hot
 */
-enum button_states {Wait, Top_Pressed, Bottom_Pressed} button_state;
 
 int TickFct_button(int button_state)
 {
-  static unsigned char bottomButtonCnt = 0;
+  static unsigned char buttonPressCnt = 0;
   switch(button_state)
   {
-    case Wait:
-      if (digitalRead(bottomButton) == HIGH){ // Button must be held down to prevent accidental drone loss
-        bottomButtonCnt = 0;
-        button_state = Bottom_Pressed;
+    case Button_Wait:
+      if (digitalRead(bottomButtonPin) == HIGH){ // Button must be held down to prevent accidental drone loss
+        buttonPressCnt = 0;
+        button_state = Button_Bottom_Pressed;
       }
-      else if (digitalRead(topButton) == HIGH){
+      else if (digitalRead(topButtonPin) == HIGH){
         clawFlag = clawFlag ? 0 : 1;
-        button_state = Top_Pressed;
+        button_state = Button_Top_Pressed;
       }
       droneSignal &= 0xDF; // buttons set to 00 for unused
       break;
-    case Top_Pressed:
-      if (digitalRead(topButton) == LOW){
-        button_state = Wait;
+    case Button_Top_Pressed:
+      if (digitalRead(topButtonPin) == LOW){
+        button_state = Button_Wait;
       }
       else {
         if (clawFlag)
@@ -165,21 +188,21 @@ int TickFct_button(int button_state)
         }
       }
       break;
-    case Bottom_Pressed:
-      if (digitalRead(bottomButton) == LOW){
-        button_state = Wait;
+    case Button_Bottom_Pressed:
+      if (digitalRead(bottomButtonPin) == LOW){
+        button_state = Button_Wait;
       }
       else
       {
-        if (bottomButtonCnt++ >= 10) // Button must be held down to prevent accidental drone loss
+        if (buttonPressCnt++ >= 10) // Button must be held down to prevent accidental drone loss
         {
-           bottomButtonCnt = 0;
+           buttonPressCnt = 0;
            droneSignal |= 0x20;
         }
       }
       break;
     default:
-      button_state = Wait;
+      button_state = Button_Wait;
       break;
   }
 
@@ -187,13 +210,11 @@ int TickFct_button(int button_state)
 }
 
 // SPI
-enum spi_states {wait, send} spi_state;
-
-int spi_master(int spi_state)
+int TickFct_spi_master(int spi_state)
 {
   switch(spi_state)
   {
-    case wait:
+    case Spi_Wait:
       counter = 0; // Counts the number of bits set to 1
       for (int i = 0; i < 7; i++)
       {
@@ -211,30 +232,26 @@ int spi_master(int spi_state)
       {
         droneSignal |= 0x80; // Set parity bit to 1 for odd number of 1s
       }
-      spi_state = send;
+      spi_state = Spi_Send;
       break;
-    case send:
+    case Spi_Send:
       payload = droneSignal; // Update payload with the droneSignal
       radio.write(&payload, sizeof(payload));
-      Serial.print("Sending: ");
-      Serial.println(payload, HEX);
-      spi_state = wait;
+      spi_state = Spi_Wait;
       break;
     default:
-      spi_state = wait;
+      spi_state = Spi_Wait;
       break;
   }
   return spi_state;
 }
 
-void RadioInit() {
-  radio.begin();
-  radio.openWritingPipe(address);
-  radio.setPALevel(RF24_PA_MIN);
-  radio.stopListening();
-}
-
 void setup() {
+  // Setup input and output pins
+  pinMode(topButtonPin, INPUT);
+  pinMode(bottomButtonPin, INPUT);
+
+  // Setup tasks
   unsigned char i = 0;
   tasks[i].state = -1;
   tasks[i].period = 50;
@@ -249,14 +266,9 @@ void setup() {
   tasks[i].state = -1;
   tasks[i].period = 25;
   tasks[i].elapsedTime = 0;
-  tasks[i].TickFct = &spi_master;
+  tasks[i].TickFct = &TickFct_spi_master;
 
-  pinMode(topButton, INPUT);
-  pinMode(bottomButton, INPUT);
-
-  Serial.begin(9600);
-  Serial.println("Beginning transmitter test");
-  RadioInit();
+  RadioMasterInit();
   TimerSet(1); // Cannot be changed
 }
 
