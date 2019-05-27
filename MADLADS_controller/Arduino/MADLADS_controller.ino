@@ -161,21 +161,30 @@ X1 - Drop it like its hot
 int TickFct_button(int button_state)
 {
   static unsigned char buttonPressCnt = 0;
+  static int bottomButton = 0;
+  static int topButton = 0;
+
+  bottomButton = digitalRead(bottomButtonPin);
+  topButton = digitalRead(topButtonPin);
+
   switch(button_state)
   {
     case Button_Wait:
-      if (digitalRead(bottomButtonPin) == HIGH){ // Button must be held down to prevent accidental drone loss
+      if (bottomButton){ // Button must be held down to prevent accidental drone loss
         buttonPressCnt = 0;
         button_state = Button_Bottom_Pressed;
       }
-      else if (digitalRead(topButtonPin) == HIGH){
+      else if (topButton){
         clawFlag = clawFlag ? 0 : 1;
         button_state = Button_Top_Pressed;
       }
       droneSignal &= 0xDF; // buttons set to 00 for unused
       break;
     case Button_Top_Pressed:
-      if (digitalRead(topButtonPin) == LOW){
+      if (bottomButton){
+        button_state = Button_Bottom_Pressed;
+      }
+      if (!topButton){
         button_state = Button_Wait;
       }
       else {
@@ -189,12 +198,12 @@ int TickFct_button(int button_state)
       }
       break;
     case Button_Bottom_Pressed:
-      if (digitalRead(bottomButtonPin) == LOW){
+      if (!bottomButton){
         button_state = Button_Wait;
       }
       else
       {
-        if (buttonPressCnt++ >= 10) // Button must be held down to prevent accidental drone loss
+        if (buttonPressCnt++ >= 5) // Button must be held down to prevent accidental drone loss
         {
            buttonPressCnt = 0;
            droneSignal |= 0x20;
@@ -205,7 +214,6 @@ int TickFct_button(int button_state)
       button_state = Button_Wait;
       break;
   }
-
   return button_state;
 }
 
@@ -259,7 +267,7 @@ void setup() {
   tasks[i].TickFct = &TickFct_movement;
   i++;
   tasks[i].state = -1;
-  tasks[i].period = 100;
+  tasks[i].period = 50;
   tasks[i].elapsedTime = 0;
   tasks[i].TickFct = &TickFct_button;
   i++;
