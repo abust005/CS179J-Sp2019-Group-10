@@ -15,11 +15,17 @@ I = cv.imread('module.jpg',1)
 
 # First set is for home testing, second for in-lab testing 
 
-# lower_pink = np.array([140, 255, 170])
-# upper_pink = np.array([255, 255, 190])
+upper_pink = np.array([127,255,212])
+lower_pink = np.array([0,168,107])
 
-upper_pink = np.array([255,193,204])
-lower_pink = np.array([86,3,25])
+# lower_pink = np.array([0,107,60])
+
+# upper_pink = np.array([229,43,80])
+# lower_pink = np.array([101,0,11])
+# lower_pink = np.array([86,3,25])
+
+#upper_pink = np.array([168, 199, 7])
+#lower_pink = np.array([102,255,0])
 
 #initiates video capture and gets the width and height of the frame
 cap = cv.VideoCapture(0)
@@ -27,10 +33,10 @@ cap.open(0)
 width = int(cap.get(cv.CAP_PROP_FRAME_WIDTH))
 height = int(cap.get(cv.CAP_PROP_FRAME_HEIGHT))
 
-widthLower = int(width * .5)
-widthUpper = int(width * 1.5)
-heightLower = int(height * .5)
-heightUpper = int(height * 1.5)
+widthLower = int(width * .375)
+widthUpper = int(width * .625)
+heightLower = int(height * .375)
+heightUpper = int(height * .625)
 
 #reads the video capture
 ret, frame = cap.read()
@@ -42,12 +48,13 @@ while(True):
     #Our operations on the frame come here
     if ret:
         #Converts the raw image into HSV for color detection
-        hsv = cv.cvtColor(frame, cv.COLOR_BGR2HSV)
-        mask = cv.inRange(hsv, lower_pink, upper_pink)
-        # mask = cv.morphologyEx(mask, cv.MORPH_OPEN, np.ones((3,3),np.uint8))   These two lines could be useful
-        # mask = cv.morphologyEx(mask, cv.MORPH_DILATE, np.ones((3,3),np.uint8))
+        #hsv = cv.cvtColor(frame, cv.COLOR_BGR2HSV)
+        lab = cv.cvtColor(frame, cv.COLOR_BGR2LAB)
+        mask = cv.inRange(lab, lower_pink, upper_pink)
+        mask = cv.morphologyEx(mask, cv.MORPH_OPEN, np.ones((3,3),np.uint8))   #These two lines could be useful
+        mask = cv.morphologyEx(mask, cv.MORPH_DILATE, np.ones((3,3),np.uint8))
         res = cv.bitwise_and(frame,frame, mask= mask)
-        cv.imshow("hsv", hsv) 
+        cv.imshow("LAB", lab) 
         cv.imshow("recognize", res)
         #thresholds and binarizes image for contour detection
         gray = cv.cvtColor(res, cv.COLOR_HSV2BGR)
@@ -104,7 +111,7 @@ while(True):
                 coords = qr.qr_read()
         
         #shows the bounding box around the package
-        cv.imshow("contours",frame)
+        cv.imshow("original",frame)
 
         # Display the resulting frame
         #cv.imshow('frame',im_bw)
