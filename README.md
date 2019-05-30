@@ -30,6 +30,11 @@ To run this project, perform the following
 Lorem ipsum dolor sit amet
 ```
 
+## Deprecated
+These modules have been deprecated, replaced, or deemed non-essential to function:
+
+* Web app
+
 ## Sources
 
 1) [Amazon Prime Air](https://www.amazon.com/b?node=8037720011&ref_=aa_art_btn&pf_rd_r=PBCHPHZ7294P1HN8JWA7&pf_rd_p=c507fba8-5301-4f03-8293-6be2bb6cc10b)
