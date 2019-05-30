@@ -96,6 +96,9 @@ while(True):
             if xCheck & yCheck:
                 #initiate pickup routine
                 coords = qr.qr_read()
+                cap.release()
+                cv.destroyAllWindows()
+                break
         
         #shows the bounding box around the package
         cv.imshow("original",frame)
