@@ -64,13 +64,17 @@ void movementPrintTest(int movement_state){
  * DEBUG: To be used without timer interrupt
  * Test: Verify button input behavior
  */
-void buttonPrintTest(int button_state){
-  button_state = TickFct_button(button_state);
+int buttonPrintTest(int button_state){
+  for (unsigned i = 0; i < 5; i++)
+  {
+    button_state = TickFct_button(button_state);
+    delay(50);
+  }
   Serial.print("Claw Flag: ");
-  Serial.println(clawFlag, BIN);
-  Serial.print("Drone Signal: ");
-  Serial.println(droneSignal, BIN);
-  delay(250);
+  Serial.print(clawFlag, HEX);
+  Serial.print(" Drone Signal: ");
+  Serial.println(droneSignal, HEX);
+  return button_state;
 }
 
 /* === Spi Master Transmit Test ===
