@@ -2,6 +2,11 @@ import serial
 
 '''
 README:
+Authors: Jonathan Woolf
+         Adriel Bustamante
+         Joshua Riley
+         Colton Vosburg
+         
 This code reads data from the linux serial port "ttyACM0" and
 calls the function "position()" which reads the serial port to both return
 latitude and longitude and output them to the position.txt file
@@ -30,9 +35,9 @@ def position(GPS):
             longitude = data[5]
 
             latDD = int(float(latitude)/100)
-            latSS = float(latitude) - DD * 100
+            latSS = float(latitude) - latDD * 100
             longDD = int(float(longitude)/100)
-            longSS = float(longitude) - DD * 100
+            longSS = float(longitude) - longDD * 100
 
             #If North latitude is positive / If South latitude is negative
             latitude = latDD + latSS/60
@@ -45,7 +50,7 @@ def position(GPS):
 
             #write latitude, Longitude to position.txt file
             with open("position.txt", "w") as pos:
-                pos.write(latitude + ", " + longitude + "\n")
+                pos.write(str(latitude) + ", " + str(longitude) + "\n")
             return(latitude, longitude)
 
 GPS = serial.Serial("/dev/ttyACM0", baudrate = 9600)
