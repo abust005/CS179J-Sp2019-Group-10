@@ -2,8 +2,6 @@ import cv2 as cv
 import numpy as np
 import qr_reader as qr
 
-print(cv.__version__)
-
 I = cv.imread('module.jpg',1)
 
 ## Note to engineers: the color bounds are not set in stone.
@@ -11,21 +9,10 @@ I = cv.imread('module.jpg',1)
 ##  can be used; these are still research-level questions and methods, and as
 ##  such, I have stuck to what seems to work experimentally
 
-#sets the bounds for color detection
-
-# First set is for home testing, second for in-lab testing 
+#sets the bounds for color detection 
 
 upper_pink = np.array([127,255,212])
 lower_pink = np.array([0,168,107])
-
-# lower_pink = np.array([0,107,60])
-
-# upper_pink = np.array([229,43,80])
-# lower_pink = np.array([101,0,11])
-# lower_pink = np.array([86,3,25])
-
-#upper_pink = np.array([168, 199, 7])
-#lower_pink = np.array([102,255,0])
 
 #initiates video capture and gets the width and height of the frame
 cap = cv.VideoCapture(0)
@@ -51,7 +38,7 @@ while(True):
         #hsv = cv.cvtColor(frame, cv.COLOR_BGR2HSV)
         lab = cv.cvtColor(frame, cv.COLOR_BGR2LAB)
         mask = cv.inRange(lab, lower_pink, upper_pink)
-        mask = cv.morphologyEx(mask, cv.MORPH_OPEN, np.ones((3,3),np.uint8))   #These two lines could be useful
+        mask = cv.morphologyEx(mask, cv.MORPH_OPEN, np.ones((3,3),np.uint8))
         mask = cv.morphologyEx(mask, cv.MORPH_DILATE, np.ones((3,3),np.uint8))
         res = cv.bitwise_and(frame,frame, mask= mask)
         cv.imshow("LAB", lab) 
