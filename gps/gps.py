@@ -19,15 +19,23 @@ python -m serial.tools.list_ports
 '''
 
 def position(GPS):
+    latitude = 0
+    longitude = 0
     line = GPS.readline()
     data = line.decode().split(",")
     if data[0] == "$GPRMC":
         #A means that the GPS is updating properly and returning a real value
         if data[2] == "A":
+            latitude = data[3]
+            longitude = data[5]
+            DD = int(float(latitude)/100)
+            SS = float(latitude) - DD * 100
+
+            latitude = DD + SS/60
             #write latitude, Longitude to position.txt file
-            with open("position.txt", "w") as pos:
-                pos.write(data[3] + ", " + data[5] + "\n")
-            return(data[3], data[5])
+            #with open("position.txt", "w") as pos:
+                #pos.write(latitude + ", " + data[5] + "\n")
+            return(latitude, data[5])
 
 GPS = serial.Serial("/dev/ttyACM0", baudrate = 9600)
 if(GPS.is_open): print(GPS.name, "is open!")
