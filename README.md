@@ -9,14 +9,17 @@
 * [Team](#team)
 
 ## General Info
-This project is an autonomous drone delivery service. **Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.**
+The **Mobile Automated Drone Liftoff Airborne Delivery Service (MADLADS)** is a drone delivery system designed for professional use. The drone can be piloted manually with a custom controller or can operate autonomously. It features a camera lens for packagae identification and  a claw mechanism for acquisition and dropoff.
+
+**MADLADS** is inspired by *Amazon Prime Air*. Amazon’s CEO, Jeff Bezos, first proposed a drone delivery service in 2013. Although initially met with heavy criticism, Amazon continued developing the service and has patented a beehive-like structure to store and charge delivery drones in cities. In 2016, *Amazon Prime Air* completed its first delivery to Cambridge, England. Drones may very well become the new standard for fast, secure, and reliable deliveries.<sup>[2]</sup>
+
 
 ## Technologies
 This project is created with:
 
 * Arduino
-* OpenCV
 * Raspberry Pi
+* OpenCV
 * I2C
 * RF
 
@@ -29,9 +32,8 @@ Lorem ipsum dolor sit amet
 
 ## Sources
 
-* Lorem ipsum dolor
-* Lorem ipsum dolor
-* Lorem ipsum dolor
+1) [Amazon Prime Air](https://www.amazon.com/b?node=8037720011&ref_=aa_art_btn&pf_rd_r=PBCHPHZ7294P1HN8JWA7&pf_rd_p=c507fba8-5301-4f03-8293-6be2bb6cc10b)
+2) [Amazon Prime Air Wiki](https://en.wikipedia.org/wiki/Amazon_Prime_Air)
 
 ## Team
 
