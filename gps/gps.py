@@ -44,8 +44,8 @@ def position(GPS):
                 longitude = longitude * -1
 
             #write latitude, Longitude to position.txt file
-            #with open("position.txt", "w") as pos:
-                #pos.write(latitude + ", " + data[5] + "\n")
+            with open("position.txt", "w") as pos:
+                pos.write(latitude + ", " + longitude + "\n")
             return(latitude, longitude)
 
 GPS = serial.Serial("/dev/ttyACM0", baudrate = 9600)
