@@ -23,19 +23,30 @@ def position(GPS):
     longitude = 0
     line = GPS.readline()
     data = line.decode().split(",")
-    if data[0] == "$GPRMC":
+    if(data[0] == "$GPRMC"):
         #A means that the GPS is updating properly and returning a real value
-        if data[2] == "A":
+        if(data[2] == "A"):
             latitude = data[3]
             longitude = data[5]
-            DD = int(float(latitude)/100)
-            SS = float(latitude) - DD * 100
 
-            latitude = DD + SS/60
+            latDD = int(float(latitude)/100)
+            latSS = float(latitude) - DD * 100
+            longDD = int(float(longitude)/100)
+            longSS = float(longitude) - DD * 100
+
+            #If North latitude is positive / If South latitude is negative
+            latitude = latDD + latSS/60
+            if(data[4] == "S"):
+                latitude = latitude * -1
+            #IF East longitude is positive / If West longitude is negative
+            longitude = longDD + longSS/60
+            if(data[6] == "W"):
+                longitude = longitude * -1
+
             #write latitude, Longitude to position.txt file
             #with open("position.txt", "w") as pos:
                 #pos.write(latitude + ", " + data[5] + "\n")
-            return(latitude, data[5])
+            return(latitude, longitude)
 
 GPS = serial.Serial("/dev/ttyACM0", baudrate = 9600)
 if(GPS.is_open): print(GPS.name, "is open!")
