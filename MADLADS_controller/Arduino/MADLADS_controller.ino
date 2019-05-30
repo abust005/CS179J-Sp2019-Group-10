@@ -17,8 +17,8 @@
 // ----------------------------------------
 // === Inputs and Variables ===
 // ----------------------------------------
-#define topButtonPin    30 // This is the button for claw operation
-#define bottomButtonPin 31 // This is the button for emergency stop (kill switch)
+#define topButtonPin    4  // This is the button for claw operation
+#define bottomButtonPin 5  // This is the button for emergency stop (kill switch)
 #define joystick1Pin    A0 // This is the joystick for left and right movement
 #define joystick2Pin    A1 // This is the joystick for forward and reverse movement
 #define joystick3Pin    A2 // This is the joystick for up and down movement
