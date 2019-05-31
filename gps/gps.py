@@ -6,7 +6,7 @@ Authors: Jonathan Woolf
          Adriel Bustamante
          Joshua Riley
          Colton Vosburg
-         
+
 This code reads data from the linux serial port "ttyACM0" and
 calls the function "position()" which reads the serial port to both return
 latitude and longitude and output them to the position.txt file
@@ -27,6 +27,7 @@ def position(GPS):
     latitude = 0
     longitude = 0
     line = GPS.readline()
+    #print(line)
     data = line.decode().split(",")
     if(data[0] == "$GPRMC"):
         #A means that the GPS is updating properly and returning a real value
@@ -51,10 +52,13 @@ def position(GPS):
             #write latitude, Longitude to position.txt file
             with open("position.txt", "w") as pos:
                 pos.write(str(latitude) + ", " + str(longitude) + "\n")
+            with open("log.txt", "a") as log:
+                log.write(str(latitude) + ", " + str(longitude) + "\n")
             return(latitude, longitude)
 
 GPS = serial.Serial("/dev/ttyACM0", baudrate = 9600)
 if(GPS.is_open): print(GPS.name, "is open!")
+open('log.txt', 'w').close()
 
 while True:
     pos = position(GPS)
