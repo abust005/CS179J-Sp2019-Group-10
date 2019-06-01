@@ -18,6 +18,7 @@ return statement is printed to terminal when the function doesn't return "None"
 
 Use the following command to gain access to the port because life is hard:
 
+drone GPS unit
 sudo chmod 666 /dev/ttyACM0
 
 if you need to find the correct port use:
@@ -36,6 +37,7 @@ def position(GPS):
             latitude = data[3]
             longitude = data[5]
             timestamp = time.strftime('%H:%M:%S')
+            stopTime = int(time.strftime('%S'))
 
             latDD = int(float(latitude)/100)
             latSS = float(latitude) - latDD * 100
@@ -52,18 +54,27 @@ def position(GPS):
                 longitude = longitude * -1
 
             #write latitude, longitude to position.txt file
-            #write latitude, longitude, and timestamp to log.txt file
-            #return latitude, longitude, and timestamp
             with open("position.txt", "w") as pos:
                 pos.write(str(latitude) + ", " + str(longitude) + "\n")
-            with open("log.txt", "a") as log:
-                log.write(str(latitude) + ", " + str(longitude) + ", " + timestamp + "\n")
+            #write latitude, longitude, and timestamp to log.txt file every 30 seconds
+            if(abs(stopTime - startTime) == 30 or abs(stopTime - startTime) == 0):
+                with open("log.txt", "a") as log:
+                    log.write(str(latitude) + ", " + str(longitude) + ", " + timestamp + "\n")
+            #return latitude, longitude, and timestamp
             return(latitude, longitude, timestamp)
+
 GPS = serial.Serial("/dev/ttyACM0", baudrate = 9600)
 if(GPS.is_open): print(GPS.name, "is open!")
+#Clear log every time the python script is ran
 open('log.txt', 'w').close()
+
+#Plus 1 to account for delay in calling position function
+startTime = time.strftime('%S')
+startTime = int(startTime) + 1
 
 while True:
     pos = position(GPS)
     if pos is not None:
         print(pos)
+        t2 = time.strftime('%S')
+        #time.sleep(5)
