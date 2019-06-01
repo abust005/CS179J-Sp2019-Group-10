@@ -1,4 +1,5 @@
 import serial
+import time
 
 '''
 README:
@@ -9,7 +10,8 @@ Authors: Jonathan Woolf
 
 This code reads data from the linux serial port "ttyACM0" and
 calls the function "position()" which reads the serial port to both return
-latitude and longitude and output them to the position.txt file
+latitude and longitude and output them to the position.txt file.
+The function now creates a log file with all recorded gps locations and timestamps
 
 For convenience, the function is called in an infinite while loop and the
 return statement is printed to terminal when the function doesn't return "None"
@@ -27,13 +29,13 @@ def position(GPS):
     latitude = 0
     longitude = 0
     line = GPS.readline()
-    #print(line)
     data = line.decode().split(",")
     if(data[0] == "$GPRMC"):
         #A means that the GPS is updating properly and returning a real value
         if(data[2] == "A"):
             latitude = data[3]
             longitude = data[5]
+            timestamp = time.strftime('%H:%M:%S')
 
             latDD = int(float(latitude)/100)
             latSS = float(latitude) - latDD * 100
@@ -49,13 +51,14 @@ def position(GPS):
             if(data[6] == "W"):
                 longitude = longitude * -1
 
-            #write latitude, Longitude to position.txt file
+            #write latitude, longitude to position.txt file
+            #write latitude, longitude, and timestamp to log.txt file
+            #return latitude, longitude, and timestamp
             with open("position.txt", "w") as pos:
                 pos.write(str(latitude) + ", " + str(longitude) + "\n")
             with open("log.txt", "a") as log:
-                log.write(str(latitude) + ", " + str(longitude) + "\n")
-            return(latitude, longitude)
-
+                log.write(str(latitude) + ", " + str(longitude) + ", " + timestamp + "\n")
+            return(latitude, longitude, timestamp)
 GPS = serial.Serial("/dev/ttyACM0", baudrate = 9600)
 if(GPS.is_open): print(GPS.name, "is open!")
 open('log.txt', 'w').close()
