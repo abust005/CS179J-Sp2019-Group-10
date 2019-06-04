@@ -1,4 +1,5 @@
 import serial
+import serial.tools.list_ports
 import time
 
 '''
@@ -15,15 +16,19 @@ The function now creates a log file with all recorded gps locations and timestam
 
 For convenience, the function is called in an infinite while loop and the
 return statement is printed to terminal when the function doesn't return "None"
+Please type "ctrl c" to end the program
 
-Use the following command to gain access to the port because life is hard:
-
-drone GPS unit
-sudo chmod 666 /dev/ttyACM0
-
-if you need to find the correct port use:
+Give yourself permanent access to the port:
 
 python -m serial.tools.list_ports
+# navigate to rules.d directory
+cd /etc/udev/rules.d
+#create a new rule file
+sudo touch my-newrule.rules
+# open the file
+sudo vim my-newrule.rules
+# add the following
+KERNEL=="ttyACM0", MODE="0666"
 '''
 
 def position(GPS):
@@ -62,8 +67,14 @@ def position(GPS):
                     log.write(str(latitude) + ", " + str(longitude) + ", " + timestamp + "\n")
             #return latitude, longitude, and timestamp
             return(latitude, longitude, timestamp)
+        else:
+            print("Error: satellites not found!")
 
-GPS = serial.Serial("/dev/ttyACM0", baudrate = 9600)
+port = ([comport.device for comport in serial.tools.list_ports.comports()])
+
+if(serial.Serial(port[0], baudrate = 9600)):
+    GPS = serial.Serial(port[0], baudrate = 9600)
+
 if(GPS.is_open): print(GPS.name, "is open!")
 #Clear log every time the python script is ran
 open('log.txt', 'w').close()
@@ -72,9 +83,16 @@ open('log.txt', 'w').close()
 startTime = time.strftime('%S')
 startTime = int(startTime) + 1
 
-while True:
-    pos = position(GPS)
-    if pos is not None:
-        print(pos)
-        t2 = time.strftime('%S')
-        #time.sleep(5)
+try:
+    while True:
+        pos = position(GPS)
+        if pos is not None:
+            print(pos)
+            t2 = time.strftime('%S')
+            #time.sleep(5)
+
+except KeyboardInterrupt:
+        GPS.close()
+        if(GPS.is_open == False):
+            print()
+            print(GPS.name, "is closed!")
