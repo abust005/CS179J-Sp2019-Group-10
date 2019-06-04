@@ -22,6 +22,7 @@ This project is created with:
 * OpenCV
 * I2C
 * RF
+* GPS
 
 ## Setup
 To run this project, perform the following
