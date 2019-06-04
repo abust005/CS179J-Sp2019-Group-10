@@ -31,7 +31,7 @@ sudo vim my-newrule.rules
 KERNEL=="ttyACM0", MODE="0666"
 '''
 
-def decimalDegrees(dms):
+def decimalDegrees(dms, direction):
     DD = int(float(dms)/100)
     SS = float(dms) - DD * 100
 
@@ -42,12 +42,12 @@ def decimalDegrees(dms):
     #Rounds DD (decimal degrees) for more consistent values
     if((tmp1 == 1 and tmp2 < 9) or (tmp1 == 2 and tmp2 < 10) or (tmp1 == 3 and tmp2 < 11)):
         DD = round(DD +  .0000001, 7)
-
+    #If South latitude is negative / If West longitude is negative
+    if(direction == "S" or direction == "W"):
+        DD = DD * -1
     return(DD)
 
 def position(GPS):
-    latitude = 0
-    longitude = 0
     line = GPS.readline()
     data = line.decode().split(",")
     if(data[0] == "$GPRMC"):
@@ -57,15 +57,8 @@ def position(GPS):
             stopTime = int(time.strftime('%S'))
 
             #Convert from DMS (degrees, minutes, seconds) to DD (decimal degrees)
-            latitude = decimalDegrees(data[3])
-            longitude = decimalDegrees(data[5])
-
-            #If North latitude is positive / If South latitude is negative
-            if(data[4] == "S"):
-                latitude = latitude * -1
-            #If East longitude is positive / If West longitude is negative
-            if(data[6] == "W"):
-                longitude = longitude * -1
+            latitude = decimalDegrees(data[3], data[4])
+            longitude = decimalDegrees(data[5], data[6])
 
             #write latitude, longitude to position.txt file
             with open("position.txt", "w") as pos:
@@ -79,31 +72,34 @@ def position(GPS):
         else:
             print("Error: satellites not found!")
 
+#create a list of accessible ports
 port = ([comport.device for comport in serial.tools.list_ports.comports()])
 
+#If no ports are accessible exit
 if(len(port) == 0):
     print("Error: GPS unit not found!")
     exit()
-    
-if(serial.Serial(port[0], baudrate = 9600)):
-    GPS = serial.Serial(port[0], baudrate = 9600)
 
+#Open GPS port
+GPS = serial.Serial(port[0], baudrate = 9600)
+
+#Verify port is open
 if(GPS.is_open):
     print(GPS.name, "is open!")
     #Clear log every time the python script starts
     open('log.txt', 'w').close()
 
-#Plus 1 to account for delay in calling position function
+#Set startTime and add 1 to account for delay
 startTime = time.strftime('%S')
 startTime = int(startTime) + 1
 
+#Infinite loop until KeyboardInterrupt is detected
 try:
     while True:
         pos = position(GPS)
         if pos is not None:
             print(pos)
-            t2 = time.strftime('%S')
-            #time.sleep(5)
+            #time.sleep(5) #Sleep for better power reserve if needed
 
 #'ctrl c' will close the serial port before exiting the program
 except KeyboardInterrupt:
