@@ -50,11 +50,11 @@ def position(GPS):
             longSS = float(longitude) - longDD * 100
 
             #If North latitude is positive / If South latitude is negative
-            latitude = latDD + latSS/60
+            latitude = round(latDD + latSS/60, 7)
             if(data[4] == "S"):
                 latitude = latitude * -1
             #IF East longitude is positive / If West longitude is negative
-            longitude = longDD + longSS/60
+            longitude = round(longDD + longSS/60, 7)
             if(data[6] == "W"):
                 longitude = longitude * -1
 
