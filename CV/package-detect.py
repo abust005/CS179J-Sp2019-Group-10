@@ -20,10 +20,10 @@ cap.open(0)
 width = int(cap.get(cv.CAP_PROP_FRAME_WIDTH))
 height = int(cap.get(cv.CAP_PROP_FRAME_HEIGHT))
 
-widthLower = int(width * .375)
-widthUpper = int(width * .625)
-heightLower = int(height * .375)
-heightUpper = int(height * .625)
+widthLower = int(width * .4)
+widthUpper = int(width * .6)
+heightLower = int(height * .4)
+heightUpper = int(height * .6)
 
 #reads the video capture
 ret, frame = cap.read()
