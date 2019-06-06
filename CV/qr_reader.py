@@ -1,5 +1,6 @@
 from re import split
 import cv2 as cv
+import pyzbar.pyzbar as pz
 import numpy as np
 import sys
 import time
@@ -18,7 +19,7 @@ def display(im, bbox):
 #inputImage = cv.imread('C:\\Users\\Adriel\\CS179J-Sp2019-Group-10\\CV\\CoordQR.jpg')
 
 def qr_read():
-    qrDecoder = cv.QRCodeDetector()
+    #qrDecoder = cv.QRCodeDetector()
 
     cap = cv.VideoCapture(0)
     cap.open(0)
@@ -34,9 +35,13 @@ def qr_read():
         inputImage = frame
         # Detect and decode the qrcode
         t = time.time()
-        data,bbox,rectifiedImage = qrDecoder.detectAndDecode(inputImage)
+        #data,bbox,rectifiedImage = qrDecoder.detectAndDecode(inputImage)
+        # Find barcodes and QR codes
+        decodedObject = pz.decode(frame)
+
         print("Time Taken for Detect and Decode : {:.3f} seconds".format(time.time() - t))
-        if len(data)>0:
+        if len(decodedObject)>0:
+            data = decodedObject[0].data
             print("Decoded Data : {}".format(data))
             coord = split(r',|\s|\[|\]', data)
             #print(coord)
