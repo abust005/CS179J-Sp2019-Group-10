@@ -9,7 +9,7 @@ I = cv.imread('module.jpg',1)
 ##  can be used; these are still research-level questions and methods, and as
 ##  such, I have stuck to what seems to work experimentally
 
-#sets the bounds for color detection 
+#sets the bounds for color detection
 
 upper_pink = np.array([127,255,212])
 lower_pink = np.array([0,168,107])
@@ -41,13 +41,13 @@ while(True):
         mask = cv.morphologyEx(mask, cv.MORPH_OPEN, np.ones((3,3),np.uint8))
         mask = cv.morphologyEx(mask, cv.MORPH_DILATE, np.ones((3,3),np.uint8))
         res = cv.bitwise_and(frame,frame, mask= mask)
-        cv.imshow("LAB", lab) 
+        cv.imshow("LAB", lab)
         cv.imshow("recognize", res)
         #thresholds and binarizes image for contour detection
         gray = cv.cvtColor(res, cv.COLOR_HSV2BGR)
         gray = cv.cvtColor(gray, cv.COLOR_BGR2GRAY)
         (thresh, im_bw) = cv.threshold(gray, 160, 255, cv.THRESH_BINARY_INV)
-        
+
         contours, hier = cv.findContours(im_bw, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
         maxArea = -1
         box = contours[0]
@@ -63,7 +63,7 @@ while(True):
         #draw a green rectangle to visualize the bounding rect
         if w < width:
             cv.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
-        
+
             # get the min area rect
             rect = cv.minAreaRect(box)
             bBox = cv.boxPoints(rect)
@@ -99,7 +99,7 @@ while(True):
                 cap.release()
                 cv.destroyAllWindows()
                 break
-        
+
         #shows the bounding box around the package
         cv.imshow("original",frame)
 
@@ -109,6 +109,6 @@ while(True):
             cap.release()
             cv.destroyAllWindows()
             break
-        
+
     else:
         break

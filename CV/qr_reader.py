@@ -11,7 +11,7 @@ def display(im, bbox):
     n = len(bbox)
     for j in range(n):
         cv.line(im, tuple(bbox[j][0]), tuple(bbox[ (j+1) % n][0]), (128,128,0), 3)
- 
+
     # Display results
     cv.imshow("Results", im)
 
