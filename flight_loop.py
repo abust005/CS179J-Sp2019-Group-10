@@ -16,8 +16,14 @@ PULSE_MIN = 0x0CCD
 
 #========I2C==========
 COMPASS_ADDRESS = 0x21
-LIDAR_ADDRES = 0x62
+LIDAR_ADDRESS = 0x62
 
+#=====PI Control======
+ALTITUDE_SET_POINT = 400
+HEADING_SET_POINT = 180
+
+#Functions
+#============================
 def pwm_control_initialise():
     i2c = busio.I2C(board.SCL, board.SDA)
     servo_hat = adafruit_pca9685.PCA9685(i2c)
@@ -64,4 +70,31 @@ def lidar_read():
     value += i2c_bus.read_byte(address) #Read low 8-bits from register 0x10 and add to value
     
     return value
+
+def altitude_PI_tick(): #note for later 500 readings/s
+    value1 = lidar_read()
+    value2 = lidar_read()
+    value3 = lidar_read()
+    value4 = lidar_read()
+    value5 = lidar_read()
     
+    process_variable = (value1 + value2 + value3 + value4 + value5)/5
+    
+    error = global ALTITUDE_SET_POINT - process_variable
+    
+def rotation_PI_tick():
+    value1 = compass_read()
+    value2 = compass_read()
+    value3 = compass_read()
+    value4 = compass_read()
+    value5 = compass_read()
+    
+    process_variable = (value1 + value2 + value3 + value4 +value5)/5
+    process_variable /= 10
+    
+    error = global HEADING_SET_POINT - process_variable
+
+#Execution
+#=======================
+pwm_control_initialise()
+i2c_initialise()
