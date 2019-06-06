@@ -43,19 +43,21 @@ def qr_read():
         if len(decodedObject)>0:
             data = decodedObject[0].data
             print("Decoded Data : {}".format(data))
-            coord = split(r',|\s|\[|\]', data)
+            data = str(data,'utf-8')
+
+            coord = split(r',|\s|\[|\]|\[a-zA-Z]', data)
             #print(coord)
-            initLong = coord[1]
-            initLat = coord[3]
-            finLong = coord[6]
-            finLat = coord[8]
+            initLong = coord[0]
+            initLat = coord[1]
+            finLong = coord[2]
+            finLat = coord[3]
             print(initLong)
             print(initLat)
             print(finLong)
             print(finLat)
-            display(inputImage, bbox)
-            rectifiedImage = np.uint8(rectifiedImage)
-            cv.imshow("Rectified QRCode", rectifiedImage)
+            # display(inputImage)
+            # rectifiedImage = np.uint8(rectifiedImage)
+            # cv.imshow("Rectified QRCode", rectifiedImage)
             break
         else:
             print("QR Code not detected")
