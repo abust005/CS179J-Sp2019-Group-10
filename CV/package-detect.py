@@ -2,8 +2,6 @@ import cv2 as cv
 import numpy as np
 import qr_reader as qr
 
-print(cv.__version__)
-
 I = cv.imread('module.jpg',1)
 
 ## Note to engineers: the color bounds are not set in stone.
@@ -13,19 +11,8 @@ I = cv.imread('module.jpg',1)
 
 #sets the bounds for color detection
 
-# First set is for home testing, second for in-lab testing 
-
 upper_pink = np.array([127,255,212])
 lower_pink = np.array([0,168,107])
-
-# lower_pink = np.array([0,107,60])
-
-# upper_pink = np.array([229,43,80])
-# lower_pink = np.array([101,0,11])
-# lower_pink = np.array([86,3,25])
-
-#upper_pink = np.array([168, 199, 7])
-#lower_pink = np.array([102,255,0])
 
 #initiates video capture and gets the width and height of the frame
 cap = cv.VideoCapture(0)
@@ -33,10 +20,10 @@ cap.open(0)
 width = int(cap.get(cv.CAP_PROP_FRAME_WIDTH))
 height = int(cap.get(cv.CAP_PROP_FRAME_HEIGHT))
 
-widthLower = int(width * .375)
-widthUpper = int(width * .625)
-heightLower = int(height * .375)
-heightUpper = int(height * .625)
+widthLower = int(width * .4)
+widthUpper = int(width * .6)
+heightLower = int(height * .4)
+heightUpper = int(height * .6)
 
 #reads the video capture
 ret, frame = cap.read()
@@ -51,16 +38,16 @@ while(True):
         #hsv = cv.cvtColor(frame, cv.COLOR_BGR2HSV)
         lab = cv.cvtColor(frame, cv.COLOR_BGR2LAB)
         mask = cv.inRange(lab, lower_pink, upper_pink)
-        mask = cv.morphologyEx(mask, cv.MORPH_OPEN, np.ones((3,3),np.uint8))   #These two lines could be useful
+        mask = cv.morphologyEx(mask, cv.MORPH_OPEN, np.ones((3,3),np.uint8))
         mask = cv.morphologyEx(mask, cv.MORPH_DILATE, np.ones((3,3),np.uint8))
         res = cv.bitwise_and(frame,frame, mask= mask)
-        cv.imshow("LAB", lab) 
+        cv.imshow("LAB", lab)
         cv.imshow("recognize", res)
         #thresholds and binarizes image for contour detection
         gray = cv.cvtColor(res, cv.COLOR_HSV2BGR)
         gray = cv.cvtColor(gray, cv.COLOR_BGR2GRAY)
         (thresh, im_bw) = cv.threshold(gray, 160, 255, cv.THRESH_BINARY_INV)
-        
+
         contours, hier = cv.findContours(im_bw, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
         maxArea = -1
         box = contours[0]
@@ -76,7 +63,7 @@ while(True):
         #draw a green rectangle to visualize the bounding rect
         if w < width:
             cv.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
-        
+
             # get the min area rect
             rect = cv.minAreaRect(box)
             bBox = cv.boxPoints(rect)
@@ -109,7 +96,10 @@ while(True):
             if xCheck & yCheck:
                 #initiate pickup routine
                 coords = qr.qr_read()
-        
+                cap.release()
+                cv.destroyAllWindows()
+                break
+
         #shows the bounding box around the package
         cv.imshow("original",frame)
 
@@ -119,6 +109,6 @@ while(True):
             cap.release()
             cv.destroyAllWindows()
             break
-        
+
     else:
         break
