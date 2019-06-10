@@ -28,7 +28,8 @@ This project is created with:
 To run this project, perform the following
 
 ```
-Lorem ipsum dolor sit amet
+Arm the drone
+Turn on the controller
 ```
 
 ## Deprecated
