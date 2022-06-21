@@ -5,7 +5,7 @@ board==0.0.0.post0
 certifi==2019.3.9
 future==0.17.1
 iso8601==0.1.12
-numpy==1.16.4
+numpy==1.22.0
 opencv-python==4.1.0.25
 PyYAML==5.1
 serial==0.0.97
